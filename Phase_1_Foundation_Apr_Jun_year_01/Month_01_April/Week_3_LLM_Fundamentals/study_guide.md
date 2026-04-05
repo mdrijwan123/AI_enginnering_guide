@@ -242,8 +242,8 @@ def attention(Q, K, V):
     return weights @ V
 ```
 
-**Why divide by √d_k?**
-For large d_k, dot products grow large (variance = d_k for unit vectors). The softmax would then create very peaked distributions (near one-hot), causing vanishing gradients. Dividing by √d_k normalises the variance back to ~1.
+**Why divide by $\sqrt{d_k}$?**
+For large $d_k$, dot products grow large (variance $= d_k$ for unit vectors). The softmax would then create very peaked distributions (near one-hot), causing vanishing gradients. Dividing by $\sqrt{d_k}$ normalises the variance back to $\approx 1$.
 
 ### 4.4 Multi-Head Attention
 

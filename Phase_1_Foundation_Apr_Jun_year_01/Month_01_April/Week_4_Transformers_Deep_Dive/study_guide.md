@@ -471,7 +471,7 @@ Total: ~151 GB → need 2× A100 80GB minimum
 > MoE uses N expert FFNs but activates only k (typically 2) per token. Result: N× more parameters but same inference cost as a dense model with N/k experts' worth of parameters. Best when: you need high capability (large parameter count for knowledge), compute-efficient inference, and can afford all weights in memory. Mixtral 8x7B has quality close to a 46B dense model at the inference cost of ~13B.
 
 **Q14: What is the difference between perplexity and accuracy for LLMs?**
-> - **Perplexity:** The geometric mean inverse probability the model assigns to test tokens. Lower is better. Used to measure general language modeling quality. PPL = exp(average cross-entropy loss).
+> - **Perplexity:** The geometric mean inverse probability the model assigns to test tokens. Lower is better. Used to measure general language modeling quality. $\text{PPL} = \exp(\text{average cross-entropy loss})$.
 > - **Accuracy:** Fraction of correct answers on specific benchmarks (MMLU, HumanEval, etc.)
 > For LLM evaluation, task-specific benchmarks (MMLU, HellaSwag, ARC) are more meaningful than perplexity for downstream use.
 

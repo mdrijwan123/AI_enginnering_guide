@@ -6,7 +6,23 @@
 
 ---
 
-## 📋 Interview Rounds at FAANG (What Gets Tested)
+## � Current Status — Week 1 · April 6, 2026
+
+| Item | Detail |
+|---|---|
+| 📍 Phase | Phase 1: Foundation |
+| 📅 Current Week | **Week 1 — DSA: Arrays & Hashing** |
+| 📁 Active Folder | `Phase_1_Foundation_Apr_Jun_year_01/Month_01_April/Week_1_DSA_Arrays_Hashing/` |
+| 🎯 This Week | Contains Duplicate, Two Sum, Valid Anagram, Group Anagrams, Top K Frequent Elements |
+| 📊 Progress Tracker | → See **[PROGRESS_TRACKER.md](PROGRESS_TRACKER.md)** to log completions |
+| 📅 Next Milestone | Week 2 (Apr 14): Two Pointers & Sliding Window |
+| 🏗️ Portfolio | Project #1 Q&A Chatbot starts this month |
+
+> **New additions this session:** `PROGRESS_TRACKER.md` · `Week_1_Daily_Plan.md` · `Reasoning_Models_2026.md` · `BEHAVIORAL_STAR_GUIDE.md` · `Vector_Databases_Deep_Dive.md`
+
+---
+
+## �📋 Interview Rounds at FAANG (What Gets Tested)
 
 | Round | Topics | Your Weight |
 |---|---|---|
@@ -181,7 +197,53 @@ These files were created after cross-referencing all 14 sheets (71 topics, 215 r
 | **Production RAG** | BM25 + Semantic Hybrid Search deep dive (BM25 algorithm implementation, Reciprocal Rank Fusion, weighted combination, Qdrant & Weaviate native hybrid) |
 | **Multi-Agent + MCP** | MCP Client implementation (discovery, tool calling, LLM integration, SSE transport for remote servers) |
 
-> **Total files: 25 study guides | 100% Excel curriculum coverage | 400+ interview Q&As**
+---
+
+## 🆕 April 2026 Session Additions
+
+| File | Location | Covers |
+|---|---|---|
+| `PROGRESS_TRACKER.md` | Root | Week-by-week checklist, LeetCode log, portfolio tracker, confidence self-assessment |
+| `Week_1_Daily_Plan.md` | Phase_1/.../Week_1_DSA_Arrays_Hashing/ | Day-by-day schedule for Apr 6–13, all 11 problems with code templates |
+| `Reasoning_Models_2026.md` | Phase_2/.../Month_04_July/ | o1/o3, DeepSeek R1 (GRPO), Claude extended thinking, test-time compute scaling, MCTS in inference, PRM vs ORM, 2026 model landscape |
+| `BEHAVIORAL_STAR_GUIDE.md` | Phase_4_Interview_Ready/ | 15 STAR story templates, Amazon LPs reference, delivery tips, company-specific framing |
+| `Vector_Databases_Deep_Dive.md` | Phase_2/.../Month_05_August/ | HNSW/IVF/PQ algorithms, Pinecone/Weaviate/Qdrant/pgvector/Chroma code examples, decision framework, RRF hybrid search |
+
+---
+
+## 🔍 April 2026 Gap Audit Additions (Session 2)
+
+Added after a comprehensive cross-reference of Braintrust, Simplilearn GenAI 2026, Chip Huyen ML Interviews, and Exponent ML questions (262 topics audited):
+
+| File | Location | Covers | Q&As |
+|---|---|---|---|
+| `Tokenization_Deep_Dive.md` | Phase_1/.../Week_3_LLM_Fundamentals/ | BPE from scratch (Python impl), WordPiece, SentencePiece, byte-level BPE, tiktoken, vocab size comparison, cost estimation, chat templates (ChatML/LLaMA/Mistral), failure modes | 5 |
+| `LLM_Evaluation_Metrics.md` | Phase_2/.../Month_05_August/ | Perplexity, BLEU, ROUGE, BERTScore, RAGAS deep-dive (faithfulness/answer relevancy/context precision/recall), LLM-as-Judge, G-Eval, MMLU/HumanEval/TruthfulQA benchmarks, production evaluation pipeline, A/B testing | 7 |
+| `Recommendation_Systems.md` | Phase_2/.../Month_06_September/ | User-based CF, matrix factorisation (PyTorch MF with biases), two-tower model (full implementation + in-batch negatives), feature engineering, production pipeline (5 stages), cold start solutions, LLM-hybrid recommender, NDCG/MAP/P@K, 5 FAANG interview Q&As | 5 |
+| `AI_INTERVIEW_MASTER_CHECKLIST.md` | Root | 124-item topic checklist mapped to every study guide, organised by round type (Coding/ML Theory/NLP/Evaluation/RAG/Fine-tuning/Inference/System Design/Behavioural), pre-interview day plan | — |
+
+> **Total files: 34 study guides + 4 reference files | 600+ interview Q&As | 124-topic interview checklist**
+
+---
+
+## 🛡️ April 2026 Security & Depth Additions (Session 3)
+
+Added after comprehensive full-workspace audit — filling the final critical gaps in security, model efficiency, and architecture knowledge:
+
+| File | Location | Covers | Q&As |
+|---|---|---|---|
+| `Prompt_Security_Safety.md` | Phase_2/.../Month_05_August/ | OWASP LLM Top 10 (all 10 with code + defences), direct vs indirect prompt injection, jailbreak taxonomy (role-play, many-shot, encoding, multi-turn), red-teaming with PyRIT & Garak, PII detection with Presidio, Llama Guard + Azure Content Safety + OpenAI Moderation API, layered security architecture, production security gateway implementation | 7 |
+| `Knowledge_Distillation.md` | Phase_3/.../Month_07_October/ | Teacher-student framework, soft vs hard targets, distillation loss math (temperature scaling, KL + CE combined loss), feature distillation, DistilBERT case study (3 training signals), sequence-level KD for LLMs (Phi-3, DeepSeek-R1-Distill), task-specific vs general distillation, distillation vs quantisation vs pruning table, full `DistillationTrainer` implementation | 6 |
+
+**In-place additions to existing files:**
+
+| File | New Content |
+|---|---|
+| `Month_07_October/study_guide.md` | **LoRA Variants section** — DoRA (weight decomposition), AdaLoRA (adaptive rank via SVD), LoRA+ (asymmetric learning rates A vs B), comparison table |
+| `generative_ai_complete.md` | **Section 8.5: MoE Deep Dive** — routing math, MoE layer + load-balancing loss (code), Mixtral 8×7B concrete numbers, DeepSeek-V3, dense vs MoE inference trade-offs |
+| `AI_INTERVIEW_MASTER_CHECKLIST.md` | +10 new checklist rows: MoE routing (Round 3), red-teaming (Round 4), OWASP LLM Top 10 + PII + content moderation (Round 6), knowledge distillation + LoRA variants + synthetic data (Round 7), prompt caching (Round 8) |
+
+> **Total files: 36 study guides + 4 reference files | 620+ interview Q&As**
 
 ---
 

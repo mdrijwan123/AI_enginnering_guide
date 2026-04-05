@@ -259,6 +259,97 @@ merged_model.save_pretrained("./llama3-8b-merged")
 
 ---
 
+### LoRA Variants — What's Beyond the Original
+
+Base LoRA changed everything when it appeared in 2021. Since then, researchers have proposed targeted improvements that address specific weaknesses. FAANG interviews frequently ask "what improvements have been made to LoRA?" — knowing the answer signals genuine depth.
+
+#### DoRA — Weight-Decomposed Low-Rank Adaptation (2024)
+
+Standard LoRA adds a low-rank delta to the full weight matrix: $W' = W + \Delta W = W + BA$. The problem is that $W$ and $\Delta W$ are updated in an entangled way — the direction and magnitude of each weight vector change together, making it harder for the student to match the learning dynamics of full fine-tuning.
+
+**DoRA's insight:** Decompose $W$ into **magnitude** (a scalar per output dimension) and **direction** (a unit vector). Only the direction is adapted via LoRA; the magnitude is trained directly.
+
+$$W' = \frac{V + \Delta V}{\|V + \Delta V\|} \cdot m$$
+
+Where $m$ is the per-column magnitude vector (trained directly) and $V + \Delta V$ is the directional component (adapted with LoRA). This decomposition makes training dynamics much closer to full fine-tuning, consistently outperforming standard LoRA across instruction-tuning and commonsense reasoning benchmarks.
+
+```python
+# DoRA is available in PEFT as a config option
+from peft import LoraConfig, get_peft_model
+
+config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],
+    use_dora=True,   # Enable DoRA instead of standard LoRA
+    lora_dropout=0.05,
+)
+model = get_peft_model(base_model, config)
+```
+
+#### AdaLoRA — Adaptive Rank Allocation (2023)
+
+Standard LoRA applies the same rank $r$ to every adapted layer. But not all layers are equally important for a given task. AdaLoRA starts with a high rank and *prunes* unimportant singular values during training using importance scores, eventually allocating a higher effective rank to critical layers and a lower rank to less important ones — with the same total parameter budget.
+
+The key mechanism: SVD decompose each adapter as $\Delta W = P \Lambda Q$, where $P$ and $Q$ are orthogonal matrices and $\Lambda$ is a diagonal matrix of singular values. An importance score is computed per singular value triplet based on gradient magnitudes, and the least important triplets are zeroed out iteratively.
+
+```python
+from peft import AdaLoraConfig, get_peft_model
+
+config = AdaLoraConfig(
+    init_r=12,            # Start with rank 12
+    target_r=8,           # Prune down to average rank 8
+    beta1=0.85,
+    beta2=0.85,
+    tinit=200,            # Steps before pruning starts
+    tfinal=1000,          # Steps when pruning stops
+    deltaT=10,            # Pruning interval (every 10 steps)
+    lora_alpha=32,
+    target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],
+)
+model = get_peft_model(base_model, config)
+```
+
+**Use AdaLoRA when:** You suspect that some layers matter much more than others for your task, and you want the adapter budget to automatically discover the optimal per-layer allocation rather than guessing a fixed rank.
+
+#### LoRA+ — Different Learning Rates for A and B (2024)
+
+A subtle but impactful fix. In standard LoRA, the A and B matrices share the same learning rate. But they play asymmetric roles: A projects the input *down* to the low-rank subspace; B projects it *back up* to the output dimension. The optimal learning rate for A is empirically much smaller than for B.
+
+LoRA+ introduces a ratio $\lambda$ (typically 16) so that $\eta_B = \lambda \cdot \eta_A$. On standard benchmarks, this simple change improves convergence speed by 1.5–2× and final accuracy by 1–2% with zero additional parameters.
+
+```python
+# LoRA+ is implemented via a custom optimiser parameter group
+from peft import LoraConfig, get_peft_model
+
+config = LoraConfig(r=16, lora_alpha=32, target_modules=["q_proj", "v_proj"])
+model = get_peft_model(base_model, config)
+
+# Separate parameter groups for A vs B matrices
+lora_A_params = [p for n, p in model.named_parameters() if "lora_A" in n]
+lora_B_params = [p for n, p in model.named_parameters() if "lora_B" in n]
+
+base_lr = 2e-5
+lambda_ratio = 16
+
+optimizer = torch.optim.AdamW([
+    {"params": lora_A_params, "lr": base_lr},
+    {"params": lora_B_params, "lr": base_lr * lambda_ratio},
+])
+```
+
+#### Comparison Table
+
+| Variant | Key Idea | Extra Params? | Best Use Case |
+|---|---|---|---|
+| **LoRA** | Low-rank delta $BA$ | No | General fine-tuning, well-established baseline |
+| **QLoRA** | LoRA on quantised base | No | GPU-memory-constrained fine-tuning |
+| **DoRA** | Decompose W into magnitude + direction | +magnitude per layer (~tiny) | Instruction tuning where quality > speed |
+| **AdaLoRA** | Adaptive rank per layer via SVD pruning | No (same total budget) | When layers have unequal importance |
+| **LoRA+** | Different LR for A vs B matrices | No | Any LoRA training — easy drop-in improvement |
+
+---
+
 ### Data Preparation for SFT
 
 **How much data do you need?**

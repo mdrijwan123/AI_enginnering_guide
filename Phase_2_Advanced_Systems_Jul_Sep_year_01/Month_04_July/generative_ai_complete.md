@@ -789,6 +789,181 @@ responsible_ai_checklist = [
 
 ---
 
+## 8.5 Mixture of Experts (MoE) — Architecture Deep Dive
+
+Every major frontier model deployed since 2023 uses Mixture of Experts: Mixtral 8×7B, DeepSeek-V3, GPT-4 (rumoured), Gemini 1.5, Grok-1. Understanding MoE is no longer optional for an AI engineer — it explains why modern models are both larger and cheaper than their predecessors.
+
+### The Core Problem MoE Solves
+
+Scaling a dense transformer means every token passes through every weight in every layer. Double the parameters, double the FLOPs per token, double the compute cost. MoE breaks this relationship: you can have many more *total* parameters, but each token activates only a small *subset* of them. The model gets the capacity of a large model at the inference cost of a smaller one.
+
+### Architecture
+
+In a standard transformer, each layer has one feed-forward network (FFN) that processes every token. MoE replaces that single FFN with $N$ parallel expert FFNs and a lightweight **router** (gating network) that selects which $k$ experts process each token:
+
+$$y = \sum_{i=1}^{N} G_i(x) \cdot E_i(x)$$
+
+Where:
+- $E_i(x)$ = output of expert $i$ applied to token $x$
+- $G_i(x)$ = the gate weight for expert $i$ — typically top-$k$ sparse (0 for most experts)
+- Only the top-$k = 2$ experts are activated per token (standard choice)
+
+```
+Token embedding
+       │
+       ▼
+┌──────────────┐
+│    Router    │  softmax over N experts → pick top-k
+│  (linear +   │  Output: expert indices + weights
+│   softmax)   │
+└──────┬───────┘
+       │ dispatch
+   ┌───┴───┬───────┬───────┐
+   ▼       ▼       ▼       ▼
+Expert1  Expert2  Expert3... ExpertN  (only top-2 execute)
+   │       │
+   └───┬───┘
+       │ weighted sum
+       ▼
+  Layer output
+```
+
+### Mixtral 8×7B — Concrete Numbers
+
+Mixtral (Mistral AI, 2023) is the canonical open-weights MoE model:
+
+| Property | Value |
+|---|---|
+| Number of experts | 8 per MoE layer |
+| Experts activated per token | 2 (top-2 gating) |
+| Total parameters | 46.7B |
+| Active parameters per token | ~12.9B |
+| FLOPs per forward pass | ≈ 13B parameter dense model |
+| Memory to load (BF16) | ~94GB |
+| Performance | Matches LLaMA 2 70B on most benchmarks |
+
+The key insight: Mixtral has 46.7B parameters but costs about the same to *run* as a 13B dense model — because only 12.9B parameters actually activate per token. You pay the memory cost of the large model but the inference cost of the small one.
+
+```python
+# How routing works (simplified)
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class MoELayer(nn.Module):
+    def __init__(self, d_model: int, d_ff: int, n_experts: int = 8, top_k: int = 2):
+        super().__init__()
+        self.n_experts = n_experts
+        self.top_k = top_k
+        
+        # Router: linear projection → softmax → pick top-k
+        self.router = nn.Linear(d_model, n_experts, bias=False)
+        
+        # N independent FFN experts (each is a standard 2-layer FFN)
+        self.experts = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(d_model, d_ff),
+                nn.SiLU(),
+                nn.Linear(d_ff, d_model),
+            )
+            for _ in range(n_experts)
+        ])
+    
+    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """
+        x: [batch, seq_len, d_model]
+        Returns: output [batch, seq_len, d_model], router_logits (for aux loss)
+        """
+        B, T, D = x.shape
+        x_flat = x.view(B * T, D)  # flatten batch and seq
+        
+        # Router scores
+        router_logits = self.router(x_flat)  # [B*T, n_experts]
+        
+        # Top-k selection
+        top_k_weights, top_k_indices = torch.topk(
+            F.softmax(router_logits, dim=-1), k=self.top_k, dim=-1
+        )
+        # Renormalise top-k weights so they sum to 1
+        top_k_weights = top_k_weights / top_k_weights.sum(dim=-1, keepdim=True)
+        
+        # Compute expert outputs (only for selected experts)
+        output = torch.zeros_like(x_flat)
+        for expert_idx in range(self.n_experts):
+            # Which tokens route to this expert?
+            token_mask = (top_k_indices == expert_idx).any(dim=-1)  # [B*T]
+            if not token_mask.any():
+                continue
+            
+            expert_tokens = x_flat[token_mask]
+            expert_output = self.experts[expert_idx](expert_tokens)
+            
+            # Get the gate weight for this expert for these tokens
+            gate_weight = top_k_weights[token_mask][
+                (top_k_indices[token_mask] == expert_idx).nonzero(as_tuple=True)
+            ]
+            output[token_mask] += gate_weight.unsqueeze(-1) * expert_output
+        
+        return output.view(B, T, D), router_logits
+```
+
+### Load Balancing: The Expert Collapse Problem
+
+Without intervention, routers tend to converge on sending *all* tokens to the same few experts (expert collapse). The popular experts get better gradients, leading to a feedback loop. The result: most of the model's capacity is wasted.
+
+The standard fix is an **auxiliary load-balancing loss** added to the total training loss:
+
+$$\mathcal{L}_{\text{aux}} = \alpha \cdot N \cdot \sum_{i=1}^{N} f_i \cdot P_i$$
+
+Where $f_i$ = fraction of tokens routed to expert $i$ and $P_i$ = average router probability for expert $i$. This term penalises imbalanced routing and encourages each expert to receive roughly $1/N$ of tokens. Typical $\alpha = 0.01$ is small enough not to hurt model quality but sufficient to prevent collapse.
+
+```python
+def load_balance_loss(router_logits: torch.Tensor, n_experts: int, top_k: int) -> torch.Tensor:
+    """
+    Compute auxiliary load-balancing loss.
+    router_logits: [num_tokens, n_experts]
+    """
+    # Fraction of tokens routed to each expert
+    router_probs = F.softmax(router_logits, dim=-1)
+    _, selected = torch.topk(router_probs, k=top_k, dim=-1)
+    
+    # One-hot encode selected experts and average over tokens
+    expert_mask = F.one_hot(selected, n_experts).float()  # [T, k, E]
+    expert_mask = expert_mask.sum(dim=1)  # [T, E] — which experts got this token
+    
+    fraction_per_expert = expert_mask.mean(dim=0)   # f_i: [E]
+    prob_per_expert = router_probs.mean(dim=0)       # P_i: [E]
+    
+    # Auxiliary loss: penalise imbalance
+    aux_loss = n_experts * (fraction_per_expert * prob_per_expert).sum()
+    return aux_loss
+```
+
+### Inference Implications
+
+MoE is not strictly better than dense models for all deployment scenarios:
+
+| Dimension | MoE Model | Dense Model |
+|---|---|---|
+| Memory required | High (must load all experts) | Lower |
+| FLOPs per token | Low (only top-k active) | Higher |
+| Throughput at batch=1 | Lower (memory bound) | Higher |
+| Throughput at large batch | Higher (compute bound) | Lower |
+| Fine-tuning cost | Same FLOPs, but more VRAM | Lower VRAM |
+| Cold-start latency | Worse (larger model to load) | Better |
+
+**Practical guidance:** MoE models shine in high-throughput serving scenarios where you are compute-bound (large batch sizes, continuous batching in vLLM). They are less ideal for low-latency single-request serving where you are memory-bandwidth-bound.
+
+### DeepSeek-V3 — MoE at Scale (2024)
+
+DeepSeek-V3 pushed MoE further with two innovations:
+1. **Multi-head Latent Attention (MLA)** — compresses the KV cache using low-rank projections, drastically reducing memory per token  
+2. **Fine-grained experts** — 256 experts per layer with top-8 routing (more granular than Mixtral's 8 experts with top-2), giving more flexible routing
+
+Total params: 671B. Active params per token: 37B. Trained for $2.664 \times 10^{24}$ FLOPs at 2.79M GPU-hours on H800s — about 10× cheaper to train than a comparable dense model.
+
+---
+
 ## 9. Multimodal Models
 
 ### Architecture Patterns
@@ -974,7 +1149,7 @@ response = client.chat.completions.create(
 **A**: Fine-tuning: Update model weights on task-specific data. Best for: changing model behavior/style. Prompt engineering: Craft input to elicit desired output. Best for: task specification, formatting. RAG: Retrieve relevant documents and include in prompt. Best for: factual grounding, up-to-date knowledge. In practice, combine all three: fine-tune for style, RAG for facts, prompt for task specification.
 
 ### Q30: What is Mixture of Experts (MoE) and why does it matter?
-**A**: Instead of one large FFN, use multiple smaller "experts" and a gating network that routes each token to top-k experts. Mixtral-8x7B: 8 experts, routes to 2 per token. Total params: 46.7B, active params per token: 12.9B. Benefits: more total capacity without proportional compute increase. Key for scaling LLMs efficiently. GPT-4 is rumored to use MoE.
+**A**: MoE replaces the single feed-forward network in each transformer layer with $N$ parallel expert FFNs plus a learned router. The router selects the top-$k$ experts per token (typically top-2), so each token activates only a fraction of the total parameters. Mixtral 8×7B has 46.7B total parameters but only 12.9B activate per token — so it runs with the FLOPs of a 13B dense model while achieving the quality of a 46.7B one. DeepSeek-V3 (671B total, 37B active) takes this further with 256 fine-grained experts. The key challenge is load balancing — without an auxiliary loss, routers collapse to routing all tokens through 1–2 favoured experts, wasting capacity. See Section 8.5 for the full architecture deep-dive including the load-balance loss formulation.
 
 ### Q31: How do you evaluate image generation models?
 **A**: FID (Fréchet Inception Distance): Compare statistics of generated vs real image features. Lower = better. IS (Inception Score): Measures quality and diversity of generated images. CLIP Score: Alignment between generated image and text prompt. Human evaluation: Quality, prompt adherence, aesthetics. No single metric captures everything — use multiple.

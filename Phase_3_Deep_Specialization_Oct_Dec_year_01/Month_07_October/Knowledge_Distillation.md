@@ -374,7 +374,7 @@ Base: LLaMA 3 70B (140GB FP16)
 
 ## Part 7 — Full Implementation: DistilTrainer in Practice
 
-A complete, production-ready training script for distilling any classification or generation model:
+A complete, production-ready training script for distilling any classification or generation model. This uses the general-purpose 2-loss approach (KL divergence + cross-entropy). For DistilBERT's specialised 3-loss approach (which adds a cosine embedding loss on hidden states), see Part 3:
 
 ```python
 #!/usr/bin/env python3

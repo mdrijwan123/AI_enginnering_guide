@@ -306,6 +306,8 @@ Action: [Systematic debugging approach, creative insight, testing methodology]
 Result: [Problem solved. What you learned about the domain. Would you approach it differently?]
 ```
 
+> 💡 **LLM-specific angle for this story:** The richest answers for an LLM Engineering role come from problems at the intersection of ML and systems — e.g. debugging hallucinations that were only reproducible at scale, tracing non-deterministic RAG failures across retrieval + generation, or resolving latency spikes caused by KV-cache eviction. Lead with the diagnostic *process*, not just the fix.
+
 **Draft your story:**
 > Situation: 
 > 
@@ -381,6 +383,81 @@ Result: [Impact measured in real terms: users, revenue, reliability, efficiency]
 
 ---
 
+### Story 16: MLOps → LLM Engineering Transition
+**All companies** — often asked when they see your background
+
+```
+Situation: [You were a strong MLOps engineer — pipelines, infra, reliability — but LLMs
+            changed what production ML looks like]
+Task: [Proactively skill up and reposition yourself for LLM Engineering]
+Action: [12-month structured self-study (this plan!), side projects, reading research papers,
+         building RAG systems / fine-tuning experiments outside work hours]
+Result: [Tangible artefacts: RAG pipelines built, models fine-tuned, evaluation frameworks
+         designed. Quantify where possible: RAGAS scores, latency benchmarks, etc.]
+```
+
+**Key message:** Show *intentionality* — you didn't drift into LLMs, you invested deliberately.
+
+**Draft your story:**
+> Situation: 
+> 
+> Task: 
+> 
+> Action: 
+> 
+> Result: 
+
+---
+
+### Story 17: Taming a Hallucinating Model in Production
+**Amazon LPs:** Customer Obsession, Dive Deep, Deliver Results  
+**Google/Meta:** Technical depth + user impact
+
+```
+Situation: [LLM or RAG pipeline returning confidently wrong answers, impacting users
+            or downstream systems]
+Task: [Diagnose root cause and reduce hallucination rate without sacrificing latency/cost]
+Action: [Evaluation framework (RAGAS / LLM-as-judge), retrieval quality audit,
+         prompt engineering, grounding improvements, guardrails added]
+Result: [Hallucination rate reduced by X%. How you measured it. What you'd do next.]
+```
+
+**Draft your story:**
+> Situation: 
+> 
+> Task: 
+> 
+> Action: 
+> 
+> Result: 
+
+---
+
+### Story 18: Build vs. Buy / Framework Trade-off Decision
+**Amazon LPs:** Invent and Simplify, Frugality, Are Right A Lot  
+**Google/Meta:** Engineering judgment
+
+```
+Situation: [Choosing between LangChain / LlamaIndex / custom pipeline, or between
+            hosted API vs self-hosted open-source model, under time and cost pressure]
+Task: [Make a technically sound, cost-justified decision your team could live with]
+Action: [POC both options with a time-box. Benchmark latency, cost, maintainability.
+         Present trade-off matrix to team. Make the call and own it.]
+Result: [Decision made, shipped, and what the real-world outcome showed. Would you
+         make the same call again?]
+```
+
+**Draft your story:**
+> Situation: 
+> 
+> Task: 
+> 
+> Action: 
+> 
+> Result: 
+
+---
+
 ## 📋 Amazon Leadership Principles — Quick Reference
 
 Amazon often explicitly maps questions to LPs. Know these 16:
@@ -405,6 +482,8 @@ Amazon often explicitly maps questions to LPs. Know these 16:
 | 16 | Success and Scale Bring Broad Responsibility | Long-term societal impact |
 
 **Amazon interview tip:** Each question typically maps to 2–3 specific LPs. If you can identify which LP they're testing, tailor your framing.
+
+> **Note:** LPs 15 and 16 ("Strive to be Earth's Best Employer" and "Success and Scale Bring Broad Responsibility") were added in 2021. They are tested less frequently than the original 14 but worth having a story for LP 15 (employee wellbeing, psychological safety) and LP 16 (societal/ethical responsibility — particularly relevant for AI engineering roles).
 
 ---
 
@@ -439,6 +518,33 @@ Amazon often explicitly maps questions to LPs. Know these 16:
 - Describing team success without your specific contribution
 - Stories that are purely positive with no challenge
 - Vague timelines and vague metrics
+
+---
+
+## ❓ Questions to Ask the Interviewer
+
+Your questions signal curiosity, depth, and whether you've done your homework. Prepare 3–5 per round.
+
+**Technical depth questions:**
+- "How does your team currently evaluate LLM output quality in production — are you using LLM-as-judge, RAGAS, or something internal?"
+- "What does the inference infrastructure look like — are you running vLLM / TGI, or primarily API-based?"
+- "How do you handle prompt versioning and rollbacks when a model update changes behaviour?"
+- "What's the team's approach to the build-vs-buy decision for LLM tooling — LangChain, custom, or somewhere in between?"
+
+**Team and culture questions:**
+- "What does a typical oncall incident look like for the LLM serving layer?"
+- "How does the team balance shipping fast vs. evaluating carefully — especially for model updates?"
+- "What's the biggest unsolved problem your team is working through right now?"
+
+**Growth questions:**
+- "What does the ramp-up look like for new engineers — how quickly do people get to own meaningful projects?"
+- "How do team members stay current with the research side — reading groups, conference budget, internal talks?"
+
+**For LLM-specific roles:**
+- "Are there open research questions your team is actively working on, or is the focus primarily applied engineering?"
+- "How do you think about the risk of vendor lock-in with foundation model providers?"
+
+> 💡 **Rule:** Always end with a question. Saying "I think you've covered everything" is a missed signal. Even one good question is better than none.
 
 ---
 

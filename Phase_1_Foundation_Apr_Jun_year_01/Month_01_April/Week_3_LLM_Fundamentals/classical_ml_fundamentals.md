@@ -1867,7 +1867,7 @@ Better: Benjamini-Hochberg (controls false discovery rate instead of FWER)
 > With sigmoid/softmax output, MSE creates a non-convex loss surface with many poor local minima, causing slow convergence. Cross-entropy produces a convex loss surface (for linear models), giving stronger gradients for wrong predictions (gradient proportional to error, not clipped by sigmoid saturation). Cross-entropy also has a probabilistic interpretation as negative log-likelihood.
 
 **Q5: What is the difference between L1 and L2 regularisation?**
-> L1 (Lasso): penalty = λΣ|wⱼ|. Drives some weights exactly to zero → automatic feature selection. Creates sparse models. Gradient has constant magnitude → pulls toward zero equally regardless of weight size. L2 (Ridge): penalty = λΣwⱼ². Shrinks all weights toward zero but never exactly to zero. Gradient is proportional to weight → large weights are penalised more. ElasticNet combines both.
+> L1 (Lasso): penalty $= \lambda\sum|w_j|$. Drives some weights exactly to zero → automatic feature selection. Creates sparse models. Gradient has constant magnitude → pulls toward zero equally regardless of weight size. L2 (Ridge): penalty $= \lambda\sum w_j^2$. Shrinks all weights toward zero but never exactly to zero. Gradient is proportional to weight → large weights are penalised more. ElasticNet combines both.
 
 **Q6: When would you choose precision over recall?**
 > When false positives are costly. Example: spam filter — marking a real email as spam is worse than letting some spam through. Email from your boss in spam folder → lost deal. Conversely, prioritise recall when false negatives are costly: cancer screening — missing a cancer case is worse than a false alarm.

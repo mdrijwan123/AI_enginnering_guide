@@ -526,7 +526,7 @@ Key design decisions:
 > Standard Adam keeps optimizer states (first + second moments) for all trainable parameters in GPU VRAM permanently. Paged Adam transfers optimizer states to CPU RAM when GPU is under pressure (using CUDA unified memory), preventing OOM crashes during training while accepting small CPU↔GPU transfer overhead.
 
 **Q8: Walk me through the math of LoRA.**
-> Pre-trained weight matrix W₀ ∈ ℝ^(d×k). Instead of full update ΔW ∈ ℝ^(d×k), LoRA factorises: ΔW = BA where B ∈ ℝ^(d×r), A ∈ ℝ^(r×k), r << min(d,k). A is Gaussian init, B is zero init (so ΔW = 0 at start, training begins from pre-trained behaviour). During forward pass: h = W₀x + (α/r)BAx. Only A and B are trained. At inference, merge: W = W₀ + (α/r)BA — zero added latency.
+> Pre-trained weight matrix $W_0 \in \mathbb{R}^{d \times k}$. Instead of full update $\Delta W \in \mathbb{R}^{d \times k}$, LoRA factorises: $\Delta W = BA$ where $B \in \mathbb{R}^{d \times r}$, $A \in \mathbb{R}^{r \times k}$, $r \ll \min(d,k)$. $A$ is Gaussian init, $B$ is zero init (so $\Delta W = 0$ at start, training begins from pre-trained behaviour). During forward pass: $h = W_0 x + (\alpha/r)BAx$. Only $A$ and $B$ are trained. At inference, merge: $W = W_0 + (\alpha/r)BA$ — zero added latency.
 
 ---
 

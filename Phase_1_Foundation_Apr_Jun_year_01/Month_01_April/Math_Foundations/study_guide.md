@@ -440,7 +440,7 @@ print(entropy([0.97, 0.01, 0.01, 0.01]))  # 0.24 (very certain)
 **A**: P(A|B) = P(B|A)·P(A)/P(B). Example: 1% of emails are phishing. A detection system flags 90% of phishing (true positive) and 5% of legitimate emails (false positive). P(phishing|flagged) = (0.9×0.01)/(0.9×0.01 + 0.05×0.99) = 0.154. Only 15.4% of flagged emails are actually phishing! This is why precision matters — base rate (prior) dominates.
 
 ### Q9: What is the softmax function and why is it used?
-**A**: softmax(zᵢ) = exp(zᵢ)/Σexp(zⱼ). Converts raw scores (logits) to a probability distribution (positive, sums to 1). Used as the final layer for multi-class classification and in attention mechanisms. The exponential amplifies differences — larger logits get much more probability. Temperature scaling (logits/T) controls how "sharp" the distribution is.
+**A**: $\text{softmax}(z_i) = \exp(z_i) \;/\; \sum_j \exp(z_j)$. Converts raw scores (logits) to a probability distribution (positive, sums to 1). Used as the final layer for multi-class classification and in attention mechanisms. The exponential amplifies differences — larger logits get much more probability. Temperature scaling ($z/T$) controls how "sharp" the distribution is.
 
 ### Q10: Explain the relationship between maximum likelihood and cross-entropy.
 **A**: Maximizing log-likelihood is equivalent to minimizing cross-entropy. For classification with true label y and predicted probability q: log-likelihood = log(q_y). Cross-entropy = -Σ yᵢ log(qᵢ). When labels are one-hot, cross-entropy equals -log(q_y) = negative log-likelihood. This is why cross-entropy is THE standard classification loss.
@@ -470,7 +470,7 @@ print(entropy([0.97, 0.01, 0.01, 0.01]))  # 0.24 (very certain)
 **A**: Input x (batch_size × features) multiplied by weight W (features × output_dim) gives output (batch_size × output_dim). Each output neuron computes a weighted sum of inputs plus bias: z = Wx + b. Deep networks chain these: z = W₃(σ(W₂(σ(W₁x + b₁)) + b₂)) + b₃. Shape compatibility is critical — this is where dim mismatch errors come from.
 
 ### Q19: What is the Jacobian and when do you need it?
-**A**: The Jacobian is the matrix of all partial derivatives of a vector-valued function. For f: R^n → R^m, J is m×n where J[i,j] = ∂fᵢ/∂xⱼ. In deep learning: autograd computes Jacobian-vector products efficiently (without forming the full Jacobian). Needed for: understanding how attention changes w.r.t. inputs, Newton's method optimization, and theoretical analysis.
+**A**: The Jacobian is the matrix of all partial derivatives of a vector-valued function. For $f: \mathbb{R}^n \to \mathbb{R}^m$, $J$ is $m \times n$ where $J_{ij} = \partial f_i / \partial x_j$. In deep learning: autograd computes Jacobian-vector products efficiently (without forming the full Jacobian). Needed for: understanding how attention changes w.r.t. inputs, Newton's method optimization, and theoretical analysis.
 
 ### Q20: Explain p-values and confidence intervals.
 **A**: p-value: Probability of observing data as extreme as ours, assuming H0 is true. p < 0.05 → reject H0 (significant). Common misconception: p-value is NOT the probability H0 is false. Confidence interval: Range estimated to contain the true parameter with X% probability. 95% CI means: if we repeated the experiment 100 times, ~95 CIs would contain the true value.
@@ -482,7 +482,7 @@ print(entropy([0.97, 0.01, 0.01, 0.01]))  # 0.24 (very certain)
 **A**: A matrix M is positive definite if x^T M x > 0 for all non-zero x. Equivalently: all eigenvalues are positive. Matters because: covariance matrices are positive semi-definite, loss function Hessians should be positive definite at a minimum (convex), kernel matrices must be positive semi-definite. Ensures optimization has well-defined minima.
 
 ### Q23: Explain the difference between L1 and L2 regularization mathematically.
-**A**: L1: L_reg = L + λΣ|wᵢ|. Gradient is ±λ (constant push toward zero) → creates exact zeros → sparsity. L2: L_reg = L + λΣwᵢ². Gradient is 2λwᵢ (proportional to weight) → shrinks proportionally → no exact zeros. L1 for feature selection (sparse models), L2 for general regularization (all features contribute but with smaller weights).
+**A**: L1: $\mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda\sum|w_i|$. Gradient is $\pm\lambda$ (constant push toward zero) → creates exact zeros → sparsity. L2: $\mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda\sum w_i^2$. Gradient is $2\lambda w_i$ (proportional to weight) → shrinks proportionally → no exact zeros. L1 for feature selection (sparse models), L2 for general regularization (all features contribute but with smaller weights).
 
 ### Q24: What is the relationship between dot product and projection?
 **A**: proj_b(a) = (a·b/‖b‖²)·b. The dot product a·b = ‖a‖‖b‖cos(θ) measures how much a aligns with b. In attention: Q·K^T computes how much each query aligns with each key — essentially projecting queries onto keys to find relevant information. Self-attention is a learned projection/alignment mechanism.
@@ -491,7 +491,7 @@ print(entropy([0.97, 0.01, 0.01, 0.01]))  # 0.24 (very certain)
 **A**: For CE loss with softmax: L = -log(softmax(z_y)) where z is logits and y is true class. The gradient has a beautifully simple form: ∂L/∂zᵢ = softmax(zᵢ) - yᵢ (where y is one-hot). This simplicity is why softmax + cross-entropy is the standard choice — clean gradients enable stable training.
 
 ### Q26: What is the Hessian matrix?
-**A**: Matrix of second-order partial derivatives: H[i,j] = ∂²f/∂xᵢ∂xⱼ. Describes the curvature of the loss surface. Positive definite Hessian → local minimum. Used in: Newton's method (second-order optimization), understanding loss landscapes, and natural gradient methods. Too expensive to compute for large models (n² entries).
+**A**: Matrix of second-order partial derivatives: $H_{ij} = \partial^2 f / \partial x_i \partial x_j$. Describes the curvature of the loss surface. Positive definite Hessian → local minimum. Used in: Newton's method (second-order optimization), understanding loss landscapes, and natural gradient methods. Too expensive to compute for large models ($n^2$ entries).
 
 ### Q27: Explain the difference between population and sample statistics.
 **A**: Population: parameters of the entire distribution (μ, σ²). Sample: estimates from observed data (x̄, s²). Key difference: sample variance uses n-1 (Bessel's correction) instead of n to be unbiased. In ML: we always work with samples (training data) to estimate population properties. More data → better estimates (law of large numbers).

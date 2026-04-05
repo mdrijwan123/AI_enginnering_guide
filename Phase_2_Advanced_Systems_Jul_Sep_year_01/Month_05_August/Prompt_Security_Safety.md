@@ -460,7 +460,8 @@ Garak is an open-source scanner that runs hundreds of pre-built probe categories
 python -m garak --model_type openai --model_name gpt-4o \
     --probes promptinject,dan,knownbadsignatures,xss
 
-# Available probe categories:
+# Available probe categories (names may vary by Garak version — run
+# `python -m garak --list_probes` to see your installed probe registry):
 # - promptinject: prompt injection attacks
 # - dan: "Do Anything Now" jailbreaks
 # - encoding: base64/rot13 obfuscation

@@ -732,8 +732,8 @@ class CostGuard:
         self.total_cost = 0.0
     
     def track(self, input_tokens: int, output_tokens: int, model: str):
-        rates = {"gpt-4": (0.03, 0.06), "gpt-3.5-turbo": (0.0005, 0.0015)}
-        in_rate, out_rate = rates.get(model, (0.01, 0.03))
+        rates = {"gpt-4o": (0.0025, 0.01), "gpt-4o-mini": (0.00015, 0.0006)}
+        in_rate, out_rate = rates.get(model, (0.005, 0.015))
         cost = (input_tokens / 1000 * in_rate) + (output_tokens / 1000 * out_rate)
         self.total_cost += cost
         if self.total_cost > self.max_cost:

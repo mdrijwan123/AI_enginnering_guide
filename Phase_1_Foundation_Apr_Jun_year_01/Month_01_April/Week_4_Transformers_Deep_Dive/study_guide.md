@@ -273,6 +273,8 @@ k = k.reshape(batch, seq, n_heads, head_dim)  # now matches Q
 
 ## Part 6 — Mixture of Experts (MoE)
 
+> **Deep-dive reference:** For the full MoE architecture with load-balancing loss formulation, PyTorch implementation, and DeepSeek-V3 analysis, see **Section 8.5** of [generative_ai_complete.md](../../Phase_2_Advanced_Systems_Jul_Sep_year_01/Month_04_July/generative_ai_complete.md).
+
 ### 6.1 What Is MoE?
 
 Instead of one FFN, use many "expert" FFNs. A **router** selects which experts process each token:
@@ -697,6 +699,8 @@ probs = outputs.logits_per_image.softmax(dim=1)  # [0.95, 0.05]
 
 ## Part 13 — Advanced Mixture of Experts (MoE) Patterns
 
+> **See also:** The definitive MoE deep-dive is in **Section 8.5** of [generative_ai_complete.md](../../Phase_2_Advanced_Systems_Jul_Sep_year_01/Month_04_July/generative_ai_complete.md) — includes the load-balancing auxiliary loss, DeepSeek-V3 innovations, and dense vs MoE inference trade-off analysis.
+
 ### 13.1 MoE Architecture Details
 
 ```
@@ -795,7 +799,7 @@ def debug_prompt(messages, model="gpt-4o"):
         total_tokens += msg_tokens
         print(f"  [{msg['role']}]: {msg_tokens} tokens")
     
-    model_limits = {"gpt-4o": 128000, "gpt-4o-mini": 128000, "gpt-3.5-turbo": 16385}
+    model_limits = {"gpt-4o": 128000, "gpt-4o-mini": 128000, "gpt-4.1-mini": 1047576}
     limit = model_limits.get(model, 128000)
     
     print(f"\n  Total: {total_tokens} tokens ({total_tokens/limit*100:.1f}% of {limit} limit)")

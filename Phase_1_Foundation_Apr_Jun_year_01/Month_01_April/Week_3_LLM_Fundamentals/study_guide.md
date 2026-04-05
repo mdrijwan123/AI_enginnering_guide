@@ -870,7 +870,7 @@ ranked = sorted(zip(products, similarities), key=lambda x: -x[1])
 ```python
 # You'll need to evaluate LLM outputs for quality, safety, and correctness
 
-# Method 1: LLM-as-Judge (GPT-4 evaluates GPT-3.5 outputs)
+# Method 1: LLM-as-Judge (GPT-4o evaluates GPT-4o-mini outputs)
 def evaluate_response(query, response, criteria="helpfulness, accuracy, safety"):
     eval_prompt = f"""Rate this AI response on a scale of 1-5 for: {criteria}
 

@@ -493,7 +493,7 @@ st.title("🤖 AI Chat Assistant")
 # Sidebar configuration
 with st.sidebar:
     st.header("Settings")
-    model = st.selectbox("Model", ["gpt-4", "gpt-3.5-turbo", "claude-3-sonnet"])
+    model = st.selectbox("Model", ["gpt-4o", "gpt-4o-mini", "claude-3.5-sonnet"])
     temperature = st.slider("Temperature", 0.0, 2.0, 0.7, 0.1)
     max_tokens = st.number_input("Max Tokens", 100, 4096, 1024)
 

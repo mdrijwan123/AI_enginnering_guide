@@ -23,7 +23,7 @@ By the end of this week you will be able to:
 
 A language model (LM) is trained to predict the next token given a sequence of previous tokens:
 
-$$P(\text{token}_t | \text{token}_1, \text{token}_2, ..., \text{token}_{t-1})$$
+$$P(\text{token}_t \mid \text{token}_1, \text{token}_2, \ldots, \text{token}_{t-1})$$
 
 That's it. Everything — translation, summarisation, code generation, question answering — emerges from training this one objective on massive amounts of text.
 

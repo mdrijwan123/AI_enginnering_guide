@@ -290,7 +290,7 @@ samples = np.random.uniform(0, 1, 10000)
 
 ### Bayes' Theorem
 
-$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
+$$P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$$
 
 **Intuition**: Update your belief about A after observing evidence B.
 
@@ -482,7 +482,7 @@ print(entropy([0.97, 0.01, 0.01, 0.01]))  # 0.24 (very certain)
 **A**: A matrix M is positive definite if x^T M x > 0 for all non-zero x. Equivalently: all eigenvalues are positive. Matters because: covariance matrices are positive semi-definite, loss function Hessians should be positive definite at a minimum (convex), kernel matrices must be positive semi-definite. Ensures optimization has well-defined minima.
 
 ### Q23: Explain the difference between L1 and L2 regularization mathematically.
-**A**: L1: $\mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda\sum|w_i|$. Gradient is $\pm\lambda$ (constant push toward zero) → creates exact zeros → sparsity. L2: $\mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda\sum w_i^2$. Gradient is $2\lambda w_i$ (proportional to weight) → shrinks proportionally → no exact zeros. L1 for feature selection (sparse models), L2 for general regularization (all features contribute but with smaller weights).
+**A**: L1: $\mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda\sum\lvert w_i \rvert$. Gradient is $\pm\lambda$ (constant push toward zero) → creates exact zeros → sparsity. L2: $\mathcal{L}_{\text{reg}} = \mathcal{L} + \lambda\sum w_i^2$. Gradient is $2\lambda w_i$ (proportional to weight) → shrinks proportionally → no exact zeros. L1 for feature selection (sparse models), L2 for general regularization (all features contribute but with smaller weights).
 
 ### Q24: What is the relationship between dot product and projection?
 **A**: proj_b(a) = (a·b/‖b‖²)·b. The dot product a·b = ‖a‖‖b‖cos(θ) measures how much a aligns with b. In attention: Q·K^T computes how much each query aligns with each key — essentially projecting queries onto keys to find relevant information. Self-attention is a learned projection/alignment mechanism.

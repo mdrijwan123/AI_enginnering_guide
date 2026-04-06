@@ -672,7 +672,7 @@ Where $\lambda$ (lambda) controls the strength of regularisation.
 
 ### 6.2 L1 Regularisation (Lasso)
 
-$$\text{Penalty} = \lambda \sum_{j=1}^p |w_j|$$
+$$\text{Penalty} = \lambda \sum_{j=1}^p \lvert w_j \rvert$$
 
 ```
 Effect: Drives some weights to EXACTLY zero → automatic feature selection
@@ -700,7 +700,7 @@ L2 penalises large weights QUADRATICALLY:
 
 ### 6.4 ElasticNet (L1 + L2)
 
-$$\text{Penalty} = \alpha \lambda \sum |w_j| + \frac{(1-\alpha)}{2} \lambda \sum w_j^2$$
+$$\text{Penalty} = \alpha \lambda \sum \lvert w_j \rvert + \frac{(1-\alpha)}{2} \lambda \sum w_j^2$$
 
 Best of both worlds: feature selection (L1) + weight shrinkage (L2).
 
@@ -1128,7 +1128,7 @@ Alternative to Gini: use **entropy** (from information theory).
 
 $$\text{Entropy}(S) = -\sum_{k=1}^K p_k \log_2(p_k)$$
 
-$$\text{Information Gain} = \text{Entropy(parent)} - \sum \frac{|S_i|}{|S|} \text{Entropy}(S_i)$$
+$$\text{Information Gain} = \text{Entropy(parent)} - \sum \frac{\lvert S_i \rvert}{\lvert S \rvert} \text{Entropy}(S_i)$$
 
 ```
 Entropy:
@@ -1450,7 +1450,7 @@ Fix: use tree-based models or neural networks instead
 
 ### 13.1 Bayes' Theorem
 
-$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
+$$P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$$
 
 ```
 In classification terms:
@@ -1463,7 +1463,7 @@ P(spam | "free money click") = P("free money click" | spam) × P(spam) / P("free
 
 Assumes all features are **conditionally independent** given the class:
 
-$$P(x_1, x_2, ..., x_n | y) = \prod_{i=1}^n P(x_i | y)$$
+$$P(x_1, x_2, \ldots, x_n \mid y) = \prod_{i=1}^n P(x_i \mid y)$$
 
 ```
 This is almost never true in real data, but it works surprisingly well!
@@ -1720,7 +1720,7 @@ selected = feature_names[selector.support_]
 
 ### 17.1 Bayes' Theorem (Used Everywhere)
 
-$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
+$$P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$$
 
 ```
 Example interview question:
@@ -1867,7 +1867,7 @@ Better: Benjamini-Hochberg (controls false discovery rate instead of FWER)
 > With sigmoid/softmax output, MSE creates a non-convex loss surface with many poor local minima, causing slow convergence. Cross-entropy produces a convex loss surface (for linear models), giving stronger gradients for wrong predictions (gradient proportional to error, not clipped by sigmoid saturation). Cross-entropy also has a probabilistic interpretation as negative log-likelihood.
 
 **Q5: What is the difference between L1 and L2 regularisation?**
-> L1 (Lasso): penalty $= \lambda\sum|w_j|$. Drives some weights exactly to zero → automatic feature selection. Creates sparse models. Gradient has constant magnitude → pulls toward zero equally regardless of weight size. L2 (Ridge): penalty $= \lambda\sum w_j^2$. Shrinks all weights toward zero but never exactly to zero. Gradient is proportional to weight → large weights are penalised more. ElasticNet combines both.
+> L1 (Lasso): penalty $= \lambda\sum\lvert w_j \rvert$. Drives some weights exactly to zero → automatic feature selection. Creates sparse models. Gradient has constant magnitude → pulls toward zero equally regardless of weight size. L2 (Ridge): penalty $= \lambda\sum w_j^2$. Shrinks all weights toward zero but never exactly to zero. Gradient is proportional to weight → large weights are penalised more. ElasticNet combines both.
 
 **Q6: When would you choose precision over recall?**
 > When false positives are costly. Example: spam filter — marking a real email as spam is worse than letting some spam through. Email from your boss in spam folder → lost deal. Conversely, prioritise recall when false negatives are costly: cancer screening — missing a cancer case is worse than a false alarm.

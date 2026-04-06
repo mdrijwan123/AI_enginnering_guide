@@ -185,7 +185,7 @@ Decoder: z → p(x|z)              [Reconstruct/generate]
 
 ### Loss Function
 
-$$\mathcal{L} = \underbrace{-\mathbb{E}_{q(z|x)}[\log p(x|z)]}_{\text{Reconstruction Loss}} + \underbrace{D_{KL}(q(z|x) \| p(z))}_{\text{KL Divergence}}$$
+$$\mathcal{L} = \underbrace{-\mathbb{E}_{q(z \mid x)}[\log p(x \mid z)]}_{\text{Reconstruction Loss}} + \underbrace{D_{KL}(q(z \mid x) \| p(z))}_{\text{KL Divergence}}$$
 
 - **Reconstruction loss**: How well can the decoder recreate the input?
 - **KL divergence**: How close is the learned distribution to a prior N(0, I)?
@@ -255,8 +255,8 @@ def vae_loss(recon_x, x, mu, logvar):
 1. **Forward process**: Gradually add noise to data until it's pure Gaussian noise
 2. **Reverse process**: Learn to denoise step by step
 
-$$q(x_t | x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I)$$
-$$p_\theta(x_{t-1} | x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))$$
+$$q(x_t \mid x_{t-1}) = \mathcal{N}(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I)$$
+$$p_\theta(x_{t-1} \mid x_t) = \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))$$
 
 ```
 Forward (add noise):
@@ -348,7 +348,7 @@ class SimpleDiffusion:
 ### Autoregressive Generation
 
 LLMs generate text one token at a time:
-$$P(x_1, x_2, \ldots, x_n) = \prod_{i=1}^n P(x_i | x_{<i})$$
+$$P(x_1, x_2, \ldots, x_n) = \prod_{i=1}^n P(x_i \mid x_{<i})$$
 
 ### Decoding Strategies
 

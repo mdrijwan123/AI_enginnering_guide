@@ -1008,7 +1008,7 @@ $= 2(y-t) \cdot \sigma(z)(1-\sigma(z)) \cdot x$
 **A**: BatchNorm normalizes across the batch dimension — depends on batch size and breaks with variable-length sequences. LayerNorm normalizes across the feature dimension for each individual sample — independent of batch size. In language tasks with variable sequence lengths and small batches, LayerNorm is more stable and consistent.
 
 ### Q12: What is the difference between L1 and L2 regularization?
-**A**: L1 ($|w|$): Drives weights exactly to zero → feature selection/sparsity. L2 ($w^2$): Shrinks weights toward zero but rarely exactly zero → smooth regularization. L1 creates sparse models (useful for feature selection). L2 creates smooth models (useful when all features matter). ElasticNet combines both: $\alpha|w| + (1-\alpha)w^2$.
+**A**: L1 ($\lvert w \rvert$): Drives weights exactly to zero → feature selection/sparsity. L2 ($w^2$): Shrinks weights toward zero but rarely exactly zero → smooth regularization. L1 creates sparse models (useful for feature selection). L2 creates smooth models (useful when all features matter). ElasticNet combines both: $\alpha\lvert w \rvert + (1-\alpha)w^2$.
 
 ### Q13: What is a convolution mathematically?
 **A**: Output[i,j] = Σ_m Σ_n Input[i+m, j+n] × Kernel[m, n]. The kernel slides over the input, computing element-wise multiplication and summing. In CNNs, the kernel weights are learned via backpropagation. Each kernel detects a specific feature (edges, textures, shapes). Multiple kernels = multiple feature maps per layer.

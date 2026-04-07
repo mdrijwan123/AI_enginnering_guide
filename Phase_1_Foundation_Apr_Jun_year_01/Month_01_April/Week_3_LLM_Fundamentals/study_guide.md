@@ -19,6 +19,16 @@ By the end of this week you will be able to:
 
 ## Part 1 — What Is a Language Model?
 
+> 📖 **Read this first — the big picture before any maths.**
+
+Imagine you're texting a friend. You type "Happy birth" and your phone suggests "day". You type "Let's grab" and it offers "coffee" or "lunch". That suggestion feature on your phone is a tiny, primitive language model.
+
+A modern LLM (Large Language Model) like ChatGPT does exactly the same thing — just vastly more sophisticated. It reads everything you've written and predicts what word (strictly: what *token*) should come next. That's it. That's the entire job.
+
+The magic is: when you train this simple prediction task on **trillions** of words from the internet — books, Wikipedia, code, conversations, research papers — the model is forced to understand *everything*: grammar, facts about the world, reasoning patterns, cause and effect, how to write code, how to explain ideas. All of that knowledge is a side effect of getting really, really good at "guess the next word."
+
+Think of it like this: a student who reads every book ever written and is then tested by filling in blanks — to do well, they would have to deeply understand every topic. That's how LLMs learn.
+
 ### 1.1 The Core Task: Next-Token Prediction
 
 A language model (LM) is trained to predict the next token given a sequence of previous tokens:
@@ -28,7 +38,15 @@ $$P(\text{token}_t \mid \text{token}_1, \text{token}_2, \ldots, \text{token}_{t-
 That's it. Everything — translation, summarisation, code generation, question answering — emerges from training this one objective on massive amounts of text.
 
 **Why does next-token prediction lead to general intelligence?**
-To predict "The capital of France is ___", the model must know Paris is the capital. To predict "def fibonacci(n): return ___", the model must understand recursion. World knowledge and reasoning capabilities are a byproduct of learning to predict text very well.
+
+Here's a concrete way to think about it: imagine you're playing a fill-in-the-blank game with these sentences:
+
+- "The capital of France is ___" → To fill in *Paris*, you need to know geography.
+- "def fibonacci(n): return ___" → To fill in the right code, you need to understand recursion.
+- "She was angry because he forgot their ___" → To predict *anniversary*, you need to understand human relationships.
+- "The patient was given a dose of ___" → To predict *medication*, you need medical context.
+
+Every single one of these requires *genuine understanding*. And the model sees hundreds of billions of such examples. World knowledge and reasoning capabilities are a byproduct of learning to predict text very well. This is why the same model can write poetry, debug code, and explain quantum physics — it has been tested on all of them through next-token prediction.
 
 ### 1.2 Brief History
 
@@ -51,6 +69,18 @@ To predict "The capital of France is ___", the model must know Paris is the capi
 
 ## Part 2 — Tokenization
 
+> 📖 **The big picture:** Before a model can read your text, it needs to convert it into numbers. Computers only understand numbers. Tokenization is the process of splitting text into small pieces called *tokens*, then mapping each token to a number (an ID). Think of it like translating English letters into Morse code — dots and dashes are what the telegraph understands, just as token IDs are what the model understands.
+
+Here's a concrete example. When you type:
+> "I love pizza"
+
+The tokenizer might split it like:
+> `["I", " love", " pizza"]` → `[40, 2928, 17953]`
+
+Now the model works with numbers `[40, 2928, 17953]` — never the original letters. Everything the model does internally is matrix multiplication on these numbers.
+
+**So why not just give each word its own number?** And why not just use letters? Great questions — here's why neither extreme works well:
+
 ### 2.1 Why Not Characters or Words?
 
 | Approach | Problem |
@@ -60,6 +90,8 @@ To predict "The capital of France is ___", the model must know Paris is the capi
 | Subword (BPE) | ✅ Balance: reasonable vocabulary (~50K), handles any word |
 
 ### 2.2 Byte-Pair Encoding (BPE) — GPT's Tokenizer
+
+> 📖 **Plain English first:** BPE is like having a really smart autocomplete that notices which letter combinations appear together all the time. If the letters "i" and "n" and "g" always appear together at the end of words, it makes sense to treat "ing" as one unit rather than three separate letters. BPE formalises this idea: start with individual characters, then keep merging the most common pairs until you've built a vocabulary of ~50,000 units. Common words become single tokens; rare words are broken into recognisable sub-pieces.
 
 BPE starts with individual characters and iteratively merges the most frequent adjacent pairs:
 
@@ -110,6 +142,20 @@ print(len(tokens))   # 7 tokens for 7 words (roughly 1 token ≈ 0.75 words)
 
 ## Part 3 — Embeddings
 
+> 📖 **The big picture:** Earlier we said the tokenizer converts words into numbers (IDs) like `"pizza" → 17953`. But here's the problem: that number 17953 is meaningless on its own. The number 17952 (the word "pasta") doesn't feel "related" to 17953 just because they're one apart. We need a smarter way to represent words — one where *similar words are mathematically close together.*
+>
+> That's what embeddings do. An embedding is a list of numbers (a *vector*) that captures the meaning of a word. Think of it like GPS coordinates: two cities that are geographically close have similar coordinates. Two words that are semantically similar should have similar coordinates in "meaning space."
+
+**The map analogy in detail:**
+
+Imagine a 2D map where we place words based on their meaning:
+- "king" and "queen" are placed very close together in a "royalty" region of the map
+- "dog" and "cat" are close together in a "household pets" region
+- "Paris" and "London" are close in a "European capitals" region
+- But "king" and "dog" are far apart — they have nothing in common
+
+An embedding is exactly this, but instead of 2 dimensions on a flat map, the model uses 768 or 4096 dimensions. More dimensions means more nuance — it can capture many aspects of meaning simultaneously (is it a person? is it royalty? is it female? is it alive? etc.).
+
 ### 3.1 What Is an Embedding?
 
 An embedding is a **dense vector representation** learned to capture semantic meaning.
@@ -122,7 +168,14 @@ An embedding is a **dense vector representation** learned to capture semantic me
 
 **Famous property:** king - man + woman ≈ queen (Word2Vec, 2013)
 
+> 💡 **What does "king - man + woman ≈ queen" actually mean?**
+> Think of it as algebra with meanings. The difference between "king" and "man" represents the concept of "royalty-without-gender". Add "woman" to that and you get "female + royalty" = "queen". This isn't magic — the model learned this purely by predicting text. It observed that king/queen appear in similar contexts to man/woman and encoded this relationship in the numbers.
+
 ### 3.2 How Token Embeddings Work in LLMs
+
+> 📖 **Plain English:** Before a word enters the transformer, it gets converted from a token ID (just a number) into a rich vector. This happens via an *embedding table* — think of it like a very large dictionary where every word has an entry, and instead of a text definition, the entry is a list of ~768 numbers that encode meaning.
+>
+> So the model looks up "cat" → finds row 3797 in the embedding table → gets back a 768-number vector. Now "cat" has been translated into a language the transformer can work with — pure maths.
 
 ```
 Input: "The cat sat"
@@ -137,6 +190,12 @@ Each vector: d_model dimensions (e.g. 768 for BERT-base, 4096 for LLaMA 7B)
 ```
 
 ### 3.3 Positional Embeddings
+
+> 📖 **The problem they solve:** Imagine you receive a bag of scrabble tiles with the words "cat", "the", "sat". You know all the words but not their order. "The cat sat" and "Cat the sat" have the exact same tiles. For language understanding, *order matters enormously*. "Dog bites man" ≠ "Man bites dog."
+>
+> Here's the catch: the Transformer processes **all tokens at once in parallel** (unlike an RNN which reads left-to-right one step at a time). This is great for speed, but it means the model has no built-in sense of position — all tokens arrive simultaneously. Positional embeddings solve this by adding a "position tag" to each token's vector before it enters the transformer.
+>
+> Think of it like seat numbers at a cinema. Two people with identical appearance can be told apart by their seat number (position 1, position 2, etc.). We add a little "seat number signal" to each word's embedding so the model always knows where it sits in the sentence.
 
 Transformers process all tokens **in parallel** — they have no inherent notion of sequence order. Positional embeddings add position information to token embeddings.
 
@@ -175,6 +234,18 @@ embeddings = model.encode(["The cat is on the mat", "A feline rests on the rug"]
 ---
 
 ## Part 4 — The Transformer Architecture
+
+> 📖 **The big picture:** Now we understand what goes *into* a transformer (tokenized, embedded, position-tagged numbers). But what happens *inside* the black box? This is where things get beautifully designed.
+>
+> A Transformer is like an assembly line for understanding language. Your sentence enters at one end as raw token embeddings, passes through a series of identical "understanding stations" (called *Transformer Blocks*), and comes out the other end as rich, context-aware representations that the model uses to predict the next token.
+>
+> Each block has two jobs:
+> 1. **Attention** — let each word "talk to" every other word and update its own meaning based on context
+> 2. **Feed-Forward Network** — independently process each word's updated representation to extract deeper features
+>
+> The same block structure repeats N times (e.g. 12 times for BERT-base, 32 times for LLaMA 7B, 96 times for GPT-4). Each repetition allows the model to build increasingly abstract understanding — early layers handle syntax, later layers handle semantics and facts.
+>
+> Let's walk through each component carefully.
 
 ### 4.1 High-Level Architecture
 
@@ -220,6 +291,31 @@ Next-token probability distribution
 
 ### 4.3 Self-Attention (The Core)
 
+> 📖 **The intuition — let's really understand this:**
+>
+> Consider the sentence: **"The animal didn't cross the street because *it* was too tired."**
+>
+> What does "it" refer to? The animal or the street? Humans immediately know it's the animal — because animals get tired, streets don't.
+>
+> Now read: **"The animal didn't cross the street because *it* was too wide."**
+>
+> Now "it" means the street — because streets can be wide, animals aren't.
+>
+> The word "it" appears in the same position in both sentences, but its meaning completely changes based on *other words in the sentence*. This is the core problem that self-attention solves.
+>
+> **Self-attention lets each word look at all other words in the sentence and update its own meaning based on what's relevant.** The word "it" will "look at" both "animal" and "street", decide that "animal" is more relevant (when "tired" is present), and update its representation accordingly.
+>
+> Here's a human analogy: imagine you're in a meeting room with 10 people. You have a question. You briefly make eye contact with each person and judge "does this person know something relevant to my question?" Then you absorb information proportionally from each person — a lot from the relevant expert, a little from everyone else. That's exactly what self-attention does for every word in a sentence.
+>
+> **The Query, Key, Value framework:**
+>
+> The maths uses three concepts borrowed from information retrieval (like a database search):
+> - **Query (Q):** What you're searching for. "I am the word 'it' — I need to find what I refer to."
+> - **Key (K):** What each item advertises. "I am 'animal', here's my description." "I am 'street', here's mine."
+> - **Value (V):** The actual content to return. "I am 'animal', here's my full information to share."
+>
+> The attention score between "it" and "animal" is computed as: how well does "it's Query" match "animal's Key"? If the match is high, "it" borrows a lot of "animal's Value". Low match = borrow very little.
+
 **Intuition:** For each token, compute a weighted average of all other tokens' information, where the weights represent "how relevant is each token to the current one?"
 
 **Math:**
@@ -247,6 +343,18 @@ For large $d_k$, dot products grow large (variance $= d_k$ for unit vectors). Th
 
 ### 4.4 Multi-Head Attention
 
+> 📖 **Why run attention multiple times?**
+>
+> Think about reading a complex legal contract. To fully understand it, you might read it multiple times — once looking for obligations ("who must do what"), once for dates and deadlines, once for financial clauses, once for exceptions and caveats. Each reading focuses on a different *type* of relationship.
+>
+> Multi-head attention does the same thing for language. Instead of running attention once, it runs it `h` times in parallel (e.g. 12 times for BERT, 32 times for LLaMA 7B). Each "head" learns to focus on different types of linguistic relationships:
+> - One head might specialise in tracking pronouns back to their antecedents ("it → animal")
+> - Another might track subject-verb agreement ("birds → fly", not "birds → flies")
+> - Another might capture positional patterns (words close together are often related)
+> - Another might handle syntactic dependencies (adjective modifying a noun)
+>
+> None of this is programmed in — the heads discover these specialisations automatically during training. After all heads run independently, their outputs are concatenated and mixed back together with a final linear layer.
+
 Run attention multiple times in parallel with different learned projections, then concatenate.
 
 ```
@@ -265,6 +373,12 @@ Linear projection: W_O × concatenated → d_model
 **Why multiple heads?** Each head can attend to different relationships simultaneously. One head might learn to resolve pronouns, another to track subject-verb agreement.
 
 ### 4.5 Feed-Forward Network (FFN)
+
+> 📖 **What does it do?** After attention lets words "talk to each other" and gather context, the FFN is each word's chance to "think in isolation" about what that context means. It's a simple 2-layer neural network applied independently to every token's vector.
+>
+> A useful analogy: imagine each employee in a company has just finished a team meeting (= attention step) and gathered input from colleagues. Now they go back to their own desk to independently process that input and decide what to do next (= FFN step). The meeting is about communication; the desk work is about individual computation.
+>
+> **A key insight:** Research has shown that the FFN layers are where the model's "factual knowledge" is primarily stored. When someone asks "What's the capital of France?" — the attention layers identify what's being asked and the FFN layers retrieve the answer "Paris" from what feels like a key-value memory in the weights.
 
 After attention, each position goes through an identical 2-layer FFN:
 
@@ -289,6 +403,10 @@ class FFN(nn.Module):
 
 ### 4.6 Layer Normalisation
 
+> 📖 **Why do we need it?** As data flows through many layers, the numbers can easily spiral out of control — some activations explode to millions, others collapse to near-zero. When this happens, gradients (which drive learning) become either enormous or vanishing, and training breaks down.
+>
+> Layer normalisation is like a standardising rinse between each layer. After each attention or FFN block, it resets the numbers to have a mean of 0 and a standard deviation of 1, then lets the model apply its own learned scaling. Think of it as a volume control that always resets the gain to a sensible baseline so nothing blows out your speakers (the gradients).
+
 **Pre-Norm vs Post-Norm:**
 
 Original paper used **Post-Norm**: residual → add → layer norm  
@@ -307,6 +425,20 @@ x = x + Attention(LayerNorm(x))
 ---
 
 ## Part 5 — BERT vs GPT: Know Both Cold
+
+> 📖 **The big picture first:**
+>
+> There are two fundamentally different ways to "read" a sentence, and BERT and GPT represent these two approaches.
+>
+> **BERT's approach — reading the whole book at once (bidirectional):**
+> Imagine you're given a test where you see an entire paragraph with one word blanked out: "The _____ sat on the mat." You get to read the full sentence — words before AND after the blank. With "on the mat" as context, you confidently fill in "cat." This is how BERT works. It reads the full context in both directions before making any judgment.
+>
+> **GPT's approach — reading left-to-right, covering what comes next (causal):**
+> Imagine instead you're reading a story word by word, with a piece of paper covering the next word. You can only see what came before. "The cat ___" → you predict "sat" or "jumped". Then "The cat sat ___" → you predict "on". You never peek ahead. This is exactly how GPT generates text — one token at a time, only ever looking backward.
+>
+> These two different "reading styles" make BERT and GPT suited for very different tasks:
+> - **BERT** is great at understanding tasks (classification, NER, question answering from a document) because it can see the full picture at once.
+> - **GPT** is great at generation tasks (chatting, writing, coding) because it naturally "writes" the next word by looking only at what came before.
 
 ### 5.1 BERT (Bidirectional Encoder Representations from Transformers)
 
@@ -363,6 +495,14 @@ on   [  1    1    1    1 ]
 
 ### 5.3 Scaling Laws
 
+> 📖 **Plain English:** Bigger models trained on more data are better — but how much bigger, and how much more data? Scaling laws give us the answer. They're essentially "rules of thumb with maths behind them" for how to spend a training budget wisely.
+>
+> **The Chinchilla insight (2022):** Before Chinchilla, companies were racing to build bigger models (GPT-3 was 175B parameters). But DeepMind discovered that GPT-3 was actually *undertrained* — they used a massive model but didn't give it enough data to match the model's capacity. It's like hiring 175 PhD students but only giving them one textbook to read.
+>
+> The optimal rule: **train model parameters ≈ number-of-training-tokens / 20.** If you have 1 trillion tokens of text, your ideal model size is about 50 billion parameters. More importantly: a smaller model trained on lots of data often beats a bigger model trained on little data.
+>
+> **Practical implication:** This is why LLaMA 3 8B (only 8 billion parameters) can outperform GPT-3 (175B parameters) on many tasks — it was trained on 15 trillion tokens, massively more than GPT-3's 300 billion.
+
 Chinchilla (DeepMind, 2022) finding:
 > For a fixed compute budget, the optimal model size and training tokens satisfy:  
 > **N_optimal ≈ tokens / 20**, and training tokens ≈ 20 × model parameters
@@ -381,7 +521,24 @@ Chinchilla    70B      1.4T         YES (the benchmark)
 
 ## Part 6 — The LLM Lifecycle
 
+> 📖 **The big picture — think of it like a student's education:**
+>
+> Building a production LLM is a three-stage journey, and it maps surprisingly well to how a human expert is trained:
+>
+> | Stage | Human Analogy | LLM Equivalent |
+> |---|---|---|
+> | **Pre-training** | 18 years of school, university — absorbing huge amounts of general knowledge | Training on trillions of tokens from the internet; model learns language, facts, reasoning |
+> | **Fine-tuning (SFT)** | Professional certification / job training — learning to apply knowledge in a specific way | Training on (instruction, response) examples; model learns to *be helpful* |
+> | **RLHF** | Performance reviews + feedback — guided by managers to correct bad habits | Human raters rank outputs; model learns to be helpful, harmless, and honest |
+> | **Inference** | The employee working on real tasks | Taking user queries and generating responses |
+>
+> A raw pre-trained model is like a brilliant but unsocialised student — it knows everything but acts strangely. It might complete "Tell me how to bake a cake" by writing "...and then my grandmother said..." rather than actually giving you a recipe. Fine-tuning and RLHF teach it to be a helpful assistant.
+
 ### 6.1 Pre-training
+
+> 📖 **What actually happens:** The model is shown enormous amounts of text (think: most of the internet, millions of books, all of GitHub). For every piece of text, it tries to predict each next word. When it's wrong, the error is measured and the weights are adjusted slightly — billions of times, across trillions of examples. After months of this on thousands of GPUs, the model has compressed the statistical patterns of virtually all human knowledge into its weights.
+>
+> **Key insight:** The model never "stores" facts like a database. It learns *patterns*. "Paris" follows "The capital of France is" because that pattern appeared millions of times. This is why models can also hallucinate — they're generating statistically likely continuations, not retrieving ground-truth facts.
 
 ```
 Massive text corpus (Common Crawl, books, GitHub, Wikipedia...)
@@ -395,6 +552,10 @@ Base model (knows language, facts, code — but doesn't "chat")
 
 ### 6.2 Fine-tuning
 
+> 📖 **Why is this needed?** The base (pre-trained) model is brilliant but not useful. If you ask it "How do I make pasta?", it might continue with "...was a question my mother always asked me when I was young..." — because on the internet, that's a plausible continuation of a conversational setup. It's completing text, not answering your question.
+>
+> Fine-tuning fixes this with a much smaller dataset of *correct examples*: thousands of (question, ideal answer) pairs written by humans. Now the model learns "when someone asks me a question, I should *answer it*." This transforms the base model into an instruction-following assistant.
+
 **Supervised Fine-tuning (SFT):**
 ```
 (instruction, response) pairs from human curators
@@ -405,6 +566,13 @@ Train model to produce human-like responses
 ```
 
 **RLHF (Reinforcement Learning from Human Feedback):**
+
+> 📖 **Why SFT alone isn't enough:** A fine-tuned model can follow instructions, but it still doesn't know exactly what "quality" looks like. Two different answers to the same question might both be grammatically fine, but one is more accurate, helpful, and safe. SFT can't easily capture this because writing a perfect answer is hard, but *ranking two answers* is easy for humans.
+>
+> RLHF exploits this: show human raters two model outputs and ask "which is better?" Collect thousands of these comparisons, train a *reward model* to predict human preference scores, then train the main LLM to score highly on that reward model. It's like game training — the model keeps trying to get a higher score (human approval).
+>
+> **Why this matters:** This is what made ChatGPT dramatically better than GPT-3 overnight. Same architecture, same data, but RLHF made it genuinely helpful and safe.
+
 ```
 Multiple model responses
          ↓
@@ -419,6 +587,21 @@ Aligned model (helpful, harmless, honest)
 
 ### 6.3 Inference
 
+> 📖 **How text generation actually works — step by step:**
+>
+> People often think ChatGPT "writes the whole reply at once." It doesn't. It generates **one token at a time** in a loop:
+>
+> 1. You send: "What is the capital of France?"
+> 2. The model reads all tokens, runs a forward pass through all layers, and produces a **probability distribution** over its 100K-word vocabulary: "Paris" gets 72%, "Lyon" gets 4%, "France" gets 2%, etc.
+> 3. It picks a token (e.g. "Paris") based on this distribution
+> 4. "Paris" is appended to the sequence. Now the model reads: "What is the capital of France? Paris"
+> 5. It runs *another* full forward pass and predicts the next token: " is" → `.` → end
+> 6. This loop repeats until a stop token (like `<|endoftext|>`) is generated or `max_tokens` is hit
+>
+> **This is called *autoregressive* generation** — each output becomes part of the input for the next step. And it's why the KV cache matters (section 4 in advanced topics) — you don't want to recompute all previous tokens on every step.
+>
+> **This is also why LLMs can't "go back and fix" an early mistake** — once "Paris" is in the sequence, the model conditions all future tokens on it. There's no editing, no drafting — just left-to-right generation.
+
 ```
 User prompt (tokenise)
     ↓
@@ -430,6 +613,17 @@ Append to sequence → repeat until stop token or max length
 ```
 
 **Key inference parameters:**
+
+> 📖 **Temperature — the creativity dial:**
+> After the model generates its probability distribution ("Paris: 72%, Lyon: 4%..."), temperature controls how confident vs. random the final sampling is.
+>
+> Imagine you're asking a very confident expert a question. At **temperature 0**, they always give their top answer with 100% conviction — like a lookup table. At **temperature 2**, they become a creative brainstormer who entertains unlikely ideas. At **temperature 1**, they respond naturally.
+>
+> - Use **low temperature (0–0.3)** for: factual questions, code, data extraction — you want the most likely correct answer
+> - Use **high temperature (0.7–1.2)** for: creative writing, brainstorming, generating diverse options
+>
+> **Top-p (nucleus sampling) — the vocabulary filter:**
+> Instead of always sampling from all 100K possible next tokens, top-p says "only sample from the *smallest set of top tokens* whose combined probability adds up to p%." For top-p = 0.9: find the fewest tokens that together total 90% probability, then pick from those. This cuts out the very unlikely "tail" tokens that would feel random and incoherent.
 
 | Parameter | Default | Effect |
 |---|---|---|

@@ -18,6 +18,12 @@ By the end of these two weeks you will be able to:
 
 ## Part 1 — What Is RAG?
 
+> 📖 **Big picture:** LLMs are trained on data up to a cutoff date. After that, they know nothing about what happened. They also can't read your company's private documents, your internal Confluence wiki, or last week's earnings report. And when asked about things they don't know well, they confidently make up answers (hallucination).
+>
+> **RAG (Retrieval-Augmented Generation)** is the solution: before asking the LLM to answer, *retrieve* the relevant documents from your knowledge base and *inject* them into the prompt. The LLM is now answering based on actual documents, not memory. It's like the difference between asking someone a question from memory versus letting them look up the answer in the right textbook first.
+>
+> **Why every AI product uses it**: RAG is the default architecture for any system that needs to answer questions about specific, recent, or proprietary information: enterprise chatbots, customer support systems, legal research tools, medical information systems. Understanding it deeply is non-negotiable for an AI engineer interview.
+
 ### 1.1 The Problem RAG Solves
 
 LLMs have three critical limitations:
@@ -60,6 +66,10 @@ Response: "According to the Q3 2025 report, revenue was $2.3B, up 12% YoY"
 
 ## Part 2 — The RAG Pipeline: Step by Step
 
+> 📖 **Big picture:** RAG has two distinct phases that run at different times. The **indexing pipeline** runs *offline* (ahead of time) and converts your documents into searchable vectors. The **query pipeline** runs *online* (at request time) and retrieves the right chunks to answer the user's question.
+>
+> Understanding both pipelines — and where each can fail — is what separates someone who has used LangChain once from a production AI engineer. FAANG system design interviews often ask you to design a RAG system end-to-end; this section is the blueprint.
+
 ### 2.1 Indexing Pipeline (Offline)
 
 ```
@@ -87,6 +97,12 @@ User Query
 ---
 
 ## Part 3 — Chunking Strategies
+
+> 📖 **Why chunking is surprisingly important:** Chunking is how you split documents (PDFs, web pages, knowledge base articles) into pieces before embedding them. It sounds trivial but is one of the biggest quality levers in a RAG system.
+>
+> **The book analogy:** Imagine a book has 500 pages. If you embed the whole book as one vector, a question about Chapter 3 will retrieve the entire book. The relevant passage gets "averaged out" by 499 pages of irrelevant content. Instead, you embed the book in 200-word chunks. Now a question about Chapter 3 retrieves the specific relevant chunk.
+>
+> **The goldilocks problem:** Too small = a chunk might only contain half a sentence (loses context). Too large = diluted meaning (retrieves irrelevant content alongside relevant). The sweet spot is usually 256-512 tokens with 50-100 token overlaps between chunks (so sentences that span chunk boundaries are covered).
 
 ### 3.1 Why Chunking Matters
 
@@ -178,6 +194,10 @@ def get_window(sentences, idx, window=2):
 
 ## Part 4 — Embeddings for RAG
 
+> 📖 **Big picture:** The quality of your RAG system is bounded by the quality of your embeddings. If your embedding model doesn't understand that "car" and "automobile" mean the same thing, it won't retrieve the right chunks. Two key decisions:
+> 1. **Which embedding model?** Larger models (OpenAI text-embedding-3-large, BAAI/bge-large) produce better embeddings but cost more. For production, benchmark on your actual data before committing.
+> 2. **Asymmetric vs symmetric embeddings:** Some models are trained to embed queries and documents differently (asymmetric). This matters because a question and its answer are semantically different text types. Models like `bge-large` have separate query instruction prefixes for this.
+
 ### 4.1 Choosing an Embedding Model
 
 ```python
@@ -218,6 +238,12 @@ The [MTEB (Massive Text Embedding Benchmark)](https://huggingface.co/spaces/mteb
 ---
 
 ## Part 5 — Vector Databases
+
+> 📖 **Big picture:** A vector database is a database optimised for one specific operation: "given a query vector, find the K most similar vectors in my collection."
+>
+> **Why you can’t use a regular database:** In a normal database, you find exact matches (WHERE name = 'Alice'). Similarity search is different: you want the K vectors *closest* in meaning to your query. Checking exact distance between a query and all 10 million stored vectors would take seconds. Vector databases use clever indexes (like HNSW) to find approximate nearest neighbours in milliseconds.
+>
+> **The library catalogue analogy:** A regular database is like looking up a book by exact ISBN. A vector database is like telling a librarian "I want books *similar in topic* to this one" and getting the 5 best matches in milliseconds rather than scanning all 10,000 books.
 
 ### 5.1 What Is a Vector Database?
 
@@ -297,6 +323,13 @@ print(result["source_documents"])
 ---
 
 ## Part 6 — Retrieval Strategies
+
+> 📖 **Big picture:** Naive RAG does one thing: embed the query, find the K most similar document vectors. This works surprisingly well but fails in predictable ways:
+> - A specific keyword like "Error E-4021" has no "semantic meaning" — vector search misses it
+> - A vague query like "make it faster" could match irrelevant speed content
+> - The top-K retrieved chunks might all be near-duplicates from the same section
+>
+> **Advanced retrieval strategies** fix these failure modes: hybrid search combines keyword + semantic, reranking re-orders results using a more expensive cross-encoder model, and diversity filters ensure retrieved chunks cover different aspects. Each adds latency and cost, so you need to know which to apply when.
 
 ### 6.1 Similarity Metrics
 
@@ -402,6 +435,14 @@ def stepback_retrieve(query, retriever, llm):
 
 ## Part 7 — RAG Evaluation with RAGAS
 
+> 📖 **Why evaluation is hard:** Unlike a toy chatbot, production RAG needs to be trustworthy. A response might sound confident but cite the wrong source, or answer a different question than what was asked. RAGAS gives you a systematic framework to measure four distinct failure modes:
+> 1. **Did we retrieve the right chunks?** (Context recall)
+> 2. **Did the retrieved chunks actually contain the answer?** (Context precision)
+> 3. **Did the LLM use the retrieved context faithfully?** (Faithfulness — no hallucination)
+> 4. **Did the answer actually answer the question?** (Answer relevancy)
+>
+> Each metric catches a different bug. You need all four. Without measurement, you don’t know which component is failing.
+
 ### 7.1 The 4 Core RAGAS Metrics
 
 ```
@@ -504,6 +545,14 @@ with tracing_v2_enabled(project_name="RAG-Production"):
 ---
 
 ## Part 8 — Advanced RAG Patterns
+
+> 📖 **Big picture:** Basic RAG (embed → retrieve → generate) works in demos but struggles in production with real documents. Advanced patterns address specific failure modes:
+> - **Contextual compression:** Retrieved chunks often include irrelevant sentences — compress to only the relevant part before sending to LLM
+> - **Parent-child retrieval:** Small chunks for precise retrieval, but send the larger surrounding context to the LLM (so the answer has full context)
+> - **Query rewriting / HyDE:** Rewrite the user's query or generate a hypothetical answer before embedding — often retrieves better results
+> - **Self-RAG:** The LLM decides *whether* to retrieve and *critiques* its own outputs
+>
+> These patterns are frequently asked about in FAANG system design rounds: "Your RAG system isn't accurate enough — what would you improve?"
 
 ### 8.1 Contextual Compression
 
@@ -642,6 +691,12 @@ query_engine = index.as_query_engine(include_text=True)
 ---
 
 ## Part 10 — BM25 + Semantic Hybrid Search (Deep Dive)
+
+> 📖 **Big picture:** This is the retrieval upgrade that turns a good RAG system into a great one. Pure semantic search (embedding similarity) is excellent at understanding meaning but fails on exact text matches — a product error code like "E-4021" is just random characters semantically. BM25 (the algorithm behind Elasticsearch, Lucene) excels at exact keyword matching but can't understand synonyms.
+>
+> **Hybrid search runs both in parallel** and combines their scores with a weighting function (Reciprocal Rank Fusion is the standard). The result reliably outperforms either approach alone, especially on knowledge bases with a mix of conceptual questions and specific lookups.
+>
+> **Why you'll see this in interviews:** "How would you improve RAG retrieval quality?" → Hybrid search is the most well-understood, production-proven answer.
 
 ### 10.1 Why Hybrid Search?
 

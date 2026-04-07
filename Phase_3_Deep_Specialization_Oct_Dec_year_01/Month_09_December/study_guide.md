@@ -5,7 +5,9 @@
 
 ## Week 1–2: General System Design for AI Engineers
 
-> FAANG interviewers expect AI engineers to be solid at general system design too. These concepts integrate with ML systems (e.g. databases for feature stores, Kafka for streaming ML, Redis for cache).
+> 📖 **Big picture:** FAANG AI engineer interviews include general system design rounds alongside ML system design. You might be asked to design a rate limiter, a distributed cache, a notification service, or a URL shortener. These aren't ML problems — they're infrastructure problems. But as an AI engineer, you're expected to be fluent in both layers. The databases, queues, and caches you design here are the exact same components that appear in ML feature stores, model serving infrastructure, and RAG pipelines.
+>
+> **Key insight:** The same distributed systems principles (CAP theorem, consistency vs availability trade-offs, horizontal scaling) govern both traditional databases and vector databases. Understanding them deeply means you can design *any* system, not just ML-specific ones.
 
 ### CAP Theorem
 
@@ -198,6 +200,12 @@ def stream_completion(request_id: str, channel: str):
 
 ## Week 3: RLHF, DPO & Alignment
 
+> 📖 **Big picture:** Pre-trained models generate text that is statistically likely, not necessarily helpful or safe. A model trained on the internet might learn to produce toxic, deceptive, or harmful content because that content exists in the training data. RLHF and DPO are the alignment techniques that transform a capable but potentially dangerous base model into a helpful, harmless assistant.
+>
+> **The core insight:** It’s easier for humans to compare two responses ("which is better?") than to write the perfect response from scratch. RLHF exploits this: collect human preferences, train a model to predict preferences (reward model), then optimise the LLM to maximise the reward. DPO is a simplified version that skips the separate reward model entirely.
+>
+> **Why this matters:** This is why ChatGPT behaves helpfully and refuses harmful requests. Understanding RLHF/DPO is essential for any role working on LLM safety, quality, or alignment at FAANG.
+
 ### RLHF: Full Pipeline
 
 **Step 1: Supervised Fine-Tuning (SFT)**
@@ -355,6 +363,10 @@ Advantage:
 ---
 
 ## Week 4: Multimodal Models
+
+> 📖 **Big picture:** Text-only LLMs are becoming the baseline, not the frontier. Modern AI systems at FAANG process images, audio, video, and code alongside text. Understanding multimodal models is essential for roles working on the next generation of AI products: image generation (DALL-E, Stable Diffusion), visual question answering (GPT-4V), speech (Whisper), and visual search.
+>
+> **The key conceptual bridge:** Multimodal models work by projecting different modalities (images, audio) into the same embedding space as text. Once in the same space, the transformer’s attention mechanism can relate visual features to text tokens naturally. CLIP and similar models pioneered this — everything else builds on it.
 
 ### CLIP: Contrastive Language-Image Pretraining (OpenAI, 2021)
 

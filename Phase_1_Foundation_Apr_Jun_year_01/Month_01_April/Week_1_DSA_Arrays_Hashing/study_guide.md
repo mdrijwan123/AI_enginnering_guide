@@ -18,6 +18,10 @@ By the end of this week you will be able to:
 
 ## Part 1 — Arrays: Deep Dive
 
+> 📖 **Big picture:** An array is the simplest data structure imaginable — a row of boxes in memory, each holding one value, each with a numbered label (index 0, 1, 2...). Almost every algorithm problem in FAANG interviews starts with an array. Before jumping to tricks and patterns, you need to understand *why* certain operations are fast and others are slow — this understanding is what lets you choose the right approach under interview pressure.
+>
+> Think of memory like a very long street of houses, each with a unique address. An array is like booking a row of consecutive houses so you can find your neighbour by just adding 1 to the address. This consecutive layout is what makes **random access O(1)** — the CPU can jump directly to any index without searching.
+
 ### 1.1 What Is an Array?
 
 An array is a **contiguous block of memory** where each element is stored at a fixed offset from the base address.
@@ -65,6 +69,8 @@ for i in range(10):
 ```
 
 ### 1.4 Key Array Patterns for FAANG
+
+> 📖 **Before the code:** These three array patterns solve a huge portion of interview questions. The underlying thread in all three is: *avoid recomputing the same thing twice*. Prefix sums avoid re-summing ranges. Kadane's avoids trying every subarray. Two-pass avoids using division. Each is a lesson in "precompute now, answer cheaply later."
 
 #### Pattern 1: Prefix Sum
 Pre-compute cumulative sums to answer range queries in O(1).
@@ -133,6 +139,12 @@ def productExceptSelf(nums):
 
 ## Part 2 — Hash Tables: Deep Dive
 
+> 📖 **Big picture:** A hash table is arguably the single most important data structure for coding interviews. It lets you trade a small amount of extra memory for dramatically faster lookups.
+>
+> Imagine you're working in a library with millions of books. Finding a specific book by scanning every shelf would take forever — O(n). But if you have a catalogue (a hash table), you can look up "Moby Dick" → shelf B12 → walk directly there. That's O(1).
+>
+> In Python, `dict` and `set` are both hash tables. Whenever you find yourself wanting to ask "have I seen this before?" or "how many times have I seen X?", your instinct should immediately be: **hash table**.
+
 ### 2.1 What Is a Hash Table?
 
 A hash table (Python: `dict`, `set`) maps **keys → values** with average O(1) for insert, delete, and lookup.
@@ -198,6 +210,8 @@ c["a"]                   # 2 (no KeyError for missing keys — returns 0)
 ```
 
 ### 2.5 Key Hash Table Patterns
+
+> 📖 **Why these patterns matter:** Most FAANG array problems reduce to one of these three templates. Once you see the pattern name, the code almost writes itself. The goal is to get fast enough at recognising "oh, this is a frequency counting problem" that you start explaining your approach within 30 seconds of reading the problem.
 
 #### Pattern 1: Frequency Counting
 ```python

@@ -14,6 +14,14 @@
 
 ## Part 1 — Heaps (Priority Queue)
 
+> 📖 **Big picture:** A heap is a tree-based structure that answers one question extremely efficiently: "What’s the current minimum (or maximum)?"
+>
+> **The analogy — hospital triage:** In A&E, patients don’t get seen in the order they arrive. The most critical case gets seen first. As new patients arrive, the queue reorders. A heap is the data structure behind this: you push items in any order, and you always pop the highest-priority item (smallest number = most urgent) in O(log n).
+>
+> **When to use:** "K largest/smallest/closest" problems, "always process the minimum next" (Dijkstra’s), "merge K sorted lists", "median of a stream". If you see K + something in the problem, try a heap.
+>
+> **Python’s `heapq` is a min-heap.** To simulate a max-heap, negate all values.
+
 ### 1.1 Heap Properties
 
 A **min-heap** is a complete binary tree where every parent ≤ its children. Stored as an array:
@@ -158,6 +166,12 @@ class MedianFinder:
 
 ## Part 2 — Graphs: BFS
 
+> 📖 **Big picture:** A graph is the most general data structure — nodes connected by edges. Trees are a special case of graphs (connected, no cycles). Real-world problems modelled as graphs: maps (road networks), social networks (friendships), dependency graphs (task scheduling), web pages (hyperlinks).
+>
+> **BFS (Breadth-First Search)** explores level by level, like ripples spreading out from a stone thrown in water. It uses a queue (FIFO). It’s the right choice for **shortest path in an unweighted graph**, because it guarantees the first time it reaches a node is via the shortest path.
+>
+> **The key pattern:** BFS always needs a `visited` set to avoid re-processing nodes in graphs with cycles (unlike trees which have no cycles). Forgetting visited is one of the most common interview bugs.
+
 ### 2.1 Graph Representations
 
 ```python
@@ -266,6 +280,10 @@ def ladderLength(beginWord, endWord, wordList):
 ---
 
 ## Part 3 — Graphs: DFS
+
+> 📖 **When to use DFS vs BFS:** BFS finds shortest paths in unweighted graphs. DFS dives deep, exploring as far as possible before backtracking. Use DFS for: detecting cycles, topological sort (ordering dependencies), finding all paths, checking connectivity, and "island" counting problems (count connected components in a grid).
+>
+> **Recursive DFS is elegant but dangerous for very large inputs** (Python’s default recursion limit is 1000). For production code or large graphs, use iterative DFS with an explicit stack.
 
 ### 3.1 DFS Template
 
@@ -408,7 +426,9 @@ def countComponents(n, edges):
 ---
 
 ## Part 4 — Dijkstra's Algorithm (Weighted Shortest Path)
-
+> 📖 **When BFS isn’t enough:** BFS finds shortest paths in *unweighted* graphs (all edges have equal cost). But what if roads have different travel times? Dijkstra uses a min-heap to always process the cheapest unvisited node next. It’s like BFS, but instead of a regular queue, it uses a priority queue so the "closest" node is always processed first.
+>
+> **The key invariant:** Once a node is popped from the heap, its shortest distance is final. Why? Because all future paths through the heap will be at least as costly (heap always pops the minimum).
 ```python
 import heapq
 

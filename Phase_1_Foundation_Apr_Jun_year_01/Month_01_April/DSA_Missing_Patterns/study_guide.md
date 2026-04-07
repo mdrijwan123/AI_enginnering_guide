@@ -20,6 +20,12 @@
 <a name="part-1"></a>
 ## Part 1 — Backtracking
 
+> 📖 **Big picture:** Backtracking is how you solve problems that require *exploring all possibilities* — generating all combinations, all permutations, all valid paths, all valid placements on a grid (like N-Queens). The naive way is to just try everything, which is what backtracking does — but *intelligently*. It builds the solution one step at a time, and the moment a partial solution can't possibly lead to a valid answer, it backtracks (undoes the last step) and tries the next option.
+>
+> **The maze analogy:** Navigating a maze, you try a path, walk as far as you can. Dead end? You backtrack to the last junction and take a different turn. You explore *depth-first*, always committing to a direction until proven wrong.
+>
+> **The key technique that trips people up:** When you store a solution with `result.append(path)`, you’re appending a *reference* to the list, not a copy. Since you mutate `path` on every step, you’ll end up with a list of identical items at the end. Always use `result.append(path[:])` or `result.append(path.copy())`.
+
 ### 1.1 What Is Backtracking?
 
 Backtracking is a systematic way to explore ALL possible solutions by building them incrementally and abandoning ("pruning") partial solutions as soon as you determine they can't lead to a valid answer.
@@ -502,6 +508,12 @@ def letterCombinations(digits):
 <a name="part-2"></a>
 ## Part 2 — Tries (Prefix Trees)
 
+> 📖 **Big picture:** A trie is a specialised tree for storing words where each level represents one character. Its superpower is prefix search: "give me all words starting with 'app'" — a hash table can’t do this efficiently, a trie does it in O(prefix length).
+>
+> **The dictionary analogy:** Think of a physical dictionary. To find all words beginning with "pre", you open to the P section, then P-R, then P-R-E — and now you’re at the start of all "pre" words. You navigate letter by letter along a shared path. That *shared path* is the key idea: all words starting with "app" share the nodes a-p-p in the trie, which is why prefix search is efficient.
+>
+> **When to use:** AutoComplete, spell check, IP routing tables, finding longest common prefix, word search in a grid.
+
 ### 2.1 What Is a Trie?
 
 A trie (pronounced "try") is a tree-like data structure for storing strings where each node represents a character. It enables O(L) lookup, insertion, and prefix search (L = length of the word).
@@ -722,6 +734,12 @@ class WordDictionary:
 <a name="part-3"></a>
 ## Part 3 — Intervals
 
+> 📖 **Big picture:** Interval problems are about managing time slots, ranges, or spans. They come up constantly in real life (meeting scheduler, calendar conflicts, merging date ranges from a database) and in FAANG interviews.
+>
+> **The calendar analogy:** Imagine you have a list of meeting time slots on a calendar. You want to find if any meetings overlap, or merge all adjacent ones, or find the first free slot. Sorting the meetings by start time is the key move — once sorted, overlapping intervals are always adjacent, so you can process them in a simple left-to-right sweep.
+>
+> **The single most important rule:** Sort intervals by start time first. Almost every interval problem becomes simple after sorting.
+
 ### 3.1 The Intervals Pattern
 
 Interval problems involve ranges [start, end] and operations like merging, inserting, or finding overlaps.
@@ -922,6 +940,13 @@ def intervalIntersection(firstList, secondList):
 <a name="part-4"></a>
 ## Part 4 — Greedy Algorithms
 
+> 📖 **Big picture:** Greedy algorithms are deceptively simple: at each step, make the choice that looks best *right now*, without considering future consequences. The tricky part is knowing *when this is safe*. If a locally optimal choice always leads to a globally optimal answer, greedy works. If not, you need dynamic programming.
+>
+> **The coin change intuition:** Making change for 36 cents with coins [25, 10, 5, 1]. Greedy says: always use the largest coin that fits. 25 + 10 + 1 = 36. This works!
+> But with coins [1, 3, 4] and amount 6: Greedy picks 4 + 1 + 1 = 3 coins. Optimal is 3 + 3 = 2 coins. Greedy fails here! Use DP instead.
+>
+> **The test:** Greedy works for "activity selection" type problems (scheduling, interval problems, minimum spanning trees). DP is needed when past choices constrain future choices in complex ways.
+
 ### 4.1 What Is Greedy?
 
 A greedy algorithm makes the **locally optimal choice at each step**, hoping it leads to a globally optimal solution. Unlike DP, greedy doesn't revisit past choices.
@@ -1104,6 +1129,12 @@ Examples:
 
 <a name="part-5"></a>
 ## Part 5 — Bit Manipulation
+
+> 📖 **Big picture:** Computers store all data in binary (1s and 0s). Bit manipulation operates on these raw binary representations directly, bypassing normal arithmetic. The reward is speed (bitwise ops are a single CPU instruction) and elegant O(1) solutions to problems that look hard with normal maths.
+>
+> **Why interviewers love it:** Bit manipulation problems have compact, beautiful solutions. A problem like "find the single non-repeating element in an array" takes O(n) space with a hash map, but XOR gives you an O(1) space O(n) time solution in one line.
+>
+> **The mental model:** Think of each integer as 32 light switches (bits), each either ON (1) or OFF (0). Bitwise AND, OR, XOR, and shifts are operations on these switches. Mastering 6-7 key tricks will cover 95% of bit manipulation problems you’ll ever see in an interview.
 
 ### 5.1 Bit Basics
 

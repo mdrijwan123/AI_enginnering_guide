@@ -23,6 +23,12 @@
 
 ## 1. Text Preprocessing
 
+> 📖 **Big picture:** Raw text from the internet, emails, documents, or user input is messy — inconsistent capitalisation, punctuation everywhere, meaningless filler words ("the", "a", "is"), and words that mean the same thing but are written differently ("running", "runs", "ran"). Before any ML model can learn from text, you need to clean and normalise it.
+>
+> **The pipeline analogy:** Think of text preprocessing like washing and chopping vegetables before cooking. You could cook them raw and dirty, but the end result would be worse. Similarly, training a model on messy raw text gives worse results than training on clean, normalised text.
+>
+> **When it matters less now:** Modern LLMs (GPT-4, LLaMA 3) handle raw text well and don't need most preprocessing. But for classical NLP (TF-IDF, Naive Bayes, small task-specific models) and for embedding pipelines where you want consistent representations, these steps still matter.
+
 ### Why It Matters
 Every NLP pipeline starts with text preprocessing. Raw text is messy — different cases, punctuation, stop words, inflections. Preprocessing normalizes text so models can learn meaningful patterns instead of noise.
 
@@ -135,6 +141,12 @@ clean = re.sub(r'<[^>]+>', '', html)
 
 ## 2. TF-IDF & Bag of Words
 
+> 📖 **Big picture:** Before embeddings existed, how did machines understand text? The simplest approach: count words. If a document contains the word "cancer" 15 times, it’s probably about medicine. If it contains "bitcoin" 20 times, it’s about cryptocurrency. **Bag of Words** does exactly this: treats each document as an unordered collection of word counts, ignoring grammar and word order.
+>
+> **The problem BoW solves:** It converts variable-length text into fixed-length numerical vectors that machine learning algorithms can process. "I love NLP" becomes `[0, 0, 1, 0, 1, 0, 1, 0...]` (1 for each word that appears).
+>
+> **TF-IDF improves on raw counts:** Some words ("the", "and", "is") appear in *every* document and carry no information. TF-IDF downweights these common words and upweights rare words that are distinctive for specific documents. It’s the foundation of keyword-based search (BM25, used in Elasticsearch).
+
 ### Bag of Words (BoW)
 
 Simple document representation: count word occurrences. Ignores order entirely.
@@ -206,6 +218,14 @@ for name, score in sorted(zip(feature_names, scores), key=lambda x: -x[1]):
 ---
 
 ## 3. Word Embeddings
+
+> 📖 **Big picture:** BoW and TF-IDF have a fatal flaw: "happy" and "joyful" are completely unrelated in a BoW vocabulary, even though they mean almost the same thing. Word embeddings fix this by representing each word as a dense vector in a "meaning space" where similar words are mathematically close.
+>
+> **The evolution of word representations shows the history of NLP:**
+> - **One-hot encoding (pre-2013):** Each word is a binary vector; "king" = [0,0,1,0,0...]. No meaning captured, vectors are sparse and orthogonal.
+> - **Word2Vec (2013):** Trains on the principle "you shall know a word by the company it keeps." Words that appear in similar contexts get similar vectors. "king" and "queen" end up near each other.
+> - **GloVe (2014):** Similar to Word2Vec but uses global co-occurrence statistics instead of local context windows.
+> - **Contextual embeddings / BERT (2018+):** The same word gets *different* vectors depending on context. "bank" in "river bank" vs "bank account" gets different representations. This is the foundation of modern LLMs.
 
 ### The Evolution
 
@@ -364,6 +384,12 @@ BERT    "bank" → deeply contextual across all layers
 
 ## 4. Text Classification
 
+> 📖 **Big picture:** Text classification is the task of assigning a label to a piece of text. It's one of the most common NLP tasks in production: spam detection, sentiment analysis, content moderation, intent classification for chatbots, ticket routing in customer support.
+>
+> **The evolution of approaches:** In 2015, you'd use TF-IDF + Logistic Regression. In 2019, you'd fine-tune BERT. In 2024, you'd either fine-tune a smaller model for cost efficiency OR use a large LLM with a well-crafted prompt for zero/few-shot classification. Knowing all three approaches and *when to use each* is what FAANG interviewers want to hear.
+>
+> **Interview insight:** When asked "how would you build a text classifier?", the right answer isn't just one approach — it's a decision tree: "For low data, start with zero-shot LLM. For high accuracy with labeled data, fine-tune. For production at scale, distil to a small model."
+
 ### Problem Types
 - **Binary**: Spam vs Not Spam, Positive vs Negative
 - **Multi-class**: News categories (Sports, Politics, Tech, Business)
@@ -451,6 +477,12 @@ results = sentiment([
 ---
 
 ## 5. Named Entity Recognition
+
+> 📖 **Big picture:** Named Entity Recognition (NER) finds and classifies *specific things* mentioned in text: people's names, organisations, locations, dates, dollar amounts. It's the "highlighter pass" over a document — identify all the important nouns and label what type they are.
+>
+> **Why it matters in production:** NER is a core pre-processing step in many AI pipelines. Before you can answer "what did Apple announce last quarter?", you need to identify "Apple" as an organisation and "last quarter" as a time period. RAG systems, knowledge graph construction, and document intelligence all depend on reliable NER.
+>
+> **Modern approach:** Fine-tuned transformer models (BERT, RoBERTa) achieve near-human accuracy. For most production use cases, SpaCy or Hugging Face pipelines give you pre-trained models you can use immediately or fine-tune on domain-specific entities (medical terms, legal entities, company-specific product names).
 
 ### What is NER?
 Identifying and classifying named entities in text into predefined categories:
@@ -585,6 +617,12 @@ crf = sklearn_crfsuite.CRF(
 ---
 
 ## 6. Sequence Models
+
+> 📖 **Big picture:** This section explains *why transformers exist* — by showing the problems that the models before them (RNNs, LSTMs) had. Understanding the history makes the transformer design choices obvious rather than arbitrary.
+>
+> **The problem with text:** Text is a sequence. "John loves Mary" has the same words as "Mary loves John" but opposite meanings. BoW lost order entirely. RNNs were the first serious attempt to model sequential structure: process text one word at a time, maintaining a running "memory" of what came before.
+>
+> **Why RNNs failed at scale:** The memory is compressed into a single vector (the hidden state), regardless of how long the sequence is. A 1000-word document must compress all information into a fixed-size vector. Long-range dependencies are lost — the model "forgets" what was said 50 words ago. LSTMs improved this with gating mechanisms, but couldn’t truly parallelize (each step depends on the previous). Transformers solved all of this.
 
 ### Why Sequences Matter
 Text is inherently sequential — word order carries meaning:
@@ -732,6 +770,12 @@ class GRUClassifier(nn.Module):
 
 ## 7. Seq2Seq & Attention
 
+> 📖 **Big picture:** Sequence-to-Sequence (Seq2Seq) models solve tasks where both input and output are sequences — translation (English → French), summarisation (long text → short text), question answering (question + context → answer). The key architecture: an **encoder** reads the input and compresses it to a fixed vector, a **decoder** generates the output from that vector.
+>
+> **The bottleneck problem:** The encoder's summary vector has to capture *everything* about the input. For long inputs, this single vector isn't enough — it forgets early parts of the sequence. **Attention** fixes this: instead of a single summary, the decoder can "attend" to every encoder state and choose which parts to focus on for each output word. This was the precursor to self-attention and the transformer.
+>
+> **Why learn this if transformers replaced it?** Because attention is the core innovation, and understanding Bahdanau attention (2014) makes transformer self-attention (2017) immediately intuitive. They're the same idea, geneneralised.
+
 ### Encoder-Decoder Architecture
 
 Used for sequence-to-sequence tasks: translation, summarization, Q&A.
@@ -787,6 +831,13 @@ Self-Attention Only → fast (parallel), better accuracy = TRANSFORMER
 ---
 
 ## 8. BERT vs GPT Deep Dive
+
+> 📖 **Big picture:** By 2018, "transformer" had become the default architecture for NLP. But two very different families emerged from it, based on which part of the transformer they use:
+>
+> - **BERT (encoder-only):** Reads the whole sentence at once, understanding each word in context of the words before *and after* it. Great for understanding tasks: classification, NER, question answering, similarity.
+> - **GPT (decoder-only):** Generates text left-to-right, predicting the next word. Great for generation tasks: completion, summarisation, instruction following.
+>
+> **The analogy:** BERT reads an essay and answers questions about it (comprehension). GPT writes the essay (generation). For FAANG AI roles, you need to know both cold: when to use each, how they're pre-trained, and what fine-tuning looks like for each family.
 
 ### BERT (Bidirectional Encoder Representations from Transformers)
 

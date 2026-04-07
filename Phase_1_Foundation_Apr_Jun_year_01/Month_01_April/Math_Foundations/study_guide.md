@@ -18,6 +18,15 @@
 
 ## 1. Linear Algebra
 
+> 📖 **Big picture:** Every neural network, every transformer, every embedding is just linear algebra. When GPT-4 processes your message, it’s doing nothing but matrix multiplications, additions, and non-linear activations — billions of them. Understanding linear algebra means you understand what’s actually happening inside models, not just as a black box.
+>
+> **The three things that matter most for AI engineers:**
+> 1. **Matrix multiplication** — this is how data flows through a neural network layer (input × weight matrix = transformed output)
+> 2. **Dot product** — this is how attention scores are computed (how "similar" are query and key?)
+> 3. **Cosine similarity** — this is how RAG retrieval works (is this document vector close to the query vector?)
+>
+> You don’t need to be a linear algebra expert. You need to be fluent with matrices, vectors, and the three operations above.
+
 ### Vectors
 
 ```python
@@ -153,6 +162,12 @@ print(f"Need {n_components_95} components for 95% variance")
 
 ## 2. Calculus for ML
 
+> 📖 **Big picture:** Neural networks learn by adjusting their parameters (weights) to reduce errors. Calculus tells us *in which direction* to adjust them. Specifically, the gradient (derivative) of the loss with respect to each weight is the signal: "if I increase this weight slightly, does the error get bigger or smaller?"
+>
+> **The mountain analogy:** Imagine you’re blindfolded on a hilly landscape and want to reach the lowest valley (minimum loss). You can only feel the slope under your feet. If the ground slopes up to your right, you move left. That’s gradient descent: at every step, compute the gradient (slope), then step in the downhill direction. You repeat this billions of times during model training.
+>
+> **What you actually need for interviews:** Chain rule (used in backpropagation), partial derivatives (gradient of the loss w.r.t. each weight), and the intuition for why activation functions need non-zero gradients.
+
 ### Derivatives — The Foundation of Training
 
 The derivative measures how a function changes as its input changes:
@@ -253,6 +268,13 @@ print(softmax(z))  # [0.659, 0.242, 0.099]
 ---
 
 ## 3. Probability & Statistics
+
+> 📖 **Big picture:** Language models are probability machines. When GPT predicts the next token, it’s outputting a probability distribution over ~100,000 possible next words. Understanding probability is understanding what models are actually doing.
+>
+> **The three essentials for AI engineers:**
+> 1. **Probability distributions** — what they are, and which ones appear in ML (Normal/Gaussian, Bernoulli, Categorical)
+> 2. **Bayes’ Theorem** — how prior knowledge updates with new evidence; foundational for understanding why models behave the way they do
+> 3. **Cross-entropy** — the loss function for classification and language models. When you see "my model’s training loss is 2.3", you’re seeing cross-entropy. Understanding it lets you interpret training curves intelligently.
 
 ### Probability Distributions
 

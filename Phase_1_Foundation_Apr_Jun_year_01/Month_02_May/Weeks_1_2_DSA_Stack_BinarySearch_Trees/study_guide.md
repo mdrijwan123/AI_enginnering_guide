@@ -18,6 +18,12 @@ By the end of these two weeks you will be able to:
 
 ## Part 1 — Stack
 
+> 📖 **Big picture:** A stack is a Last-In First-Out (LIFO) structure — like a stack of plates. The last plate you put on is the first one you take off. Python’s built-in `list` works perfectly as a stack (`append` to push, `pop` to pop).
+>
+> Stacks are powerful for problems where you need to *remember what you’ve seen and haven’t yet resolved*. Classic example: parenthesis matching. When you see `(`, push it. When you see `)`, check if the top of the stack is `(`. If yes, they cancel. If the stack is empty when you need to cancel, the string is invalid.
+>
+> The **monotonic stack** is the advanced pattern that unlocks hard problems: you maintain the stack in sorted order, and whenever a new element breaks the order, you pop everything smaller — and those popped elements have just *found their answer* (the new element is their "next greater element"). This gives O(n) solutions to problems that otherwise require O(n²).
+
 ### 1.1 Stack LIFO Operations
 Stack = Last-In First-Out. Python `list` works perfectly as a stack.
 
@@ -139,6 +145,12 @@ def largestRectangleArea(heights):
 
 ## Part 2 — Binary Search
 
+> 📖 **Big picture:** Binary search is the algorithm that turns O(n) linear scans into O(log n) searches by exploiting a sorted order. With each comparison, you eliminate *half* the remaining search space. 1,000,000 elements? Find any value in 20 comparisons (log₂ 1,000,000 ≈ 20).
+>
+> **Beyond plain sorted arrays:** The real power of binary search at FAANG level is applying it to *abstract sorted spaces* — "what’s the minimum speed to complete a task in D days?" is a binary search where the answer space is the range of possible speeds, ordered from smallest to largest. If speed X works, anything faster works too. Binary search on this monotonic property finds the minimum in O(log(max_speed)) steps.
+>
+> **The off-by-one trap:** Most binary search bugs come from the exit condition and mid-pointer update. The template below is battle-tested — memorise it and adapt `while left < right` vs `while left <= right` based on whether you want `left` to converge into the answer or `left` to converge past it.
+
 ### 2.1 The Template
 
 Binary search finds a target in a **sorted** space (array or "answer space") in O(log n).
@@ -229,6 +241,12 @@ def search(nums, target):
 ---
 
 ## Part 3 — Linked Lists
+
+> 📖 **Big picture:** A linked list is a chain of nodes where each node holds a value and a pointer to the next node. Unlike arrays, nodes are scattered in memory — there’s no index-based access (no `O(1)` random access). But insertions and deletions at the front are O(1), which is useful in some contexts.
+>
+> **The dummy node trick:** Almost every linked list problem becomes cleaner with a dummy (sentinel) node at the head. It eliminates the special case of "what if I need to delete the head node?" — you just delete the node after dummy. Use it by default.
+>
+> **Slow/fast pointers:** The most elegant linked list technique. A slow pointer moves 1 step, a fast pointer moves 2 steps. This lets you: find the middle of a list (in one pass), detect cycles (if fast catches slow, there’s a cycle), and find the start of a cycle.
 
 ### 3.1 Core Operations
 
@@ -331,6 +349,15 @@ class LRUCache:
 ---
 
 ## Part 4 — Trees
+
+> 📖 **Big picture:** Trees are hierarchical structures. A binary tree has each node with at most two children (left, right). Binary Search Trees (BSTs) add an ordering property: all left descendants are smaller, all right descendants are larger. This makes search O(log n) in a balanced BST.
+>
+> **The three traversals you must know cold:**
+> - **Inorder (Left → Root → Right):** For a BST, this produces elements in sorted order. If you see a BST problem, your first thought should be "inorder traversal gives me the sorted sequence."
+> - **Preorder (Root → Left → Right):** Used to serialize/clone a tree (root first, then children).
+> - **Level-order (BFS):** Uses a queue. Processes row by row from top to bottom. Used whenever the problem says "by level" or "minimum depth" (shortest path from root to leaf).
+>
+> **Recursion is the natural language of trees.** For most tree problems, think: "What do I do at this node? What do I return to my parent?" Then recursion handles the rest automatically.
 
 ### 4.1 Tree Traversals
 

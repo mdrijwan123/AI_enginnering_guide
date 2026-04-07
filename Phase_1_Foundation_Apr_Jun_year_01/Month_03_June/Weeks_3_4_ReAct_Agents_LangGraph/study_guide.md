@@ -17,6 +17,12 @@
 
 ## Part 1 — What Is an AI Agent?
 
+> 📖 **Big picture:** For years, AI meant "you send text in, you get text back." An LLM is stateless: it processes your input and produces output, then forgets everything. It can't take action on the world, it can't remember your preferences, and it can't break a complex 10-step task into manageable pieces.
+>
+> **An agent changes all of this.** An agent is an LLM wrapped in a *loop* with access to *tools* and *memory*. The key shift in thinking: instead of one input → one output, the agent can take multiple steps, observe results, change course, and keep going until the task is done. Think of the difference between asking someone a question versus hiring them to complete a project.
+>
+> **Why this matters now:** Every major AI product being built at FAANG is some form of agentic system. Coding assistants (GitHub Copilot), research assistants (Perplexity), customer service bots, data analysis pipelines — these are all agents. Understanding what they are and how they fail is table stakes for an AI engineer role.
+
 ### 1.1 From LLM to Agent
 
 **LLM (stateless):** Given input → produce output. No memory, no tools, no iteration.
@@ -52,6 +58,12 @@ Agent Categories:
 ---
 
 ## Part 2 — ReAct Pattern
+
+> 📖 **Big picture:** The problem with naive agents is that they either reason (chain-of-thought) or act (call tools) but not both at the same time. Pure reasoning leads to hallucinations — the model "makes up" facts instead of looking them up. Pure action without reasoning leads to wasted tool calls — the model calls the wrong tool or misinterprets results.
+>
+> **ReAct (Reasoning + Acting)** interleaves the two: the model *thinks out loud* (Thought), *takes an action* (Action), and *reads the result* (Observation), then repeats. This grounding of reasoning in real observations is why ReAct agents are far more reliable than pure reasoning chains.
+>
+> **The paper that started it:** "ReAct: Synergizing Reasoning and Acting in Language Models" (Yao et al., 2022) demonstrated that this simple loop outperformed both pure chain-of-thought AND pure action models on tasks like fact verification and Wikipedia-based question answering.
 
 ### 2.1 ReAct = Reasoning + Acting
 
@@ -172,6 +184,10 @@ def db_search(q: str) -> str:
 ---
 
 ## Part 3 — LangGraph: Stateful Agents
+
+> 📖 **Why LangGraph?** A simple ReAct agent is a loop: Observe → Think → Act → repeat. But production agents need more: branching logic, error recovery, human approval steps, parallel tool calls, state that persists across sessions, and multi-agent coordination. LangGraph lets you model these as an explicit directed graph where nodes are agent steps and edges are transitions between them.
+>
+> **The GPS analogy:** A simple agent is like following verbal directions (go straight, turn left, done). LangGraph is like a GPS system: it has a full graph of roads (states and transitions), can reroute on failure, handles junctions, enables branching, and gives you full visibility of where you are in the journey at any point.
 
 ### 3.1 Why LangGraph Over Simple Agent Loops?
 
@@ -304,6 +320,15 @@ app.invoke(None, config)
 
 ## Part 4 — Tool Calling Deep Dive
 
+> 📖 **How it actually works:** When you give an LLM tools, you’re not giving it magical abilities. You send the tool definitions (as JSON schemas describing function names, descriptions, and parameters) in the prompt. The model then outputs structured JSON telling you *which tool to call with which arguments*. Your code then executes the tool and feeds the result back to the model.
+>
+> The model never directly calls anything. It’s all a "structured text output" pattern:
+> - You: "Here are tools you can use. What do you want to do?"
+> - Model: "Please call `get_weather(city='London')`"
+> - You: call the function, get result
+> - You: "The result was: Rainy, 15°C"
+> - Model: now generates a response using that information
+
 ### 4.1 How Function Calling Works
 
 Modern LLMs (GPT-4, Claude 3, LLaMA 3.1) have native tool-calling support:
@@ -370,6 +395,14 @@ print(review.rating)  # 9.2 (typed Python object, not raw string!)
 
 ## Part 5 — Agent Memory Systems
 
+> 📖 **Why memory is the hard part:** An LLM has no persistent memory by default. Every conversation starts fresh. An agent that can’t remember what happened last session, can’t build on previous work, and asks the same clarifying questions repeatedly is useless in production.
+>
+> **The four types of memory map to how humans store information:**
+> - **Sensory (context window):** What you can currently see on your desk. Short, immediate.
+> - **Working memory (conversation buffer):** What you’re actively thinking about this session.
+> - **Long-term semantic (vector store):** Facts you can recall: capitals of countries, company policies, product specs.
+> - **Long-term episodic (logs):** "Last Tuesday, the user told me their database was named prod-db."
+
 ### 5.1 Types of Memory
 
 ```
@@ -432,6 +465,10 @@ memories = m.search("what cloud platform does the user use?", user_id="user_123"
 ---
 
 ## Part 6 — Production Agent Patterns
+
+> 📖 **Big picture:** A prototype agent running on your laptop is very different from an agent serving 10,000 users. In production, agents fail in new ways: tools timeout, LLMs return malformed JSON, costs spiral, users try to hijack the agent's instructions (prompt injection), and debugging becomes nearly impossible without proper observability.
+>
+> **This section covers the patterns that separate toy agents from production agents:** error handling with retries, structured observability (logging every thought/action/observation), rate limiting and cost controls, and safe fallback behaviours when the agent gets confused.
 
 ### 6.1 Error Handling & Retry
 
@@ -582,6 +619,10 @@ response = await rails.generate_async(prompt="User message here")
 
 ## Part 8 — CrewAI: Multi-Agent Framework
 
+> 📖 **Big picture:** A single agent can handle many tasks, but there are limits. Complex workflows benefit from *specialisation*: one agent for research, one for writing, one for reviewing. CrewAI is a framework that makes this easy by letting you define agents with explicit *roles*, *goals*, and *backstories* (which shape how the LLM behaves), then assigning them *tasks* and letting them collaborate.
+>
+> **The team analogy:** LangGraph is like programming a workflow. CrewAI is like describing a team and letting the team figure out how to work together. You define "I have a researcher, a writer, and a reviewer" and CrewAI handles the orchestration. It's a higher-level abstraction than LangGraph, trading control for convenience.
+
 ### 8.1 CrewAI Architecture
 
 CrewAI is a framework for orchestrating role-based AI agents that collaborate on complex tasks.
@@ -668,6 +709,15 @@ crew = Crew(
 ---
 
 ## Part 9 — Agent Safety & Guardrails
+
+> 📖 **Big picture:** A chatbot that says something wrong is embarrassing. An agent that says something wrong while also deleting your database, sending emails to customers, or executing code on a server is catastrophic. Because agents can *act on the world*, safety is not optional — it's table stakes.
+>
+> **The three agent safety concerns:**
+> 1. **Prompt injection** — a malicious user (or malicious tool output) tricks the agent into ignoring its instructions and doing something unintended
+> 2. **Runaway execution** — the agent gets into an infinite loop or keeps calling expensive tools indefinitely
+> 3. **Scope creep** — the agent takes actions outside its intended scope ("while I'm at it, I'll also delete these old files")
+>
+> FAANG interviewers ask about safety because production AI systems are increasingly agentic, and "my agent went rogue" is a real risk they care about mitigating.
 
 ### 9.1 Why Agent Safety Matters
 

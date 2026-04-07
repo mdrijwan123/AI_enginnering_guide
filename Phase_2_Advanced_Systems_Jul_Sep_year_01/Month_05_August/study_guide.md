@@ -5,7 +5,9 @@
 
 ## Week 1–2: LLM Internals — KV Cache, Quantisation, FlashAttention (Revisit + Deepen)
 
-> You covered these in Month 1 Week 4. This week is a deeper dive with practical implementation focus.
+> 📖 **Why revisit this?** You covered these concepts in Month 1 Week 4. This month is about going deeper with *production implementation focus*. Month 1 was "understand the concepts". Month 5 is "calculate memory budgets, implement quantisation, profile throughput, justify architectural choices in a system design interview."
+>
+> **The practical stakes:** At FAANG scale, the difference between serving a 7B model at 100 requests/second vs 500 requests/second is worth millions of dollars. Every optimisation in this section — quantisation, speculative decoding, continuous batching — directly translates to cost savings and latency improvements.
 
 ### KV Cache Memory Budget Planning
 
@@ -115,6 +117,10 @@ def speculative_decode(target_model, draft_model, input_ids, gamma=4):
 ---
 
 ## Week 3: MCP Protocol (Model Context Protocol)
+
+> 📖 **Big picture:** Imagine every AI assistant needing a custom adapter for every tool: a custom Slack integration, a custom GitHub integration, a custom database integration. That’s N×M integrations. MCP is the USB standard for AI: one protocol, one interface, and any LLM application can use any MCP-compatible tool.
+>
+> Released by Anthropic in November 2024 and rapidly adopted across the industry (including by OpenAI, Google, and Microsoft), MCP is becoming the standard way to give AI agents access to the real world. Understanding it deeply is a genuine differentiator in 2026 interviews.
 
 ### What Is MCP?
 
@@ -291,6 +297,16 @@ if __name__ == "__main__":
 ---
 
 ## Week 4: LLMOps — Observability, Evaluation, Monitoring
+
+> 📖 **Big picture:** You can’t improve what you can’t measure. A production LLM system without monitoring is flying blind. LLMOps is the practice of treating LLM pipelines like the software systems they are: with version control, testing, monitoring, alerting, and continuous improvement.
+>
+> **What specifically goes wrong in production LLM systems without monitoring:**
+> - Prompt regressions: a prompt change that worked better in testing silently degrades quality in production
+> - Cost explosions: token usage 10× higher than expected due to runaway chains
+> - Latency spikes: P99 latency suddenly 5 seconds because one chain is retrying on errors
+> - Quality drift: model provider updates their model, behaviour changes without notice
+>
+> LangSmith, RAGAS, Arize, and Weights & Biases are the tools that let you catch and fix these before users notice.
 
 ### The LLMOps Stack
 

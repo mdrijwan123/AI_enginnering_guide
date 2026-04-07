@@ -5,6 +5,17 @@
 
 ## Week 1–2: Fine-Tuning Theory & Implementation
 
+> 📖 **Big picture:** Fine-tuning is how you take a general-purpose LLM (which knows about everything) and specialise it for your domain (which needs reliable, consistent, on-brand behaviour). Think of it like hiring a brilliant generalist and then putting them through your company’s specific training programme.
+>
+> **The escalating ladder of adaptation:**
+> - **Prompt engineering:** Change the input — zero cost, instant, but the model’s underlying behaviour doesn’t change
+> - **RAG:** Inject relevant knowledge into the prompt — keeps knowledge current, but the model’s style doesn’t change
+> - **Fine-tuning (SFT):** Adjusts the model’s weights on your domain data — changes both knowledge and behaviour, but requires data and compute
+> - **LoRA/QLoRA:** Efficiently fine-tunes by only training small adapter matrices — same quality as full fine-tuning at 1% of the cost
+> - **RLHF/DPO:** Aligns the model with human preferences beyond just instruction following
+>
+> **Why LoRA matters for you specifically:** Fine-tuning a 7B model requires 112 GB of GPU memory (full fine-tuning). LoRA reduces this to ~10 GB. This makes fine-tuning accessible on a single A100 or even on consumer hardware (RTX 4090). Every FAANG team doing custom model training uses LoRA or QLoRA.
+
 ### Why Fine-Tune vs Prompt Engineer vs RAG?
 
 | Approach | When to Use | Cost | Latency | Privacy |
@@ -451,6 +462,8 @@ Generated: {generated}
 ---
 
 ## Week 3–4: ML System Design Practice (5 Full Designs)
+
+> 📖 **Study tip:** These are full mock interview designs. For each one, cover it with a piece of paper and try to sketch the design from scratch first. Then compare to the answer. The goal isn’t memorisation — it’s internalising the *pattern of thinking*: clarify scope → data flow → model → serving → monitoring. Once you’ve applied the 7-step framework to 5 different designs, it becomes instinctive.
 
 ### Design 4: Feature Store
 

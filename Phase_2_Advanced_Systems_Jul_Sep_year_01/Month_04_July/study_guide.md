@@ -5,6 +5,18 @@
 
 ## Week 1–2: Dynamic Programming
 
+> 📖 **Big picture:** Dynamic Programming (DP) is the algorithm technique that turns exponential-time solutions (“try all possibilities”) into polynomial-time solutions by storing and reusing intermediate results.
+>
+> **The core idea:** Many problems have *overlapping subproblems* where the same computation appears multiple times. DP says: compute it once, store the result, and reuse it. This transforms recursive solutions that branch exponentially into iterative (or memoised) solutions that run in O(n) or O(n²).
+>
+> **The staircase analogy (Climbing Stairs problem):** To count ways to reach step 10, you need ways to reach step 9 + ways to reach step 8. To count ways to reach step 9, you need step 8 + step 7. Without DP, this tree of subproblems has exponential branches. With DP, you calculate each step once, left to right, building up the answer.
+>
+> **Two approaches to DP:**
+> - **Top-down (memoisation):** Write the recursive solution, add a cache. `@lru_cache` in Python. Easier to write but uses call stack.
+> - **Bottom-up (tabulation):** Fill a table iteratively from the smallest subproblems up. More efficient, avoids recursion depth issues.
+>
+> **How to recognise DP:** The problem asks for a count, maximum, minimum, or yes/no across a *combination of choices*, where each choice constrains future choices. Examples: "maximum sum subarray", "minimum coins to make change", "longest common subsequence".
+
 ### The DP Mindset
 
 DP = "memoised recursion" or "tabulation". Use when:
@@ -187,6 +199,12 @@ def minDistance(word1, word2):
 ---
 
 ## Week 3–4: Multi-Agent Systems
+
+> 📖 **Big picture:** A single LLM agent can handle many tasks, but it has limitations: context window overflows for complex multi-step tasks, one model can’t be a simultaneous expert in code generation AND data analysis AND report writing, and one agent can’t work in parallel.
+>
+> Multi-agent systems solve this by having multiple specialised agents collaborate — like a software development team where the PM, developer, code reviewer, and QA engineer each do their part. Each agent has a focused role, clear inputs/outputs, and they hand off work to each other.
+>
+> **FAANG relevance:** Multi-agent is exactly what’s being built at Google (Gemini agents), OpenAI (operator framework), Anthropic (computer use), and Amazon (Bedrock agents). This is where the industry is going. Understanding it well differentiates you in LLM system design interviews.
 
 ### Why Multi-Agent?
 

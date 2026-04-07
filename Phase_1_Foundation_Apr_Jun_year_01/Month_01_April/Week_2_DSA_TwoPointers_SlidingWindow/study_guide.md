@@ -18,6 +18,12 @@ By the end of this week you will be able to:
 
 ## Part 1 — Two Pointers
 
+> 📖 **Big picture:** The core enemy in array problems is O(n²) — the nested loop. If you check every pair of elements, with an array of 10,000 items you'd do 100 million comparisons. Two pointers is a way to *systematically eliminate pairs you don’t need to check*, reducing that to O(n).
+>
+> **The key insight:** If the array is sorted (or you can sort it), you can make a guarantee. For example: if the leftmost element + the rightmost element is *already too large*, then any pair involving the rightmost element is also too large — so you can eliminate the entire rightmost column of the "pairs table" in one step by moving right inward. You're ruling out huge swathes of possibilities with each pointer move.
+>
+> Think of it like a guessing game: "I'm thinking of two numbers that add to 10." If someone guesses (1, 10) and you say "too big", they don't need to try (1, 9), (1, 8), (1, 7)... they should move the bigger number down *and* try a bigger first number. That's exactly what two pointers does.
+
 ### 1.1 The Core Idea
 
 Two pointers uses two indices (`left`, `right` or `slow`, `fast`) to avoid the O(n²) nested loop.
@@ -176,6 +182,14 @@ def trap(height):
 ---
 
 ## Part 2 — Sliding Window
+
+> 📖 **Big picture:** Sliding window solves the "best/longest/shortest contiguous subarray" class of problems. The naive approach checks every possible subarray: O(n²) or O(n³). Sliding window avoids this by maintaining an active "window" that moves forward across the array, adding one element at a time from the right and removing from the left when the window becomes invalid.
+>
+> **The wiper analogy:** Imagine a car windshield wiper. It sweeps left-to-right, covering a window of the glass. If you see a dirty spot enter the wiper’s view, you adjust the wiper’s position. You never go backwards — each part of the glass is processed once. That’s sliding window: every element is added once (right pointer advances) and removed once (left pointer advances). Total work: O(2n) = O(n), regardless of how many subarrays there are.
+>
+> **The two flavours:**
+> 1. **Fixed-size:** Window size `k` is given. This is simpler — right pointer runs while left follows exactly `k` behind.
+> 2. **Variable-size:** You decide when to shrink. You expand right aggressively, then shrink left when the window violates a constraint (e.g. more than 2 distinct characters). The tricky part is always: *what is the shrink condition?*
 
 ### 2.1 The Core Idea
 

@@ -5,6 +5,12 @@
 
 ## Week 1–2: LLM Inference Internals — vLLM & PagedAttention
 
+> 📖 **Big picture:** You understand how LLMs work (transformer, KV cache). Now the question is: how do you serve them efficiently to thousands of concurrent users? This is one of the most practical topics for FAANG AI infrastructure roles.
+>
+> **The fundamental tension:** LLMs use a lot of GPU memory, and GPU memory is finite. The KV cache for each request grows with the sequence length. Without careful management, a single long-context request can exhaust memory and prevent other requests from being served. vLLM solves this with **PagedAttention** — a technique borrowed from operating system virtual memory management.
+>
+> **Why this matters in interviews:** "How would you design a system to serve a 70B LLM at production scale?" is a real FAANG system design question. The answer involves vLLM, PagedAttention, continuous batching, and quantisation — all of which are in this section.
+
 ### The Inference Memory Problem
 
 When you serve an LLM, memory is allocated for:

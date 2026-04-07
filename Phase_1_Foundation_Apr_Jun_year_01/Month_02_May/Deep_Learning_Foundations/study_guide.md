@@ -25,6 +25,12 @@
 
 ## 1. Neural Network Basics
 
+> 📖 **Big picture:** A neural network is a function approximator inspired loosely by neurons in the brain. The key insight: by stacking layers of "neurons" (each just a weighted sum followed by a non-linear squash), you can approximate *any* function given enough data and the right architecture.
+>
+> **The weight tuning process:** Initially, all weights are random. The network makes terrible predictions. You measure how wrong it is (the *loss*), then you figure out which weights to nudge in which direction to reduce the loss (*backpropagation*), and nudge them (*gradient descent*). Repeat millions of times on millions of examples. Gradually the weights shift towards configurations that make good predictions. That’s training.
+>
+> **Why does this work for LLMs?** The transformer architecture is a neural network. GPT-4 is "just" a very deep neural network with 96 layers and 175 billion parameters. Every concept here — activations, loss, backprop, optimisers, regularisation — applies directly to how LLMs are trained.
+
 ### The Perceptron
 
 The simplest neural unit — a single linear classifier:
@@ -94,6 +100,11 @@ A neural network with a single hidden layer of sufficient width can approximate 
 ---
 
 ## 2. Activation Functions
+
+> 📖 **Why they exist:** Without non-linear activations, stacking linear layers collapses into a single linear layer. Non-linearity lets networks model complex functions. The choice of activation function affects training stability, and several generations of activations have been developed to fix specific problems:
+> - **Sigmoid/Tanh:** Early choices, but cause *vanishing gradients* in deep networks (derivatives get tiny, early layers don’t learn)
+> - **ReLU:** Solved vanishing gradients for most networks; hugely popular
+> - **GELU/SiLU:** What modern LLMs use; smoother than ReLU, better in practice at scale
 
 ### Why Non-linear Activations?
 Without non-linear activations, stacking linear layers is equivalent to a single linear layer:
@@ -198,6 +209,10 @@ kl_loss = nn.KLDivLoss(reduction='batchmean')
 ---
 
 ## 4. Backpropagation
+
+> 📖 **Plain English:** Backpropagation is how neural networks learn from mistakes. After a forward pass produces a prediction and we measure the error (loss), we need to know: *which weights caused the error, and by how much?* We trace the error backwards through the network, layer by layer, using the **chain rule** from calculus. Each weight gets a gradient — a signed number saying "increase this weight → loss goes up/down by this much." Then gradient descent nudges every weight in the direction that reduces loss.
+>
+> **The human analogy:** Your boss tells you the project failed. You figure out your role: "I made decisions X and Y. X was good, Y was bad. I’ll change how I make decision-Y-type choices in future." Backprop is the mathematical equivalent of this attribution process across millions of parameters.
 
 ### Chain Rule — The Foundation
 
@@ -314,6 +329,10 @@ print(y.grad)  # dz/dy = 3x + 2y = 6 + 6 = 12
 
 ## 5. Optimization Techniques
 
+> 📖 **Big picture:** Once you have gradients from backpropagation, you have to decide how to use them to update weights. Plain gradient descent says "move every weight in the direction of its negative gradient." But this naive approach has problems: it oscillates, gets stuck in saddle points, and is slow if you have to set the learning rate carefully.
+>
+> **Adam is the default for LLMs:** Adaptive Moment Estimation (Adam) combines momentum (remember past gradients to smooth updates) with adaptive learning rates (make small updates for parameters that have big gradients, and big updates for parameters with small gradients). It’s the go-to optimiser for almost all modern deep learning including transformers.
+
 ### SGD (Stochastic Gradient Descent)
 
 $$\theta_{t+1} = \theta_t - \eta \nabla L(\theta_t)$$
@@ -409,6 +428,12 @@ scheduler = OneCycleLR(optimizer, max_lr=1e-3, total_steps=10000)
 ---
 
 ## 6. Regularization
+
+> 📖 **The problem:** A neural network with millions of parameters can *memorise* the training data rather than learning general patterns. It gets 99% accuracy on training data but fails on new examples. This is **overfitting**. Regularisation is a collection of techniques that push the model towards simpler, more general solutions.
+>
+> - **Dropout:** Randomly disable 20-50% of neurons during each training step. Prevents any single neuron from becoming essential, forces redundant representations. Disabled at inference time.
+> - **Weight decay (L2):** Penalises large weights, encouraging the model to spread knowledge across many weights rather than concentrating it.
+> - **Batch Normalisation:** Normalises layer outputs to have zero mean and unit variance, allowing higher learning rates and more stable training.
 
 ### Dropout
 

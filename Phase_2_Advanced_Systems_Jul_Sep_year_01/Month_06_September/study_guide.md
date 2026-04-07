@@ -5,6 +5,10 @@
 
 ## Week 1–2: Advanced Agentic AI Patterns
 
+> 📖 **Big picture:** By now you know how a single LLM agent works (ReAct loop, tool calling, memory). Month 6 Week 1–2 asks: what does a *production-grade* agentic system look like at a company like Google, Meta, or Stripe? The answer involves RLHF (how models learn human preferences), constitutional AI (how models self-correct), and multi-agent orchestration patterns used in real products.
+>
+> **Why it matters for interviews:** FAANG AI engineer roles increasingly require you to discuss not just "can this agent do the task" but "how do we make this agent *reliably* helpful, safe, and auditable at scale?" This week builds the vocabulary and intuition for those discussions.
+
 ### RLHF Concepts (Preview — Deep dive in Month 9)
 
 **Reinforcement Learning from Human Feedback:**
@@ -129,6 +133,12 @@ workflow.add_conditional_edges("reflect", should_revise)
 ---
 
 ## Week 3–4: ML System Design Framework
+
+> 📖 **Big picture:** ML System Design is the interview round where you’re asked to design a complete machine learning system from scratch: "Design YouTube’s recommendation system" or "Design a fraud detection system for a payments company" or "Design a RAG system for enterprise documents."
+>
+> **Why it’s hard:** You have 45 minutes, a blank whiteboard, and need to demonstrate expertise in: data pipelines, model selection, training, evaluation, serving, scalability, and monitoring. Without a structured framework, you’ll ramble.
+>
+> **The 7-step framework below is your structure.** In an interview: state the framework out loud at the start, then systematically work through each step. This shows organised thinking and ensures you don’t miss key aspects that interviewers are looking for.
 
 ### The 7-Step Framework (Applies to Any ML System Design Question)
 

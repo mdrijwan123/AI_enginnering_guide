@@ -19,6 +19,10 @@ By the end of this week you will:
 
 ## Part 1 — The Full Inference Pipeline
 
+> 📖 **Big picture:** Week 3 taught you *what* a transformer is. This week is about *what happens in practice* when you actually run one. After all, understanding the architecture is one thing — but FAANG L5/L6 interviews for AI engineers will ask "how much memory does a 70B model use?" or "why is your service slow at long context lengths?" or "how does vLLM improve throughput?" These are engineering questions, not theory questions.
+>
+> Think of a transformer in production like a factory assembly line. Week 3 was the blueprint of the machines. This week is about: how much does the factory cost to run? Where are the bottlenecks? How do you speed up production without sacrificing quality? Every concept here (—KV cache, FlashAttention, quantisation, GQA—) is a specific engineering answer to a specific bottleneck in that factory.
+
 ### 1.1 Two Phases: Prefill vs Decode
 
 **Phase 1: Prefill (prompt processing)**
@@ -62,6 +66,10 @@ KV_memory = 2 × num_layers × num_kv_heads × head_dim × seq_len × bytes_per_
 ---
 
 ## Part 2 — KV Cache: Deep Dive
+
+> 📖 **The problem it solves:** Every time the model generates a new token during autoregressive decoding, it needs to compute attention between the new token and *all previous tokens*. Without caching, this means recomputing the Key and Value matrices for every historical token on every single step. For a 1000-token response, that means token 1000 is computed 999 times — a total of O(n²) work.
+>
+> **The analogy — a note-taking meeting:** Imagine each step of generation is a team meeting. At each meeting, every attendee needs a summary of all previous meetings. Without caching: someone re-reads all the old meeting notes from scratch every time (O(n²)). With caching: a secretary wrote notes at each meeting and the summary is always ready (O(n)). The KV cache is that secretary.
 
 ### 2.1 What Is the KV Cache?
 
@@ -122,6 +130,10 @@ class CachedAttention(nn.Module):
 
 ## Part 3 — FlashAttention
 
+> 📖 **The problem:** Standard attention has to write a massive n×n matrix to GPU memory. For long sequences (8K, 32K, 128K tokens), this matrix becomes *larger than the GPU’s fast memory*. The GPU then constantly reads and writes from slow memory (HBM) instead of fast memory (SRAM). This is like doing all your work by running to a filing cabinet in another building every few seconds instead of keeping papers on your desk.
+>
+> **FlashAttention’s solution:** Perform the entire attention calculation in small tiles that fit on the desk (SRAM). Never write the full n×n matrix. The result is mathematically identical to standard attention — it’s not an approximation, it’s the same answer computed much more efficiently.
+
 ### 3.1 The Problem with Standard Attention
 
 Standard attention computes:
@@ -175,6 +187,10 @@ output = F.scaled_dot_product_attention(q, k, v,
 
 ## Part 4 — Modern Positional Encodings
 
+> 📖 **Why this section exists:** Week 3 introduced positional embeddings (sinusoidal and learned). Modern LLMs use better alternatives that let models *generalise to longer sequences than seen in training*. This matters enormously for FAANG interviews because "how does your model handle 100K-token contexts?" is a real system design question.
+>
+> **The core problem they solve:** If a model is only trained on sequences up to 4096 tokens, what happens when you give it 8192 tokens? Sinusoidal and learned positional embeddings both fail here — the model has never seen those position values. RoPE and ALiBi are specifically designed to extrapolate gracefully.
+
 ### 4.1 RoPE (Rotary Position Embedding)
 
 Used by: LLaMA, Mistral, Falcon, GPT-NeoX, Gemma
@@ -218,6 +234,10 @@ Where `m` is a head-specific slope. This naturally penalises attending to distan
 ---
 
 ## Part 5 — Multi-Head Variants: MHA, MQA, GQA
+
+> 📖 **Why this exists:** Standard Multi-Head Attention (MHA) is memory-hungry during inference. For each request, you have to store K and V caches for *every head*. With 32 heads, that’s 32 sets of K and V tensors. On long contexts or with many concurrent users, this becomes the GPU memory bottleneck.
+>
+> Three variants address this with a key trade-off: fewer KV heads means less memory but potentially lower quality. The industry trend is towards GQA (Grouped Query Attention) — it’s what LLaMA 3, Mistral, and most modern open-source models use. You will be asked about this in FAANG LLM system design interviews.
 
 ### 5.1 Multi-Head Attention (MHA) — Original
 
@@ -272,6 +292,10 @@ k = k.reshape(batch, seq, n_heads, head_dim)  # now matches Q
 ---
 
 ## Part 6 — Mixture of Experts (MoE)
+
+> 📖 **Big picture:** Standard transformers activate *every* parameter for *every* token. MoE breaks this: it has many "expert" FFN sub-networks, and a router selects only 2-4 of them per token. This means you can have a model with 100B total parameters but only activate 14B for each token — giving you the knowledge capacity of a huge model at the inference cost of a small one.
+>
+> **The switchboard analogy:** Imagine a call centre with 100 specialists. When a call comes in, a receptionist (the router) decides which 2-3 specialists are relevant to this specific query and routes only to them. Each call gets expert attention without everyone working on every call. This is MoE: sparse activation of a large parameter pool.
 
 > **Deep-dive reference:** For the full MoE architecture with load-balancing loss formulation, PyTorch implementation, and DeepSeek-V3 analysis, see **Section 8.5** of [generative_ai_complete.md](../../Phase_2_Advanced_Systems_Jul_Sep_year_01/Month_04_July/generative_ai_complete.md).
 
@@ -345,6 +369,17 @@ class MoELayer(nn.Module):
 
 ## Part 7 — LLaMA 3 Architecture vs GPT-2: Diffs
 
+> 📖 **Big picture:** GPT-2 (2019) is the "textbook" transformer. LLaMA 3 (2024) is what a modern production transformer looks like after 5 years of research improvements. The differences are instructive: each one fixes a specific problem that GPT-2 had.
+>
+> | GPT-2 component | Problem | LLaMA 3 fix |
+> |---|---|---|
+> | Learned positional encoding | Can't generalise beyond training length | RoPE (rotary, extrapolates) |
+> | Multi-Head Attention | Too much KV cache memory | GQA (grouped query, 4× less) |
+> | GELU activation | Standard performance | SwiGLU (slightly better) |
+> | Post-LayerNorm | Training instability | Pre-RMSNorm (more stable) |
+>
+> **Interview tip:** If asked "how does LLaMA differ from GPT?", walk through this table. It demonstrates you understand *why* each choice was made, not just *what* it is.
+
 | Component | GPT-2 | LLaMA 3 (8B) |
 |---|---|---|
 | Positional Encoding | Learned absolute | RoPE |
@@ -384,6 +419,18 @@ class RMSNorm(nn.Module):
 ---
 
 ## Part 8 — Calculating Model Memory Requirements
+
+> 📖 **Why you need to know this:** When someone hands you a 70B model and says "can we serve this on our 4×A100 cluster?", you need to calculate the answer in your head. When an interviewer asks "what’s the minimum hardware to fine-tune LLaMA 3 70B?", the answer is a calculation, not a guess.
+>
+> The formula is simple: multiply parameter count by bytes-per-parameter. Then add KV cache, activations, and optimizer states. The table below gives you the multipliers.
+>
+> **Rule of thumb for inference:**
+> - fp16: parameters (GB) = model size in billions × 2
+> - e.g. LLaMA 3 8B at fp16 = 8 × 2 = **16 GB**
+>
+> **Rule of thumb for full fine-tuning (Adam):**
+> - fp32 weights + fp32 gradients + 2× fp32 optimizer states = ×16 bytes per parameter
+> - e.g. LLaMA 3 8B full fine-tune = 8B × 16 = **128 GB** (needs 2× A100 80GB at minimum)
 
 ### 8.1 Weights Memory
 
@@ -541,6 +588,12 @@ Total: ~151 GB → need 2× A100 80GB minimum
 
 ## Part 11 — Hugging Face Transformers Practical Guide
 
+> 📖 **Big picture:** Hugging Face is the GitHub of AI models. It hosts 500,000+ models and is the standard library for working with transformers in Python. As an AI engineer, you'll interact with Hugging Face daily — loading pre-trained models, running inference, fine-tuning, and even publishing models.
+>
+> **The `AutoClass` pattern:** Hugging Face uses `Auto*` classes (AutoModel, AutoTokenizer, AutoProcessor) that automatically detect the right model architecture from the model name. This means the same 3 lines of code work for GPT-2, LLaMA 3, BERT, or any other model. Learn the pattern once, use it everywhere.
+>
+> **Practical knowledge for interviews:** Interviewers will sometimes ask "how would you load and run inference on a LLaMA model?" This section gives you that answer with production details (quantisation, device mapping, chat templates).
+
 ### 11.1 Loading & Using Models
 
 ```python
@@ -628,6 +681,10 @@ models = api.list_models(filter="text-generation", sort="downloads", direction=-
 
 ## Part 12 — Vision Transformers (ViT)
 
+> 📖 **Big picture:** The transformer architecture designed for text sequences can also work on images — you just need to convert the image into a sequence. ViT does this by splitting an image into fixed-size *patches* and treating each patch like a "word token."
+>
+> **Why this matters:** Vision transformers are the backbone of modern multimodal AI (GPT-4V, Gemini, CLIP). Image embeddings are created by ViT-style encoders. Understanding ViT is the bridge between NLP transformers and multimodal systems — a topic that appears increasingly in FAANG AI engineer interviews.
+
 ### 12.1 How ViT Works
 
 Standard Transformers process sequences of tokens. ViT treats an image as a sequence of patches:
@@ -698,6 +755,10 @@ probs = outputs.logits_per_image.softmax(dim=1)  # [0.95, 0.05]
 ---
 
 ## Part 13 — Advanced Mixture of Experts (MoE) Patterns
+
+> 📖 **Big picture:** Part 6 introduced MoE conceptually. This section goes deeper into the engineering challenges: how do you *prevent all tokens from routing to the same expert* (expert collapse)? How does training differ from dense models? How does inference serve MoE models at scale?
+>
+> **Why it matters now:** GPT-4 is rumoured to be MoE. Mixtral 8x7B is open-source MoE. DeepSeek-V3 uses a novel MoE design that achieved GPT-4 quality at a fraction of the training cost. MoE is the dominant frontier for scaling transformers efficiently, making it a frequent topic in FAANG AI infrastructure interviews.
 
 > **See also:** The definitive MoE deep-dive is in **Section 8.5** of [generative_ai_complete.md](../../Phase_2_Advanced_Systems_Jul_Sep_year_01/Month_04_July/generative_ai_complete.md) — includes the load-balancing auxiliary loss, DeepSeek-V3 innovations, and dense vs MoE inference trade-off analysis.
 

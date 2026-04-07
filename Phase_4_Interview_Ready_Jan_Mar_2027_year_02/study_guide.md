@@ -17,6 +17,10 @@ By January 2027, you've spent 9 months building deep knowledge. This phase is ab
 
 # MONTH 10 (January 2027): DSA Company-Specific + Behavioral
 
+> 📖 **What changes in Phase 4:** For 9 months you’ve been building knowledge. Now the focus shifts from *learning* to *performing*. The difference is real: you can know the solution to a problem but fail to communicate it well under pressure, or know the architecture but freeze when an interviewer asks "what would you monitor?"
+>
+> **Phase 4 is about deliberate practice under test conditions:** Company-specific problem sets (different companies favour different patterns), STAR story preparation, mock loops, and application strategy. Every hour in this phase should simulate an actual interview.
+
 ## Week 1–2: LeetCode by Company
 
 ### Google LeetCode Patterns
@@ -134,6 +138,10 @@ Amazon values: **Leadership Principles expressed through code**, efficient solut
 ---
 
 ## Week 3: Behavioral Interview — STAR Stories
+
+> 📖 **Why behavioral prep matters as much as technical:** At FAANG L5+, everyone who makes it to interviews can code. Behavioral rounds differentiate candidates by leadership, ownership, and impact. A weak behavioral performance with a perfect technical round can still lead to rejection.
+>
+> **STAR stories aren’t memorised scripts — they’re structured recall.** The goal is to have 8-10 clear stories from your career that can be adapted to different questions. The same story about a production incident might answer "tell me about a time you failed", "tell me about working under pressure", and "tell me about a time you made a technical decision others disagreed with."
 
 ### The STAR Framework
 
@@ -454,6 +462,10 @@ Project 5: LLM Evaluation Dashboard
 ---
 
 # MONTH 11 (February 2027): Full Mock Interview Loops
+
+> 📖 **The most important month:** Nothing builds interview muscle like full mock loops under time pressure. By February, your knowledge is complete. The bottleneck is now execution: explaining your thinking while coding, structuring system design answers, keeping STAR answers under 3 minutes.
+>
+> **The rule of 10:** You need at least 10 full mock loops before your first real interview. Each one should include all three rounds (coding + system design + behavioral), followed by honest self-assessment. If you’re not failing some mocks, the mocks are too easy.
 
 ## Mock Interview Schedule
 

@@ -24,6 +24,8 @@
 
 ## 1. Advanced Data Structures
 
+> 📖 **Big picture:** Standard Python lists and dicts get you far, but they’re not always the right tool. Python’s `collections` module gives you purpose-built data structures that make common patterns much cleaner and often faster. `defaultdict` removes the "handle missing key" boilerplate you’d otherwise write every time. `Counter` replaces a 3-line frequency loop with one call. `deque` gives you O(1) insertions at both ends (lists are O(n) for left-end insertions). In production AI code, you’ll use all of these constantly.
+
 ### Collections Module
 
 ```python
@@ -111,6 +113,8 @@ unique = list(dict.fromkeys(items))  # [3, 1, 4, 5, 9, 2, 6]
 ---
 
 ## 2. Functions, Decorators & Generators
+
+> 📖 **Big picture:** These three features let you write production-quality Python. **Decorators** wrap functions to add behaviour (retry logic, logging, caching, auth checks) without modifying the function itself — every LLM API call in production uses a retry decorator. **Generators** let you process huge datasets lazily (one item at a time) rather than loading everything into memory — critical when processing millions of documents. **Closures** let functions remember state, enabling factory patterns.
 
 ### Lambda & Higher-Order Functions
 
@@ -271,6 +275,13 @@ def torch_inference():
 ---
 
 ## 3. Object-Oriented Programming
+
+> 📖 **Big picture:** OOP is how you structure production AI systems. A well-designed class hierarchy means you can swap out model providers without changing business logic, add new tools to an agent without touching existing code, and write tests without mocking entire systems.
+>
+> For AI engineers, the most important OOP patterns are:
+> - **Abstract base class** — defines a common interface (e.g. `BaseModel.predict()`) so different models (GPT-4, LLaMA, Claude) are interchangeable
+> - **Context manager** (`with` statement) — ensures resources (API sessions, database connections) are always cleaned up, even on errors
+> - **Dataclass** — clean, type-annotated data containers without boilerplate `__init__`
 
 ### Classes & Inheritance
 
@@ -543,6 +554,8 @@ if (data_dir / "embeddings.npy").exists():
 
 ## 5. REST APIs & HTTP
 
+> 📖 **Big picture:** Every LLM interaction in production is an HTTP request. OpenAI, Anthropic, Cohere, HuggingFace — they all expose REST APIs. You’ll use `requests` for synchronous calls and `aiohttp` for async. The most important habit: always handle errors explicitly (`raise_for_status()`), always set timeouts, and always have retry logic for transient failures.
+
 ```python
 import requests
 
@@ -604,6 +617,10 @@ for chunk in response.iter_lines():
 ---
 
 ## 6. Async Python
+
+> 📖 **Big picture:** LLM API calls are I/O-bound — you send a request and wait for the model server to respond. With synchronous code, your program sits idle during that wait. Async Python lets you fire off 100 LLM calls simultaneously and process responses as they arrive. For bulk embedding generation, document classification at scale, or any batch LLM pipeline, async is 10-50× faster than sequential.
+>
+> **The taxi analogy:** Synchronous code is a taxi driver who takes one passenger, drives them to their destination, comes back, then picks up the next. Async is Uber: take many requests, handle them all concurrently, respond as each completes.
 
 ```python
 import asyncio

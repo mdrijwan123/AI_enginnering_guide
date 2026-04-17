@@ -11,6 +11,9 @@
 
 ### RLHF Concepts (Preview — Deep dive in Month 9)
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> **Pre-training** an LLM is like teaching a dog English by making it read the entire internet — it knows words, but it's wildly unpredictable. **RLHF (Reinforcement Learning from Human Feedback)** is the dog obedience training. You ask the dog to sit. If it sits politely, you give it a treat (high reward). If it bites the furniture, you give it no treat (low reward). Over time, the model learns human preferences.
+
 **Reinforcement Learning from Human Feedback:**
 ```
 1. Pre-train base LLM (next-token prediction)
@@ -29,6 +32,9 @@ Used by: Zephyr, OpenHermes, many open-source instruction models
 ```
 
 ### Constitutional AI (Anthropic's Approach)
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine a **writer and a strict editor** inside the same brain. The writer generates a draft response. The editor (the "Constitution") checks the draft against a rulebook: "Does this instruction help someone build a bomb?" If yes, the editor rejects it, and the writer creates a new, safe draft *before* the user ever sees anything.
 
 ```python
 # Constitutional AI process:

@@ -25,6 +25,10 @@ By the end of these two weeks you will be able to:
 > The **monotonic stack** is the advanced pattern that unlocks hard problems: you maintain the stack in sorted order, and whenever a new element breaks the order, you pop everything smaller — and those popped elements have just *found their answer* (the new element is their "next greater element"). This gives O(n) solutions to problems that otherwise require O(n²).
 
 ### 1.1 Stack LIFO Operations
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> A stack is exactly like the "Undo" button (Ctrl+Z) on your computer, or a physical stack of pancakes. You have to eat the top pancake before you can get to the bottom ones. The last action you performed is the very first one you undo. This is LIFO: Last In, First Out.
+
 Stack = Last-In First-Out. Python `list` works perfectly as a stack.
 
 ```python
@@ -152,6 +156,9 @@ def largestRectangleArea(heights):
 > **The off-by-one trap:** Most binary search bugs come from the exit condition and mid-pointer update. The template below is battle-tested — memorise it and adapt `while left < right` vs `while left <= right` based on whether you want `left` to converge into the answer or `left` to converge past it.
 
 ### 2.1 The Template
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> If you have a physical phone book and want to find "Smith", you don't read page 1, then page 2, then page 3 (doing an O(n) search). You open it exactly in the middle. You land on the M's. You know S comes after M, so you immediately rip the first half of the book out and throw it away. You just halved your search space. You repeat this until you find Smith.
 
 Binary search finds a target in a **sorted** space (array or "answer space") in O(log n).
 
@@ -360,6 +367,11 @@ class LRUCache:
 > **Recursion is the natural language of trees.** For most tree problems, think: "What do I do at this node? What do I return to my parent?" Then recursion handles the rest automatically.
 
 ### 4.1 Tree Traversals
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine exploring a family tree. 
+> * **Depth-First Search (DFS):** You trace an entire bloodline completely to the oldest ancestor before you ever look at siblings or cousins.
+> * **Breadth-First Search (BFS / Level-order):** You look at all the children first. Then you look at all the grandchildren. Then all the great-grandchildren. You look row by row.
 
 ```python
 class TreeNode:

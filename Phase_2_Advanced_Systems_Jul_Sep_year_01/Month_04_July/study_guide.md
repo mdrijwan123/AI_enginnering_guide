@@ -5,6 +5,9 @@
 
 ## Week 1–2: Dynamic Programming
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine someone asks you to calculate 1+1+1+1+1+1+1+1. You count them up and say "8". Then they add another "+1" to the end and ask what the answer is now. You don't recount from the beginning; you just remember that the previous answer was 8, add 1, and say "9". That is Dynamic Programming: remembering past answers so you don't have to recalculate them.
+
 > 📖 **Big picture:** Dynamic Programming (DP) is the algorithm technique that turns exponential-time solutions (“try all possibilities”) into polynomial-time solutions by storing and reusing intermediate results.
 >
 > **The core idea:** Many problems have *overlapping subproblems* where the same computation appears multiple times. DP says: compute it once, store the result, and reuse it. This transforms recursive solutions that branch exponentially into iterative (or memoised) solutions that run in O(n) or O(n²).
@@ -199,6 +202,9 @@ def minDistance(word1, word2):
 ---
 
 ## Week 3–4: Multi-Agent Systems
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine trying to run a restaurant all by yourself: you are the chef, the waiter, and the cashier. It gets overwhelming fast. A Multi-Agent System is like hiring a team: instead of one single LLM trying to do everything, you have a Chef Agent (writes code), a Waiter Agent (handles user requests), and a QA Agent (tastes the food/tests the code) working together seamlessly.
 
 > 📖 **Big picture:** A single LLM agent can handle many tasks, but it has limitations: context window overflows for complex multi-step tasks, one model can’t be a simultaneous expert in code generation AND data analysis AND report writing, and one agent can’t work in parallel.
 >

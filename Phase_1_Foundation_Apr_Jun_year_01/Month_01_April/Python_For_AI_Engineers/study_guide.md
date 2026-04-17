@@ -24,6 +24,8 @@
 
 ## 1. Advanced Data Structures
 
+> 💡 **ELI5 (Explain Like I'm 5):** Think of normal Python lists and dicts like a basic hammer and screwdriver. They work for almost everything, but sometimes you need a power drill. Advanced data structures are power tools designed for specific jobs—like counting items instantly or preventing errors when a key doesn't exist.
+
 > 📖 **Big picture:** Standard Python lists and dicts get you far, but they’re not always the right tool. Python’s `collections` module gives you purpose-built data structures that make common patterns much cleaner and often faster. `defaultdict` removes the "handle missing key" boilerplate you’d otherwise write every time. `Counter` replaces a 3-line frequency loop with one call. `deque` gives you O(1) insertions at both ends (lists are O(n) for left-end insertions). In production AI code, you’ll use all of these constantly.
 
 ### Collections Module
@@ -113,6 +115,10 @@ unique = list(dict.fromkeys(items))  # [3, 1, 4, 5, 9, 2, 6]
 ---
 
 ## 2. Functions, Decorators & Generators
+
+> 💡 **ELI5 (Explain Like I'm 5):** 
+> * **Decorators** are like add-ons for your functions. Imagine a function makes a sandwich. A decorator is a machine that automatically puts the sandwich in a bag and labels it without you having to change the sandwich-making function.
+> * **Generators** are like a water filter pitcher. Instead of trying to filter a whole lake at once (which takes too much memory/space), it filters one glass of water at a time as you ask for it.
 
 > 📖 **Big picture:** These three features let you write production-quality Python. **Decorators** wrap functions to add behaviour (retry logic, logging, caching, auth checks) without modifying the function itself — every LLM API call in production uses a retry decorator. **Generators** let you process huge datasets lazily (one item at a time) rather than loading everything into memory — critical when processing millions of documents. **Closures** let functions remember state, enabling factory patterns.
 
@@ -275,6 +281,8 @@ def torch_inference():
 ---
 
 ## 3. Object-Oriented Programming
+
+> 💡 **ELI5 (Explain Like I'm 5):** OOP is like using blueprints to build houses. Instead of building a house from scratch by throwing wood and nails together (procedural code), you create a blueprint (`Class`) that describes what a house has (doors, windows) and what it can do (open garage). Then you can effortlessly build 100 actual houses (`Objects`) from that one blueprint.
 
 > 📖 **Big picture:** OOP is how you structure production AI systems. A well-designed class hierarchy means you can swap out model providers without changing business logic, add new tools to an agent without touching existing code, and write tests without mocking entire systems.
 >

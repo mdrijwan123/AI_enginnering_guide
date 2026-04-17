@@ -20,9 +20,37 @@ FAANG companies each have distinct behavioral lenses:
 
 > 💡 **The STAR format works for all of them.** The framing differs but the stories don't.
 
+> 🃏 **Quick-Reference — Amazon's 16 Leadership Principles**
+> | LP | What They're Really Asking |
+> |---|---|
+> | Customer Obsession | Did you prioritise user impact over internal convenience? |
+> | Ownership | Did you go beyond your job scope? Did you take responsibility for failures? |
+> | Invent & Simplify | Did you find a clever, simpler solution? Did you reduce complexity? |
+> | Are Right, A Lot | Did you make good decisions with imperfect data? Did you update your views with evidence? |
+> | Learn & Be Curious | Did you teach yourself something new? Did you challenge assumptions? |
+> | Hire & Develop the Best | Did you raise the bar? Did you mentor someone? |
+> | Insist on Highest Standards | Did you push back on "good enough"? Did you catch quality issues? |
+> | Think Big | Did you have a bold vision? Was your scope larger than the immediate task? |
+> | Bias for Action | Did you move fast under uncertainty? Did you avoid analysis paralysis? |
+> | Frugality | Did you accomplish more with less? Did you avoid unnecessary spending? |
+> | Earn Trust | Did you disagree and commit? Did you deliver on promises? |
+> | Dive Deep | Did you get into the technical details? Did you catch something others missed? |
+> | Backbone | Did you disagree with a more senior person when you were right? |
+> | Deliver Results | Did you ship it despite obstacles? What was the measurable outcome? |
+> | Strive to Be the Best | Did you benchmark against the best in class, not just within your team? |
+> | Success & Scale | Did you consider the broader impact of your decisions? |
+>
+> **Tip:** Prepare 8–10 strong stories. Each story can cover multiple LPs depending on how you frame it.
+>
+> **Meta Pillars:** Move Fast | Build Awesome Things | Be Bold | Be Direct | Respect | Care for Others
+> **Google Googleyness:** Intellectual humility | Comfort with ambiguity | Genuine collaboration | Enjoys a challenge without ego
+
 ---
 
 ## 📐 STAR Framework — The Template
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> The STAR format is like telling a good superhero origin story. First, tell us the world was in danger (Situation). Then tell us it was YOUR job to save it (Task). Then explain exactly what lasers you fired and gadgets you built to save the day (Action). Finally, show us the world celebrating you and what you learned from the fight (Result).
 
 ```
 S — Situation:  Set the scene. What was the context? 2–3 sentences max.

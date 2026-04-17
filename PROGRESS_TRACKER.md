@@ -2,6 +2,9 @@
 > **Start Date:** April 6, 2026 | **Target:** April 2027
 > Update this file daily. Mark items ✅ when done, 🔄 in-progress, ⏳ not started.
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Progress tracking isn't about being perfect every day; it's like brushing your teeth. Doing it for 5 minutes every single day prevents cavities far better than doing it for 3 hours once a month. This tracker is your daily "toothbrush" for your career.
+
 ---
 
 ## 🗓️ Current Week at a Glance

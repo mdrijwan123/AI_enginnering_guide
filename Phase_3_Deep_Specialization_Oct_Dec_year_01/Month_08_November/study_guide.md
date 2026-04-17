@@ -39,6 +39,9 @@ For 4096 token sequence: 128 KB × 4096 = 512 MB  (for ONE request!)
 
 ### PagedAttention: vLLM's Core Innovation
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> PagedAttention is like managing tables at a restaurant. Previously, restaurants would reserve an entire large table for a party of 8 even if only 2 showed up, wasting space (static KV cache). PagedAttention only assigns seats precisely when a person sits down, letting the restaurant serve instantly without wasting space.
+
 **Insight:** KV cache is like virtual memory in an OS. Use paging!
 
 ```
@@ -73,28 +76,52 @@ Benefits:
 
 ### vLLM Architecture
 
-```
-                        ┌─────────────────────────────────┐
-HTTP Requests ──────────►  FastAPI Server (REST/OpenAI)   │
-                        └──────────────┬──────────────────┘
-                                       │
-                        ┌──────────────▼──────────────────┐
-                        │      LLM Engine                  │
-                        │  ┌────────────────────────────┐  │
-                        │  │   Scheduler               │  │
-                        │  │  - Prefill vs Decode order │  │
-                        │  │  - Continuous batching     │  │
-                        │  │  - Block allocator         │  │
-                        │  └────────────┬───────────────┘  │
-                        │               │                   │
-                        │  ┌────────────▼───────────────┐  │
-                        │  │   Model Executor           │  │
-                        │  │  - Loads batched request   │  │
-                        │  │  - Runs forward pass       │  │ 
-                        │  │  - Distributed (tp/pp)     │  │
-                        │  └────────────────────────────┘  │
-                        └─────────────────────────────────┘
-```
+> 📐 **End-to-End Production LLM Serving Pipeline (Annotated)**
+>
+> ```
+>  CLIENT (Python / curl / any HTTP)
+>      │
+>      │  POST /v1/chat/completions
+>      ▼
+>  ┌────────────────────────────────────────────────────────────┐
+>  │  FastAPI Server (OpenAI-compatible REST)                   │
+>  │  • Validates request schema                                │
+>  │  • Applies rate limiting                                   │
+>  │  • Streams SSE tokens back to client                       │
+>  └──────────────────────┬─────────────────────────────────────┘
+>                         │ AsyncLLMEngine.add_request()
+>                         ▼
+>  ┌────────────────────────────────────────────────────────────┐
+>  │  Scheduler  (the heart of vLLM)                           │
+>  │  • Decides which requests run this iteration               │
+>  │  • Splits requests into PREFILL (prompt) vs DECODE (gen)   │
+>  │  • Implements continuous batching:                         │
+>  │      → New requests join mid-flight, no waiting            │
+>  │  • Block Allocator: allocates/frees KV cache pages         │
+>  │      → Like OS virtual memory: paged, non-contiguous       │
+>  └──────────────────────┬─────────────────────────────────────┘
+>                         │ Batch of token_ids + KV block tables
+>                         ▼
+>  ┌────────────────────────────────────────────────────────────┐
+>  │  Model Executor                                           │
+>  │  • Distributes batch across GPUs (Tensor Parallelism)      │
+>  │  • Runs ONE forward pass (NOT per-request, per-batch)      │
+>  │  • Flash Attention reads/writes KV blocks in place         │
+>  │  • Sampling: temperature / top-p / top-k → next tokens     │
+>  └──────────────────────┬─────────────────────────────────────┘
+>                         │ sampled_token_ids
+>                         ▼
+>  ┌────────────────────────────────────────────────────────────┐
+>  │  Detokeniser + Output Handler                             │
+>  │  • Maps token IDs → text strings                           │
+>  │  • Checks stop conditions (max_tokens, stop sequences)     │
+>  │  • Streams completed tokens back to FastAPI                │
+>  └────────────────────────────────────────────────────────────┘
+>
+>  KEY INSIGHT: All requests share ONE forward pass per step.
+>  GPU utilisation stays near 100% because the batch is always full.
+>  This is why vLLM achieves 23× higher throughput than naive serving.
+> ```
 
 **Continuous Batching (vs Static Batching):**
 ```
@@ -185,6 +212,9 @@ for prompt, output in zip(prompts, outputs):
 
 ### Tensor Parallelism & Pipeline Parallelism
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine carrying a piano. One person can't lift it alone. **Tensor Parallelism** is like splitting the piano in half and two people each carrying half simultaneously. **Pipeline Parallelism** is like a relay race where person 1 carries the piano up the first flight of stairs, then hands it to person 2 for the second flight.
+
 **Tensor Parallelism (TP):** Split a single weight matrix across N GPUs.
 
 ```
@@ -224,6 +254,21 @@ vLLM command:
 ```
 
 ---
+
+> 🃏 **Quick-Recall Card — vLLM & LLM Serving at Scale**
+> | Concept | One-liner |
+> |---|---|
+> | PagedAttention | Allocates KV cache in fixed pages (like OS virtual memory) — no wasted reserved space. |
+> | Continuous Batching | New requests join a running batch immediately, no waiting for the current batch to finish. |
+> | TTFT | Time To First Token — latency of the Prefill phase. Watched by UX teams. |
+> | TBT | Time Between Tokens — latency of each Decode step. Watched by streaming quality teams. |
+> | Tensor Parallelism | Split each weight matrix across N GPUs (column-wise). AllReduce after each layer. |
+> | Pipeline Parallelism | Split layers across GPUs (GPU0 → early layers, GPU1 → later layers). Relay-race model. |
+> | Quantization INT8 | fp16 weights → int8. 2× memory reduction, ~5% accuracy cost. Use for serving 70B+ models. |
+> | Speculative Decoding | Small draft model predicts K tokens; big model verifies in 1 pass. 2–3× decode speedup. |
+> | KV cache key formula | `2 × layers × kv_heads × head_dim × bytes_per_element` per token |
+>
+> **Interview answer for "how would you serve a 70B model?":** *vLLM with PagedAttention + INT8 quantization + Tensor Parallelism across 4×A100 GPUs, tracking TTFT/throughput.*
 
 ### Benchmarking LLM Inference
 
@@ -279,6 +324,9 @@ Under load (32 concurrent requests, vLLM):
 ### Week 2: Advanced Serving Patterns
 
 ### Speculative Decoding (Deep Dive)
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine a senior software engineer (the huge model) pair programming with a fast junior developer (the small model). The fast junior types out 5 lines of code instantly. The senior simply glances at the code and says "yes, looks good," approving it all at once rather than typing it themselves. The whole process is dramatically faster.
 
 ```
 Problem: Decode phase is memory-bandwidth bound, not compute-bound

@@ -4,6 +4,9 @@
 > **Timeline:** April 2026 → April 2027  
 > **Daily Commitment:** ~2.5 hrs weekdays | 3–4 hrs Saturday | 3 hrs Sunday
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> This whole plan is like learning to explore space. Phase 1 teaches you how gravity works and what the buttons do. Phase 2 puts you in a flight simulator with co-pilots (Agents). Phase 3 shows you how the engine is built and how to fix it in orbit. Phase 4 gets you ready for your astronaut exam.
+
 ---
 
 ## � Current Status — Week 1 · April 6, 2026

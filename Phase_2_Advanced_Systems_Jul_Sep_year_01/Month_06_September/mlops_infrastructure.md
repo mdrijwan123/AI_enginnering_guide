@@ -23,6 +23,9 @@
 
 ## 1. Docker for ML
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Docker is like a **standardised shipping container**. In the past, software was like shipping individual chairs and barrels — every ship had to be custom-packed, and things broke in transit ("It worked on my machine!"). Docker packs your code and all its dependencies into an identical, secure box. If it runs on your laptop, it will run exactly the same way in the cloud.
+
 ### Dockerfile for ML Applications
 
 ```dockerfile
@@ -139,6 +142,9 @@ docker system prune -a  # Cleanup unused images
 ---
 
 ## 2. Kubernetes Essentials
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> If your Docker container is the shipping container, **Kubernetes is the intelligent port manager**. If your app suddenly gets a million users, Kubernetes automatically orders more ships (scaling). If a ship sinks, Kubernetes replaces it automatically (self-healing). You just tell the manager how you want the port to run, and it handles the chaos.
 
 ### Core Concepts
 

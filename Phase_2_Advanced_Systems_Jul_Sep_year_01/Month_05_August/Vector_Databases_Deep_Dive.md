@@ -7,6 +7,9 @@
 
 ## Part 1 — Why Vector Databases?
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> A traditional database is like a **library card catalog**: to find a book, you need the exact ISBN or exact title. A Vector Database is like walking up to the **library's smartest clerk**. You say, *"I want something that feels like Harry Potter but with space ships instead of wands,"* and they instantly hand you *Dune*.
+
 Traditional databases (SQL/NoSQL) find data by **exact match** or **range queries**:
 ```sql
 SELECT * FROM products WHERE category = 'electronics' AND price < 100

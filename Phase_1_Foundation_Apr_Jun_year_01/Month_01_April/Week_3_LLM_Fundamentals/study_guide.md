@@ -91,7 +91,7 @@ Now the model works with numbers `[40, 2928, 17953]` — never the original lett
 
 ### 2.2 Byte-Pair Encoding (BPE) — GPT's Tokenizer
 
-> 📖 **Plain English first:** BPE is like having a really smart autocomplete that notices which letter combinations appear together all the time. If the letters "i" and "n" and "g" always appear together at the end of words, it makes sense to treat "ing" as one unit rather than three separate letters. BPE formalises this idea: start with individual characters, then keep merging the most common pairs until you've built a vocabulary of ~50,000 units. Common words become single tokens; rare words are broken into recognisable sub-pieces.
+> 💡 **ELI5 (Explain Like I'm 5):** BPE is like having a really smart autocomplete that notices which letter combinations appear together all the time. If the letters "i" and "n" and "g" always appear together at the end of words, it makes sense to treat "ing" as one unit rather than three separate letters. BPE formalises this idea: start with individual characters, then keep merging the most common pairs until you've built a vocabulary of ~50,000 units. Common words become single tokens; rare words are broken into recognisable sub-pieces.
 
 BPE starts with individual characters and iteratively merges the most frequent adjacent pairs:
 
@@ -173,7 +173,7 @@ An embedding is a **dense vector representation** learned to capture semantic me
 
 ### 3.2 How Token Embeddings Work in LLMs
 
-> 📖 **Plain English:** Before a word enters the transformer, it gets converted from a token ID (just a number) into a rich vector. This happens via an *embedding table* — think of it like a very large dictionary where every word has an entry, and instead of a text definition, the entry is a list of ~768 numbers that encode meaning.
+> 💡 **ELI5 (Explain Like I'm 5):** Before a word enters the transformer, it gets converted from a token ID (just a number) into a rich vector. This happens via an *embedding table* — think of it like a very large dictionary where every word has an entry, and instead of a text definition, the entry is a list of ~768 numbers that encode meaning.
 >
 > So the model looks up "cat" → finds row 3797 in the embedding table → gets back a 768-number vector. Now "cat" has been translated into a language the transformer can work with — pure maths.
 

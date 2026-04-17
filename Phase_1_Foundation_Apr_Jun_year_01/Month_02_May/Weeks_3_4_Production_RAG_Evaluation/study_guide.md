@@ -18,11 +18,10 @@ By the end of these two weeks you will be able to:
 
 ## Part 1 — What Is RAG?
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine taking an exam. Without RAG, an LLM is taking a *closed-book exam*. It has to answer based purely on what it memorised in "school" (training). If it doesn't know, it might confidently guess (hallucinate). With RAG, it's an *open-book exam*. Before answering, you *retrieve* the exact relevant pages from your filing cabinet, hand them to the LLM, and say "Answer the question using *only* these pages."
+
 > 📖 **Big picture:** LLMs are trained on data up to a cutoff date. After that, they know nothing about what happened. They also can't read your company's private documents, your internal Confluence wiki, or last week's earnings report. And when asked about things they don't know well, they confidently make up answers (hallucination).
->
-> **RAG (Retrieval-Augmented Generation)** is the solution: before asking the LLM to answer, *retrieve* the relevant documents from your knowledge base and *inject* them into the prompt. The LLM is now answering based on actual documents, not memory. It's like the difference between asking someone a question from memory versus letting them look up the answer in the right textbook first.
->
-> **Why every AI product uses it**: RAG is the default architecture for any system that needs to answer questions about specific, recent, or proprietary information: enterprise chatbots, customer support systems, legal research tools, medical information systems. Understanding it deeply is non-negotiable for an AI engineer interview.
 
 ### 1.1 The Problem RAG Solves
 
@@ -98,11 +97,10 @@ User Query
 
 ## Part 3 — Chunking Strategies
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine a book has 500 pages. If you scan the whole book into one giant block, a search for "Chapter 3" pulls up the entire book. The bit you care about gets drowned out by 499 pages of irrelevant noise. Instead, we chunk the book into 200-word blocks. Now a search for "Chapter 3" quickly retrieves the *exact* block of text you need without the noise. 
+
 > 📖 **Why chunking is surprisingly important:** Chunking is how you split documents (PDFs, web pages, knowledge base articles) into pieces before embedding them. It sounds trivial but is one of the biggest quality levers in a RAG system.
->
-> **The book analogy:** Imagine a book has 500 pages. If you embed the whole book as one vector, a question about Chapter 3 will retrieve the entire book. The relevant passage gets "averaged out" by 499 pages of irrelevant content. Instead, you embed the book in 200-word chunks. Now a question about Chapter 3 retrieves the specific relevant chunk.
->
-> **The goldilocks problem:** Too small = a chunk might only contain half a sentence (loses context). Too large = diluted meaning (retrieves irrelevant content alongside relevant). The sweet spot is usually 256-512 tokens with 50-100 token overlaps between chunks (so sentences that span chunk boundaries are covered).
 
 ### 3.1 Why Chunking Matters
 
@@ -111,6 +109,38 @@ Embedding models have a maximum input length (typically 512 tokens). Even if the
 **The chunking dilemma:**
 - Too small chunks: miss context, "the answer requires knowing the surrounding para"
 - Too large chunks: diluted embeddings, injecting irrelevant content into prompts
+
+> ⚠️ **Before/After: Chunking Quality Impact**
+>
+> **❌ BEFORE — 2,000-character fixed chunks, no overlap:**
+> ```
+> Query: "What is the recommended dosage of lisinopril for hypertension?"
+>
+> Retrieved chunk (2000 chars):
+> "...Lisinopril is an ACE inhibitor. It works by relaxing blood vessels.
+>  History: approved in 1987. Side effects include dry cough, dizziness,
+>  elevated potassium. In 2003, a large trial showed... Also used for
+>  heart failure. Generic versions include... Interactions with NSAIDs...
+>  [dosage information buried and cut off at chunk boundary]"
+>
+> LLM answer: "The document discusses lisinopril but I cannot confirm the
+> exact dosage." ← HALLUCINATION RISK
+> ```
+>
+> **✅ AFTER — 512-character chunks, 50-char overlap, structure-aware:**
+> ```
+> Query: "What is the recommended dosage of lisinopril for hypertension?"
+>
+> Retrieved chunk (in the exact relevant section):
+> "Dosage for hypertension: Initial dose 10mg once daily. Increase to
+>  20–40mg based on response. Maximum 80mg/day. Renal impairment: start
+>  at 5mg. Monitor BP at 2-4 weeks."
+>
+> LLM answer: "For hypertension, lisinopril is started at 10mg daily,
+> titrated to 20–40mg based on blood pressure response." ← PRECISE
+> ```
+>
+> **The fix:** Smaller chunks + overlap + structure-aware splitting so answers aren't cut at boundaries.
 
 ### 3.2 Chunking Strategies
 
@@ -239,11 +269,12 @@ The [MTEB (Massive Text Embedding Benchmark)](https://huggingface.co/spaces/mteb
 
 ## Part 5 — Vector Databases
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> A regular database is like walking into a library and asking the librarian for a book using its exact ISBN number (exact match). A vector database is like telling the librarian "I want books *similar in plot and feeling* to Harry Potter". The librarian doesn't check every single book; they instantly point you to the fantasy section. It searches by *meaning*.
+
 > 📖 **Big picture:** A vector database is a database optimised for one specific operation: "given a query vector, find the K most similar vectors in my collection."
 >
-> **Why you can’t use a regular database:** In a normal database, you find exact matches (WHERE name = 'Alice'). Similarity search is different: you want the K vectors *closest* in meaning to your query. Checking exact distance between a query and all 10 million stored vectors would take seconds. Vector databases use clever indexes (like HNSW) to find approximate nearest neighbours in milliseconds.
->
-> **The library catalogue analogy:** A regular database is like looking up a book by exact ISBN. A vector database is like telling a librarian "I want books *similar in topic* to this one" and getting the 5 best matches in milliseconds rather than scanning all 10,000 books.
+> **Why you can't use a regular database:** In a normal database, you find exact matches (WHERE name = 'Alice'). Similarity search is different: you want the K vectors *closest* in meaning to your query. Checking exact distance between a query and all 10 million stored vectors would take seconds. Vector databases use clever indexes (like HNSW) to find approximate nearest neighbours in milliseconds.
 
 ### 5.1 What Is a Vector Database?
 

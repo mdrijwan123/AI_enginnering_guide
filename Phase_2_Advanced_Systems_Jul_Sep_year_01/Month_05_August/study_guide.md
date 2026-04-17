@@ -32,6 +32,9 @@ print(kv_cache_memory_gb(32, 8, 128, 4096, 8))  # ~8.6 GB
 
 ### INT8 Quantisation in Practice
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine packing clothes for an international trip. **FP16** is folding every shirt perfectly and placing it delicately into your suitcase. It preserves every detail but takes up lots of space. **INT8 Quantisation** is tightly rolling up the shirts and shoving them in. They might have a few wrinkles when you unpack them (~1% quality drop), but you can fit twice as many clothes in the exact same bag!
+
 ```python
 # bitsandbytes INT8 quantisation (LLM.int8())
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig
@@ -123,6 +126,9 @@ def speculative_decode(target_model, draft_model, input_ids, gamma=4):
 > Released by Anthropic in November 2024 and rapidly adopted across the industry (including by OpenAI, Google, and Microsoft), MCP is becoming the standard way to give AI agents access to the real world. Understanding it deeply is a genuine differentiator in 2026 interviews.
 
 ### What Is MCP?
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Think of MCP as a **universal travel adapter** for AI. Without it, your AI needs a completely different cord for every country (a custom API integration for Slack, another for GitHub, a third for Postgres). With MCP, you just plug your AI into the universal adapter, and the adapter magically handles the connection to any tool or database in the world.
 
 MCP is Anthropic's open protocol (Nov 2024) for connecting AI models to external data sources and tools in a **standardised way**.
 
@@ -307,6 +313,9 @@ if __name__ == "__main__":
 > - Quality drift: model provider updates their model, behaviour changes without notice
 >
 > LangSmith, RAGAS, Arize, and Weights & Biases are the tools that let you catch and fix these before users notice.
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Deploying an LLM is like **flying a commercial airplane**. You can't just point it at the sky, close your eyes, and hope it lands safely. You need a dashboard with dials (tracking latency, cost, and hallucination rates) and alarms (guardrails) so you can course-correct before crashing. That dashboard is LLMOps.
 
 ### The LLMOps Stack
 

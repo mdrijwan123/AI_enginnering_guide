@@ -7,6 +7,9 @@
 
 ## Part 1 — Why LLM Evaluation Is Hard
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Evaluation in traditional ML is like **grading a math test**: 2+2=4. It's either right or wrong. Evaluating LLMs is like **grading an English essay**. A student might be factually correct but have terrible grammar, or write a beautifully structured story that completely ignores the prompt. You can't capture that with a single score.
+
 "Does the model give a good answer?" is a deceptively simple question with no clean answer. In traditional ML, evaluation is straightforward: you have a fixed label space, you compute accuracy or F1, and you're done. LLMs break every assumption that makes this easy.
 
 With classical models, outputs are deterministic and come from a finite label space — you can always compare a prediction to a ground truth label. With LLMs, outputs are stochastic (run the same query twice and you get different text), correctness is often subjective or context-dependent, and sometimes there is simply no single "right" answer. An LLM that politely declines to help with a harmful request is producing a *correct* output — but a naive accuracy metric would score it as a failure.
@@ -161,6 +164,9 @@ print(f"BERTScore F1: {F1.mean().item():.3f}")
 ## Part 3 — RAG-Specific Evaluation: RAGAS
 
 ### 3.1 RAGAS Metrics Overview
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> RAGAS is like a food critic diagnosing a **terrible meal at a restaurant**. If the meal is bad, was it because the ingredients delivered were rotten (bad **Retrieval / Context Precision**) or because the chef burned perfectly good ingredients in the kitchen (bad **Generation / Faithfulness**)? RAGAS breaks down exactly where the pipeline failed.
 
 RAGAS (Retrieval-Augmented Generation Assessment) is designed to evaluate the full RAG pipeline rather than just the final answer. A RAG system can fail in at least two distinct places: the *retriever* might not find the right context, or the *generator* might not faithfully use the context it was given. RAGAS measures both failure modes with four complementary metrics, each of which answers a different diagnostic question about where the system is breaking down.
 

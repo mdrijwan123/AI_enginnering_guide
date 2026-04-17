@@ -26,6 +26,9 @@ By the end of this week you will be able to:
 
 ### 1.1 The Core Idea
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> You're managing a seesaw, trying to perfectly balance a heavy adult and a light child to hit a combined weight of exactly 100 kg. If the total is too heavy, you bring the adult closer to the centre (move the right pointer left). If the total is too light, you push the child further out (move the left pointer right). You don't try every possible combination randomly; you adjust methodically based on whether you're too heavy or too light.
+
 Two pointers uses two indices (`left`, `right` or `slow`, `fast`) to avoid the O(n²) nested loop.
 
 **When to use:**
@@ -192,6 +195,9 @@ def trap(height):
 > 2. **Variable-size:** You decide when to shrink. You expand right aggressively, then shrink left when the window violates a constraint (e.g. more than 2 distinct characters). The tricky part is always: *what is the shrink condition?*
 
 ### 2.1 The Core Idea
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine looking out of a narrow train window at a beautiful mountain range passing by. You can only see 3 mountains at a time. To see the next mountain, your window slides right: one mountain disappears on the left, and a new one appears on the right. You never look at ALL the mountains from scratch again. A sliding window in code just adds the newest item on the right and drops the oldest item on the left.
 
 A sliding window maintains a contiguous subarray between `left` and `right` indices. You slide it across the array to ask: "What's the best window satisfying condition X?"
 

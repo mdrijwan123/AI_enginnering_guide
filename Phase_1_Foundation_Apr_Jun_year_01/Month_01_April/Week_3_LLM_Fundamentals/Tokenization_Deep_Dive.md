@@ -7,6 +7,9 @@
 
 ## Part 1 — What Is Tokenization?
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine you want to feed a whole book to a computer, but the computer only understands numbers. You could give every single letter a number (a=1, b=2), but reading letter-by-letter is too slow. You could give every whole word a number ("apple" = 500), but there are too many unique words in the world! Tokenization is the Goldilocks solution: we break text into chunks (often common syllables or word parts) and give *those* chunks numbers. "Unbelievable" might become ["Un", "believ", "able"].
+
 Tokenization converts raw text into the discrete units (tokens) that an LLM processes. It sits at the boundary between human language and the model's mathematical world.
 
 ```
@@ -243,6 +246,20 @@ A **larger vocabulary** (e.g., 100K–256K like GPT-4 or Gemma) dedicates tokens
 **Rule of thumb for model selection:** Larger vocabulary models are generally better for code generation, multilingual tasks, and domains with dense technical vocabulary. Smaller vocabulary models are lighter to serve and simpler to fine-tune on constrained hardware.
 
 ---
+
+> 🃏 **Quick-Recall Card — Tokenization**
+> | Concept | One-liner |
+> |---|---|
+> | BPE (Byte Pair Encoding) | Merge most frequent adjacent byte/character pairs iteratively. Used by GPT-2/3/4, LLaMA. |
+> | WordPiece | Like BPE but merges pairs that maximise language model likelihood, not raw frequency. Used by BERT. |
+> | SentencePiece | Language-agnostic, treats raw text as bytes. Good for multilingual. Used by LLaMA 1/2, T5. |
+> | Byte-level BPE | Starts from 256 raw bytes → never produces `[UNK]`. Used by GPT-4 (tiktoken). |
+> | Vocab size trade-off | Small vocab (32K) → more tokens per word, longer sequences. Large vocab (128K+) → fewer tokens, bigger embedding table. |
+> | ~1.3 tokens/word | Rule of thumb for English. Code is ~2–3 tokens/word. Chinese ≈ 2 tokens/char. |
+> | Special tokens | `[BOS]`, `[EOS]`, `[PAD]`, `[MASK]` — always occupy fixed IDs in the vocabulary |
+> | Temperature ≠ tokenization | Token probability at sampling uses softmax temperature. Separate from tokenization. |
+>
+> **Why this matters in interviews:** "How do you estimate API cost for your pipeline?" → Count tokens, not words. "Why does this SQL query use 3× more tokens?" → Code tokenizes inefficiently.
 
 ## Part 4 — Byte-Level BPE (GPT-4 Approach)
 

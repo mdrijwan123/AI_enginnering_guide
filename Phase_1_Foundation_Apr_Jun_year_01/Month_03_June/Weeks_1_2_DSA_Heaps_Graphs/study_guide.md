@@ -14,13 +14,14 @@
 
 ## Part 1 — Heaps (Priority Queue)
 
-> 📖 **Big picture:** A heap is a tree-based structure that answers one question extremely efficiently: "What’s the current minimum (or maximum)?"
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine an A&E (Emergency Room) at a hospital. Patients don't get seen in the exact order they arrive; the most critical cases get seen first. Every time a new patient arrives, the nurses mentally reorder the queue. A heap is the data structure behind this: you throw items in randomly, but whenever you pull one out, you are guaranteed to get the highest-priority (or lowest-number) item instantly.
+
+> 📖 **Big picture:** A heap is a tree-based structure that answers one question extremely efficiently: "What's the current minimum (or maximum)?"
 >
-> **The analogy — hospital triage:** In A&E, patients don’t get seen in the order they arrive. The most critical case gets seen first. As new patients arrive, the queue reorders. A heap is the data structure behind this: you push items in any order, and you always pop the highest-priority item (smallest number = most urgent) in O(log n).
+> **When to use:** "K largest/smallest/closest" problems, "always process the minimum next" (Dijkstra's), "merge K sorted lists", "median of a stream". If you see K + something in the problem, try a heap.
 >
-> **When to use:** "K largest/smallest/closest" problems, "always process the minimum next" (Dijkstra’s), "merge K sorted lists", "median of a stream". If you see K + something in the problem, try a heap.
->
-> **Python’s `heapq` is a min-heap.** To simulate a max-heap, negate all values.
+> **Python's `heapq` is a min-heap.** To simulate a max-heap, negate all values.
 
 ### 1.1 Heap Properties
 
@@ -190,6 +191,9 @@ graph = {
 
 ### 2.2 BFS Template
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine pouring a bucket of water onto a flat tile floor. The water spreads out perfectly evenly in all directions at the exact same speed. It reaches all the tiles 1 meter away before it touches any tile 2 meters away. This is Breadth-First Search (BFS). Because it spreads evenly, the first time the water touches your shoes, you know that was the absolute shortest path from the bucket to you.
+
 BFS explores level by level — guarantees **shortest path** in unweighted graphs.
 
 ```python
@@ -286,6 +290,9 @@ def ladderLength(beginWord, endWord, wordList):
 > **Recursive DFS is elegant but dangerous for very large inputs** (Python’s default recursion limit is 1000). For production code or large graphs, use iterative DFS with an explicit stack.
 
 ### 3.1 DFS Template
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine navigating a corn maze with a piece of chalk. You pick a path and walk as far straight and deep as you possibly can until you hit a dead end, marking the walls as you go. Once you hit a dead end, you back up just enough to find a new path you haven't tried yet, and dive deep again. Depth-First Search (DFS) prioritises going *deep* before it goes *wide*.
 
 ```python
 def dfs(graph, node, visited=None):

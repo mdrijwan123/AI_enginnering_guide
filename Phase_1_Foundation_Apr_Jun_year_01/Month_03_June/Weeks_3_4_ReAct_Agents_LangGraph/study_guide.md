@@ -17,11 +17,10 @@
 
 ## Part 1 — What Is an AI Agent?
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Think of the difference between an encyclopedia and an intern. An LLM is like a super-smart encyclopedia: you ask it a question, and it gives you text back, but it can't *do* anything for you. An agent is like an intern: you give them a goal ("Plan my trip"), and they independently open a browser, search for flights, read the results, book the tickets, and then report back when the job is completely done.
+
 > 📖 **Big picture:** For years, AI meant "you send text in, you get text back." An LLM is stateless: it processes your input and produces output, then forgets everything. It can't take action on the world, it can't remember your preferences, and it can't break a complex 10-step task into manageable pieces.
->
-> **An agent changes all of this.** An agent is an LLM wrapped in a *loop* with access to *tools* and *memory*. The key shift in thinking: instead of one input → one output, the agent can take multiple steps, observe results, change course, and keep going until the task is done. Think of the difference between asking someone a question versus hiring them to complete a project.
->
-> **Why this matters now:** Every major AI product being built at FAANG is some form of agentic system. Coding assistants (GitHub Copilot), research assistants (Perplexity), customer service bots, data analysis pipelines — these are all agents. Understanding what they are and how they fail is table stakes for an AI engineer role.
 
 ### 1.1 From LLM to Agent
 
@@ -185,9 +184,10 @@ def db_search(q: str) -> str:
 
 ## Part 3 — LangGraph: Stateful Agents
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> A simple AI agent is like having someone blindly navigate by following verbal instructions ("turn left, go straight, stop"). LangGraph is like giving them a full GPS navigation system. It has a full map of all possible roads (states and transitions), it can gracefully reroute if there's a roadblock (tool failure), it handles complex junctions (branching logic), and it accurately tracks exactly where you are in the journey at any given second.
+
 > 📖 **Why LangGraph?** A simple ReAct agent is a loop: Observe → Think → Act → repeat. But production agents need more: branching logic, error recovery, human approval steps, parallel tool calls, state that persists across sessions, and multi-agent coordination. LangGraph lets you model these as an explicit directed graph where nodes are agent steps and edges are transitions between them.
->
-> **The GPS analogy:** A simple agent is like following verbal directions (go straight, turn left, done). LangGraph is like a GPS system: it has a full graph of roads (states and transitions), can reroute on failure, handles junctions, enables branching, and gives you full visibility of where you are in the journey at any point.
 
 ### 3.1 Why LangGraph Over Simple Agent Loops?
 

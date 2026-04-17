@@ -23,6 +23,9 @@ By January 2027, you've spent 9 months building deep knowledge. This phase is ab
 
 ## Week 1–2: LeetCode by Company
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Doing LeetCode isn't about memorizing 500 different puzzles. It's like learning to recognize that a guitar, a violin, and a cello all work by restricting a string. Once you learn the "sliding window" or "two pointers" concept, you can solve 50 different problems because they all use the exact same underlying trick.
+
 ### Google LeetCode Patterns
 
 Google values: **correctness over speed**, clean code, edge cases, time/space complexity analysis.
@@ -547,6 +550,10 @@ Stripe / Cloudflare        — ML Engineering in financial/infra tech
 ## Offer Evaluation & Negotiation
 
 ### Total Compensation (TC) Components
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Total Compensation (TC) is like a 4-slice pizza. You get one slice guaranteed in cash every year (Base salary). You get another slice as a cash bonus if you do a good job (Performance bonus). The last two slices are company stock (RSUs), but the company only gives you a bite of that stock every few months over 4 years so you stick around!
+
 ```
 Base salary:       Fixed annual salary
 RSU (stock):       Restricted Stock Units vesting over 4 years (cliff at year 1)

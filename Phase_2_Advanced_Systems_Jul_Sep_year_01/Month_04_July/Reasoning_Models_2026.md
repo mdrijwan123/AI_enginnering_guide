@@ -9,6 +9,9 @@
 
 ### 1.1 The Shift from Completion to Reasoning
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> If I ask you, "What is 2 + 2?", you instantly say "4" without thinking. That's a standard LLM. But if I ask you, "What is 17 × 23?", you have to pause, pull out a mental chalkboard, multiply the numbers step-by-step, and *then* give me the answer. That is a **Reasoning Model**. It doesn't just blurt out the first thing that comes to mind; it explicitly stops to "think" before answering.
+
 Standard LLMs (GPT-4, Claude 3, Llama 3) generate tokens in a single forward pass — they produce an answer immediately without explicit "thinking" steps.
 
 **Reasoning models** introduce a deliberate _thinking phase_ before producing the final answer:

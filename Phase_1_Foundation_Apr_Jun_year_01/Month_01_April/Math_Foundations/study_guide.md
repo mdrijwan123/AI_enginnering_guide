@@ -18,6 +18,8 @@
 
 ## 1. Linear Algebra
 
+> 💡 **ELI5 (Explain Like I'm 5):** Imagine a spreadsheet. A single number in a cell is a *scalar*. A single column of numbers is a *vector*. The whole grid of numbers is a *matrix*. Linear algebra is just the rules for how to multiply, add, and transform these grids of numbers at massive scale.
+
 > 📖 **Big picture:** Every neural network, every transformer, every embedding is just linear algebra. When GPT-4 processes your message, it’s doing nothing but matrix multiplications, additions, and non-linear activations — billions of them. Understanding linear algebra means you understand what’s actually happening inside models, not just as a black box.
 >
 > **The three things that matter most for AI engineers:**
@@ -162,6 +164,8 @@ print(f"Need {n_components_95} components for 95% variance")
 
 ## 2. Calculus for ML
 
+> 💡 **ELI5 (Explain Like I'm 5):** If linear algebra is the engine of AI, calculus is the steering wheel. Calculus helps us figure out *how much* a small change in one place (a weight) affects something else (the model's error). It tells us which way to adjust our numbers to make the AI smarter.
+
 > 📖 **Big picture:** Neural networks learn by adjusting their parameters (weights) to reduce errors. Calculus tells us *in which direction* to adjust them. Specifically, the gradient (derivative) of the loss with respect to each weight is the signal: "if I increase this weight slightly, does the error get bigger or smaller?"
 >
 > **The mountain analogy:** Imagine you’re blindfolded on a hilly landscape and want to reach the lowest valley (minimum loss). You can only feel the slope under your feet. If the ground slopes up to your right, you move left. That’s gradient descent: at every step, compute the gradient (slope), then step in the downhill direction. You repeat this billions of times during model training.
@@ -268,6 +272,8 @@ print(softmax(z))  # [0.659, 0.242, 0.099]
 ---
 
 ## 3. Probability & Statistics
+
+> 💡 **ELI5 (Explain Like I'm 5):** AI models rarely produce definitive "yes or no" answers. They deal in "probably yes" and "probably no." Probability lets us measure and predict uncertainty. For instance, an LLM doesn't just predict the next word; it predicts the *most likely* next word out of thousands of possibilities.
 
 > 📖 **Big picture:** Language models are probability machines. When GPT predicts the next token, it’s outputting a probability distribution over ~100,000 possible next words. Understanding probability is understanding what models are actually doing.
 >

@@ -24,6 +24,9 @@
 
 ## 1. FastAPI Fundamentals
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> In the world of an AI restaurant, **FastAPI is the busy kitchen** — it takes incoming orders (requests), coordinates the chefs (LLMs / GPUs), makes sure the food is cooked right (validation), and sends the meals out smoothly. **Streamlit is the dining room** — it's the pretty tables, menus, and waiters that make it incredibly easy for the customer (user) to sit down and interact with the kitchen's amazing creations.
+
 ### Why FastAPI for AI?
 - **Async support**: Handle 1000s of concurrent LLM API calls
 - **Pydantic integration**: Automatic request validation and structured output

@@ -42,6 +42,9 @@ Collaborative filtering is the oldest and most widely studied approach to recomm
 
 ### 3.1 User-Based Collaborative Filtering
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> This is pure **word of mouth**. If you and a stranger both loved *The Matrix* and *Inception*, and the stranger also gave 5 stars to *Interstellar*, the system recommends *Interstellar* to you. The system knows absolutely nothing about space or sci-fi; it only knows that people with your taste loved it.
+
 The most intuitive form of collaborative filtering: find users whose historical ratings most closely resemble yours, then recommend items they enjoyed that you haven't seen yet. It's essentially "word of mouth" implemented algorithmically at scale.
 
 **Idea:** "Users similar to you liked X, so you might like X."
@@ -176,6 +179,9 @@ def train_mf(model, train_pairs, n_epochs=20, lr=0.001):
 ## Part 4 — Two-Tower Model (Modern Production Standard)
 
 **Used by:** YouTube, Google Play, Pinterest, LinkedIn, TikTok
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine an exclusive **bespoke matchmaking agency**. You have one department ("user tower") whose only job is to interview people and summarise their personality into a profile. You have another department ("item tower") that watches every movie and summarises its vibe. The magic happens when both departments are forced to write their summaries in the exact same language (a shared embedding space). To find a match, you just look for a user profile and a movie profile that are almost identical.
 
 The two-tower model is the dominant architecture for recommendation retrieval at scale, and understanding it deeply is arguably the single most important technical topic for a FAANG ML system design interview. The core idea is elegant: build two separate neural networks — one for users, one for items — and train them to project their respective inputs into a shared embedding space where a user's vector should land close to the items they'd enjoy.
 
@@ -386,6 +392,9 @@ class RecommendationPipeline:
 ---
 
 ## Part 6 — Cold Start Problem
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> This is the **"new kid at school"** problem. A brand new movie uploads to YouTube with zero views. Because collaborative filtering relies wholly on user behaviour, the movie is completely invisible to the recommendation engine. To fix this, the system relies on the movie's "resume" (its title, thumbnail, category) to guess who might like it until enough real people have watched it.
 
 The cold start problem is one of the most common discussion topics in recommendation system interviews — and a genuine pain point in production systems. The name captures the dilemma perfectly: your recommendation model learns to surface good items by training on interaction history, but you can only gather that interaction history by serving recommendations in the first place. New users arrive with zero history, and newly published items have zero engagement. Without explicit handling, both would be invisible to a standard collaborative filtering or matrix factorisation model.
 

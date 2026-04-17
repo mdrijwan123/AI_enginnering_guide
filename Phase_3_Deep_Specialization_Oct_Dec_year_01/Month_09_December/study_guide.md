@@ -11,6 +11,9 @@
 
 ### CAP Theorem
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Suppose you and your partner share a bank account but have two debit cards. The network goes down (Partition). You go to the ATM. Should the ATM show you your balance? If it says "Sorry, network down," it's Consistent (CP) but unavailable. If it gives you the last known balance, it's Available (AP) but maybe incorrect. You can't have both when the network breaks.
+
 **Consistency, Availability, Partition Tolerance — pick two in a distributed system.**
 
 ```
@@ -208,6 +211,9 @@ def stream_completion(request_id: str, channel: str):
 
 ### RLHF: Full Pipeline
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine an AI chef who knows 10,000 recipes but doesn't know what TASTES good. RLHF is having humans taste the food and say "this one is better." The AI learns a mental model of human taste (the Reward Model) and then optimizes all its cooking to please that palate.
+
 **Step 1: Supervised Fine-Tuning (SFT)**
 ```python
 # Already covered in Month 7
@@ -283,6 +289,9 @@ for batch in ppo_trainer.dataloader:
 ---
 
 ### DPO: Direct Preference Optimisation (2023)
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> RLHF/PPO is like hiring a full-time food critic (reward model) to rate every dish the AI chef cooks, then paying the chef based on those ratings. **DPO** is simpler: you just show the chef two versions of a dish and say "people preferred this one over that one." The chef learns directly from comparisons, no full-time critic needed, saving you enormous effort.
 
 **Key insight:** You don't need a separate reward model. The optimal policy IS the reward model, up to a reparameterisation.
 
@@ -362,6 +371,21 @@ Advantage:
 
 ---
 
+> 🃏 **Quick-Recall Card — RLHF, PPO & DPO**
+> | Concept | One-liner |
+> |---|---|
+> | RLHF goal | Align a pre-trained LLM to human preferences beyond simple instructions |
+> | SFT (Step 1) | Fine-tune on curated (prompt, ideal response) pairs — sets baseline behaviour |
+> | Reward Model (Step 2) | Trained on human comparisons (A > B) to score response quality. Outputs a scalar. |
+> | PPO (Step 3) | RL algorithm that nudges the policy to maximise reward, penalised by KL from SFT model |
+> | KL penalty | Prevents model from drifting too far from SFT — stops reward hacking |
+> | PPO complexity | Requires 4 models in memory: SFT ref, actor, reward model, critic. Very expensive. |
+> | DPO | Skips reward model entirely. Directly optimises on (chosen, rejected) pairs. ~3× cheaper. |
+> | DPO β | Temperature: higher = stay closer to SFT reference. Typically 0.1. |
+> | Constitutional AI | Anthropic's method: AI self-critiques responses using principles → generates preference pairs automatically |
+>
+> **Key trade-off:** PPO = more powerful/flexible; DPO = simpler, cheaper, often similar quality for instruction following.
+
 ## Week 4: Multimodal Models
 
 > 📖 **Big picture:** Text-only LLMs are becoming the baseline, not the frontier. Modern AI systems at FAANG process images, audio, video, and code alongside text. Understanding multimodal models is essential for roles working on the next generation of AI products: image generation (DALL-E, Stable Diffusion), visual question answering (GPT-4V), speech (Whisper), and visual search.
@@ -369,6 +393,9 @@ Advantage:
 > **The key conceptual bridge:** Multimodal models work by projecting different modalities (images, audio) into the same embedding space as text. Once in the same space, the transformer’s attention mechanism can relate visual features to text tokens naturally. CLIP and similar models pioneered this — everything else builds on it.
 
 ### CLIP: Contrastive Language-Image Pretraining (OpenAI, 2021)
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine putting all the world's text in one room, and all the images in another. CLIP is a translator who stands between the rooms, learning that when someone shouts "Golden Retriever!" in the text room, a specific picture lights up in the image room. It builds a universal dictionary connecting words and pictures.
 
 **Architecture:**
 ```

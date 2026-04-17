@@ -23,6 +23,9 @@
 
 ## 1. Text Preprocessing
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine trying to organise a messy filing cabinet. Before you can sort anything, you need to remove the paperclips, flatten the crumpled pages, and rewrite messy cursive into neat print. Text preprocessing is exactly this: stripping away punctuation, making everything lowercase, and turning "running" into "run", so the AI doesn't get confused thinking "Run" and "running" are different words.
+
 > 📖 **Big picture:** Raw text from the internet, emails, documents, or user input is messy — inconsistent capitalisation, punctuation everywhere, meaningless filler words ("the", "a", "is"), and words that mean the same thing but are written differently ("running", "runs", "ran"). Before any ML model can learn from text, you need to clean and normalise it.
 >
 > **The pipeline analogy:** Think of text preprocessing like washing and chopping vegetables before cooking. You could cook them raw and dirty, but the end result would be worse. Similarly, training a model on messy raw text gives worse results than training on clean, normalised text.
@@ -218,6 +221,9 @@ for name, score in sorted(zip(feature_names, scores), key=lambda x: -x[1]):
 ---
 
 ## 3. Word Embeddings
+
+> 💡 **ELI5 (Explain Like I'm 5):** 
+> Imagine a massive city map. We place all the pet stores in the north, and all the banks in the south. The word "Dog" gets coordinates (North 10, East 5). "Cat" gets (North 11, East 4). They are close together! "Mortgage" gets (South 5, West 2). An embedding is simply giving every word a set of GPS coordinates in "meaning space." Words with similar meanings get similar coordinates.
 
 > 📖 **Big picture:** BoW and TF-IDF have a fatal flaw: "happy" and "joyful" are completely unrelated in a BoW vocabulary, even though they mean almost the same thing. Word embeddings fix this by representing each word as a dense vector in a "meaning space" where similar words are mathematically close.
 >
@@ -477,6 +483,9 @@ results = sentiment([
 ---
 
 ## 5. Named Entity Recognition
+
+> 💡 **ELI5 (Explain Like I'm 5):** 
+> Imagine reading a book with three highlighters. Every time you see a person's name, you highlight it in yellow. Every time you see a city, green. Every time you see a date, pink. NER is just teaching an AI to hold those digital highlighters and automatically color-code the important nouns in a sentence.
 
 > 📖 **Big picture:** Named Entity Recognition (NER) finds and classifies *specific things* mentioned in text: people's names, organisations, locations, dates, dollar amounts. It's the "highlighter pass" over a document — identify all the important nouns and label what type they are.
 >

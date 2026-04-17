@@ -19,9 +19,10 @@ By the end of this week you will:
 
 ## Part 1 — The Full Inference Pipeline
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Think of a transformer in production like a car factory assembly line. Our previous lessons gave you the *blueprint* of the machines. This week is about: how much does the factory physically cost to run? Where are the bottlenecks? How do you speed up production without sacrificing quality? Every concept here (KV cache, FlashAttention, quantisation) is a specific engineering answer to a specific bottleneck in that factory.
+
 > 📖 **Big picture:** Week 3 taught you *what* a transformer is. This week is about *what happens in practice* when you actually run one. After all, understanding the architecture is one thing — but FAANG L5/L6 interviews for AI engineers will ask "how much memory does a 70B model use?" or "why is your service slow at long context lengths?" or "how does vLLM improve throughput?" These are engineering questions, not theory questions.
->
-> Think of a transformer in production like a factory assembly line. Week 3 was the blueprint of the machines. This week is about: how much does the factory cost to run? Where are the bottlenecks? How do you speed up production without sacrificing quality? Every concept here (—KV cache, FlashAttention, quantisation, GQA—) is a specific engineering answer to a specific bottleneck in that factory.
 
 ### 1.1 Two Phases: Prefill vs Decode
 
@@ -67,9 +68,10 @@ KV_memory = 2 × num_layers × num_kv_heads × head_dim × seq_len × bytes_per_
 
 ## Part 2 — KV Cache: Deep Dive
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine each step of text generation is a team meeting. At each meeting, every attendee needs a summary of *all* previous meetings to make a decision. Without caching, someone has to re-read all the old meeting notes from scratch every single time (doing O(n²) work). With caching, a secretary writes a summary at each meeting and hands it to you immediately (O(n) work). The KV cache is that secretary.
+
 > 📖 **The problem it solves:** Every time the model generates a new token during autoregressive decoding, it needs to compute attention between the new token and *all previous tokens*. Without caching, this means recomputing the Key and Value matrices for every historical token on every single step. For a 1000-token response, that means token 1000 is computed 999 times — a total of O(n²) work.
->
-> **The analogy — a note-taking meeting:** Imagine each step of generation is a team meeting. At each meeting, every attendee needs a summary of all previous meetings. Without caching: someone re-reads all the old meeting notes from scratch every time (O(n²)). With caching: a secretary wrote notes at each meeting and the summary is always ready (O(n)). The KV cache is that secretary.
 
 ### 2.1 What Is the KV Cache?
 
@@ -130,9 +132,10 @@ class CachedAttention(nn.Module):
 
 ## Part 3 — FlashAttention
 
-> 📖 **The problem:** Standard attention has to write a massive n×n matrix to GPU memory. For long sequences (8K, 32K, 128K tokens), this matrix becomes *larger than the GPU’s fast memory*. The GPU then constantly reads and writes from slow memory (HBM) instead of fast memory (SRAM). This is like doing all your work by running to a filing cabinet in another building every few seconds instead of keeping papers on your desk.
->
-> **FlashAttention’s solution:** Perform the entire attention calculation in small tiles that fit on the desk (SRAM). Never write the full n×n matrix. The result is mathematically identical to standard attention — it’s not an approximation, it’s the same answer computed much more efficiently.
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine doing your taxes by running to a massive filing cabinet in another building every few seconds to grab one piece of paper, bringing it to your tiny desk, doing the math, and running back. It would take forever! FlashAttention's solution is simply to grab a huge stack of papers (a "tile") that perfectly fits on your desk, do *all* the math for those papers at once, and thereby avoid running back and forth. You get the exact same answer, but blazing fast.
+
+> 📖 **The problem:** Standard attention has to write a massive n×n matrix to GPU memory. For long sequences (8K, 32K, 128K tokens), this matrix becomes *larger than the GPU’s fast memory*. The GPU then constantly reads and writes from slow memory (HBM) instead of fast memory (SRAM).
 
 ### 3.1 The Problem with Standard Attention
 
@@ -293,9 +296,10 @@ k = k.reshape(batch, seq, n_heads, head_dim)  # now matches Q
 
 ## Part 6 — Mixture of Experts (MoE)
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine a call centre with 100 specialists. When a customer calls with a question, the receptionist (the "router") doesn't put every single specialist on the line! They decide which 2 specialists are most relevant to the question and route the call only to them. This is MoE: you have a massive brain, but you only activate a tiny, hyper-relevant fraction of it for any given word.
+
 > 📖 **Big picture:** Standard transformers activate *every* parameter for *every* token. MoE breaks this: it has many "expert" FFN sub-networks, and a router selects only 2-4 of them per token. This means you can have a model with 100B total parameters but only activate 14B for each token — giving you the knowledge capacity of a huge model at the inference cost of a small one.
->
-> **The switchboard analogy:** Imagine a call centre with 100 specialists. When a call comes in, a receptionist (the router) decides which 2-3 specialists are relevant to this specific query and routes only to them. Each call gets expert attention without everyone working on every call. This is MoE: sparse activation of a large parameter pool.
 
 > **Deep-dive reference:** For the full MoE architecture with load-balancing loss formulation, PyTorch implementation, and DeepSeek-V3 analysis, see **Section 8.5** of [generative_ai_complete.md](../../Phase_2_Advanced_Systems_Jul_Sep_year_01/Month_04_July/generative_ai_complete.md).
 

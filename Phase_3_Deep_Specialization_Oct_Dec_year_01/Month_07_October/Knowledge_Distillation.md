@@ -21,6 +21,9 @@ Understanding distillation is essential in 2026 because the entire Small Languag
 
 ## Part 1 — The Core Idea: Soft Targets vs Hard Targets
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> In school, taking a multiple-choice test only tells you the right answer (hard target). Distillation is like the teacher showing you their detailed thought process, including why the wrong answers were tempting (soft targets). This lets you learn the "shape" of the problem, far faster than just memorizing the final answer.
+
 Imagine you are training to be a doctor. The fastest path is to memorise the answer key: question 23 = "C: appendicitis." This is training with **hard targets** — a one-hot distribution where the correct answer is 1 and everything else is 0.
 
 Now imagine instead of the answer key, you received a senior consultant's differential diagnosis: "Appendicitis: 82%, mesenteric adenitis: 12%, ovarian cyst: 4%, other: 2%." This is far richer information. You learn not just *what* the answer is, but *how certain* the expert was, *which conditions were plausible alternatives*, and *how the problem space is structured*. This is training with **soft targets** — the teacher model's full output probability distribution.
@@ -369,6 +372,25 @@ Base: LLaMA 3 70B (140GB FP16)
      8B merged model at INT4 (~4.5GB)
          └─→ Fits on a single RTX 3090 for serving
 ```
+
+---
+
+> 🃏 **Quick-Recall Card — Knowledge Distillation**
+> | Concept | One-liner |
+> |---|---|
+> | Teacher model | Large, accurate pretrained model. Provides soft targets (probability distributions). |
+> | Student model | Smaller, faster model we are training. Mimics teacher's OUTPUT, not just the correct label. |
+> | Hard targets | One-hot labels: cat=1, rest=0. Standard supervised training. |
+> | Soft targets | Full probability distribution: cat=0.85, kitten=0.08, dog=0.05. Rich learning signal. |
+> | Dark knowledge | Similarity information hidden in the non-winning class probabilities. |
+> | Temperature T | Higher T → softer distribution → more dark knowledge available. T=4–8 for distillation. |
+> | Distillation loss | KL divergence between student and teacher soft distributions (at temperature T). |
+> | Combined loss | α × CE(student, hard_labels) + (1-α) × KL(student, teacher). α=0.1 typical. |
+> | DistilBERT result | 40% smaller, 60% faster than BERT-base, retains 97% of performance. |
+> | vs Quantisation | Distillation = new smaller model. Quantisation = smaller number format for existing model. |
+> | vs LoRA | LoRA adapts an existing model cheaply. Distillation creates a brand new smaller model. |
+>
+> **Interview answer for "how would you make this 70B model deployable on a single GPU?":** *"Sequence-level distillation to an 8B student, then QLoRA + INT4 quantisation to fit in ~4.5GB."*
 
 ---
 

@@ -24,6 +24,9 @@ By the end of this week you will be able to:
 
 ### 1.1 What Is an Array?
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine a street with houses right next to each other, numbered exactly 0, 1, 2, 3, etc. If an Uber driver needs to drop you off at house #4, and they're at house #0, they know exactly how far to drive. They don't have to knock on houses 1, 2, and 3 to ask where 4 is. An array is exactly this: a contiguous block of memory where you can jump straight to any element in O(1) time.
+
 An array is a **contiguous block of memory** where each element is stored at a fixed offset from the base address.
 
 ```
@@ -147,6 +150,9 @@ def productExceptSelf(nums):
 
 ### 2.1 What Is a Hash Table?
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine using a coat check at a theatre. You give the attendant your coat (Value), and they give you a ticket with a number (Key). Later, you don't search through 500 coats to find yours. You just hand them the ticket with the number, and they immediately grab your exact coat. A Hash Table is a digital coat check. You put an item in, get a "key", and use that "key" to fetch the item instantly later.
+
 A hash table (Python: `dict`, `set`) maps **keys → values** with average O(1) for insert, delete, and lookup.
 
 **How it works:**
@@ -260,6 +266,22 @@ def groupAnagrams_fast(strs):
     return list(groups.values())
 ```
 
+> 🃏 **Quick-Recall Card — Arrays & Hash Tables**
+> | Concept | One-liner |
+> |---|---|
+> | Array random access | O(1) — base_addr + i × element_size |
+> | Insert/delete at end | O(1) amortised — occasional O(n) resize doubles capacity |
+> | Insert/delete at index i | O(n) — must shift all elements after i |
+> | Hash table lookup/insert/delete | O(1) average, O(n) worst case (all keys collide) |
+> | Load factor | n_items / n_buckets. Python resize at >0.67 |
+> | Chaining | Each bucket holds a linked list. Python's actual impl. |
+> | Open addressing | Try next bucket on collision. Cache-friendly but clusters. |
+> | Pattern: frequency count | `Counter(arr)` or `defaultdict(int)` — when question asks about counts/duplicates |
+> | Pattern: complement lookup | Store `{val: index}` and check `target - val in seen` — Two Sum family |
+> | Pattern: group by hash key | `defaultdict(list)` — anagram grouping, categorisation by computed key |
+>
+> **When to reach for a hash:** Any time you need O(1) lookup, deduplication, or grouping. If you're looping through an array asking "have I seen X before?" — that's a hash table problem.
+
 ---
 
 ## Part 3 — LeetCode Problems (15 Problems, Week 1)
@@ -267,6 +289,7 @@ def groupAnagrams_fast(strs):
 > **Strategy:** Read problem → Think 1–2 mins → If stuck, think about which pattern applies → Code → Check edge cases.
 
 ---
+
 
 ### 🟢 Easy
 

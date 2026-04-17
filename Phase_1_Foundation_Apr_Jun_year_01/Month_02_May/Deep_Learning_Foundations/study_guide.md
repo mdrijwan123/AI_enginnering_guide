@@ -25,6 +25,9 @@
 
 ## 1. Neural Network Basics
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine trying to guess the price of a house. You might guess based on size, location, and age. A neural network is like a huge team of guessers. The first group looks at basic things (is it big?). They pass their answers to the next group, who combine them into more complex thoughts (large house + good location = high price). The system starts out guessing randomly, but every time it's wrong, we correct the guessers slightly until they're perfectly tuned.
+
 > 📖 **Big picture:** A neural network is a function approximator inspired loosely by neurons in the brain. The key insight: by stacking layers of "neurons" (each just a weighted sum followed by a non-linear squash), you can approximate *any* function given enough data and the right architecture.
 >
 > **The weight tuning process:** Initially, all weights are random. The network makes terrible predictions. You measure how wrong it is (the *loss*), then you figure out which weights to nudge in which direction to reduce the loss (*backpropagation*), and nudge them (*gradient descent*). Repeat millions of times on millions of examples. Gradually the weights shift towards configurations that make good predictions. That’s training.
@@ -209,6 +212,10 @@ kl_loss = nn.KLDivLoss(reduction='batchmean')
 ---
 
 ## 4. Backpropagation
+
+> 💡 **ELI5 (Explain Like I'm 5):** 
+> Imagine a restaurant makes a terrible cake. The head chef tastes test it (calculates the error) and yells at the baker: "Too salty!" The baker then yells at the prep cook: "You added too much salt!" The prep cook yells at the supplier: "Your salt shakers are too big!" 
+> Backpropagation is exactly this: blaming the error on the people (weights) responsible, tracing backward from the final result to the very beginning, so everyone knows how to adjust for the next cake.
 
 > 📖 **Plain English:** Backpropagation is how neural networks learn from mistakes. After a forward pass produces a prediction and we measure the error (loss), we need to know: *which weights caused the error, and by how much?* We trace the error backwards through the network, layer by layer, using the **chain rule** from calculus. Each weight gets a gradient — a signed number saying "increase this weight → loss goes up/down by this much." Then gradient descent nudges every weight in the direction that reduces loss.
 >
@@ -428,6 +435,9 @@ scheduler = OneCycleLR(optimizer, max_lr=1e-3, total_steps=10000)
 ---
 
 ## 6. Regularization
+
+> 💡 **ELI5 (Explain Like I'm 5):** 
+> If you study for a math test by memorising *exactly* the 10 practice questions, you'll fail the real test because the numbers changed. You memorised instead of learning the rules. Regularization is like a teacher randomly changing the practice numbers while you study, or forcing you to solve equations with one hand tied behind your back (Dropout). It forces the AI to learn the *actual rules* instead of just memorising the training data.
 
 > 📖 **The problem:** A neural network with millions of parameters can *memorise* the training data rather than learning general patterns. It gets 99% accuracy on training data but fails on new examples. This is **overfitting**. Regularisation is a collection of techniques that push the model towards simpler, more general solutions.
 >

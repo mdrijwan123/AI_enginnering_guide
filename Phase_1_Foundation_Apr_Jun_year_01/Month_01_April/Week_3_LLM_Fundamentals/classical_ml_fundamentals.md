@@ -35,6 +35,11 @@
 <a name="part-1"></a>
 ## Part 1 — The Three Types of Machine Learning
 
+> 💡 **ELI5 (Explain Like I'm 5):** 
+> 1. **Supervised:** You show a toddler 10 pictures of cats and say "kat". Then you show a dog and say "not kat". The toddler learns from being explicitly taught with labels.
+> 2. **Unsupervised:** You give a toddler a box of mixed Legos. Without you saying a word, they sort them into red, blue, and yellow piles. They found patterns naturally.
+> 3. **Reinforcement:** You give a toddler a video game controller. They press A and fall in lava (bad). They press B and get a coin (good). By trial and error, they learn to press B.
+
 ### 1.1 Supervised Learning
 
 The model learns from **labelled** examples: (input, correct output) pairs.
@@ -107,6 +112,8 @@ Self-supervised: Create labels FROM the data itself
 ## Part 2 — Linear Regression: From Scratch
 
 ### 2.1 What It Does
+
+> 💡 **ELI5 (Explain Like I'm 5):** Imagine mapping height to weight on a graph. The dots are scattered vaguely upwards. Linear Regression is the math magic to draw the "best possible straight line" through the exact middle of all those dots so you can predict the weight of someone based on their height.
 
 Find the best straight line (or hyperplane) through data points.
 
@@ -425,6 +432,18 @@ but finding A minimum that generalises well to unseen data.
 That's where regularisation comes in...
 ```
 
+> 🃏 **Quick-Recall Card — Gradient Descent**
+> | Concept | One-liner |
+> |---|---|
+> | Gradient | Direction of steepest ascent of loss. We go the opposite way. |
+> | Learning Rate (η) | Step size. Too big = explode. Too small = crawls forever. |
+> | Batch GD | All data per update. Stable but slow on big datasets. |
+> | SGD | 1 sample per update. Fast & noisy. Can escape local minima. |
+> | Mini-Batch | B samples (32–256). Best of both worlds. **What's used in practice.** |
+> | Adam | SGD + momentum + per-param adaptive LR. **Default choice for neural nets.** |
+> | Warmup+Cosine | Ramp LR up, then decay. Used in every modern LLM training run. |
+> | Gradient Clipping | Cap gradient norm (1.0) to prevent NaN explosions in Transformers. |
+
 ---
 
 <a name="part-4"></a>
@@ -567,12 +586,27 @@ If data is linearly separable, logistic regression works well.
 If not (e.g., XOR problem), you need a non-linear model (SVM with kernel, neural network, tree).
 ```
 
+> 🃏 **Quick-Recall Card — Logistic Regression**
+> | Concept | One-liner |
+> |---|---|
+> | Sigmoid | Squashes any value to (0,1). Gives probability for binary class. |
+> | BCE Loss | −log(ŷ) for label=1. Exponential penalty for confident wrong predictions. |
+> | Decision boundary | A straight line (hyperplane). Assumes linearly separable data. |
+> | Softmax | Multi-class version. K outputs summing to 1.0. Used in every LLM output layer. |
+> | Gradient | (ŷ − y) × x — elegantly same formula regardless of sigmoid or softmax. |
+
 ---
 
 <a name="part-5"></a>
 ## Part 5 — The Bias-Variance Tradeoff
 
 > **This is the #1 most-asked ML fundamentals question at FAANG.**
+
+> 💡 **ELI5 (Explain Like I'm 5):** 
+> Imagine studying for a test by taking practice exams. 
+> * **High Bias (Underfitting):** You don't study at all. You just write "C" for every multiple choice question. You fail the practice test and the real test.
+> * **High Variance (Overfitting):** You memorise the exact answers (A, B, D, A) to the practice test without understanding the material. You get 100% on the practice test, but fail the real test because the questions are slightly different.
+> * **The Sweet Spot:** You understand the core concepts. You do decently on the practice test, and similarly well on the real test.
 
 ### 5.1 What Is Bias?
 
@@ -656,6 +690,16 @@ Training error HIGH, Test error HIGHER → Both (rare, usually underfitting)
 ### 5.7 The Interview Answer
 
 > "The bias-variance tradeoff states that a model's total error is the sum of bias squared, variance, and irreducible noise. Bias measures systematic error from overly simple assumptions — high bias means underfitting. Variance measures sensitivity to training data fluctuations — high variance means overfitting. We can't minimise both simultaneously: reducing one tends to increase the other. The goal is to find the sweet spot using techniques like cross-validation, regularisation, and ensemble methods."
+
+> 🃏 **Quick-Recall Card — Bias-Variance Tradeoff**
+> | Scenario | Signal | Fix |
+> |---|---|---|
+> | Train error HIGH, Test error HIGH | High Bias (Underfitting) | More features, deeper model, less regularisation |
+> | Train error LOW, Test error HIGH | High Variance (Overfitting) | More data, regularisation, dropout, simpler model |
+> | Train error LOW, Test error LOW | Good fit ✓ | Ship it. |
+> | Both errors HIGH | Underfitting AND noisy data | Fix data quality first |
+>
+> **One-sentence interview answer:** *"Bias is systematic error from overly simple assumptions; variance is sensitivity to training data. The tradeoff: reducing one tends to increase the other — use cross-validation, regularisation, and ensemble methods to find the sweet spot."*
 
 ---
 

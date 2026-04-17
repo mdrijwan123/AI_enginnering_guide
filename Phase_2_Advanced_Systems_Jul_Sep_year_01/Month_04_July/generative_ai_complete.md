@@ -56,6 +56,9 @@ Generative Models
 
 ## 2. GANs (Generative Adversarial Networks)
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine an art forger (the Generator) and a police art detective (the Discriminator). The forger tries to paint fake Picassos, and the detective tries to spot the fakes. At first, the forger is terrible, and the detective easily catches them. But the forger learns from their mistakes and gets better. Eventually, the forger gets so incredibly good that even the best detective can't tell the difference between the fake Picasso and a real one. 
+
 ### Core Concept
 Two networks play a minimax game:
 - **Generator G**: Creates fake data from random noise
@@ -174,6 +177,9 @@ def train_gan(generator, discriminator, dataloader, epochs=100):
 
 ## 3. VAEs (Variational Autoencoders)
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine trying to describe your friend's face over a phone call to a sketch artist. You can't send a picture, so you compress the information into key traits (latent features): "Blue eyes, curly hair, round face." The artist on the other end uses this compact description to reconstruct the face (decode). A VAE trains AI to do exactly this: compress complex images into a tiny list of numbers (encoder), and then accurately reconstruct them (decoder).
+
 ### Core Concept
 Learn a compressed latent representation AND a generative model:
 
@@ -250,6 +256,9 @@ def vae_loss(recon_x, x, mu, logvar):
 ---
 
 ## 4. Diffusion Models
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine taking a perfectly clear photograph and slowly adding TV static to it, step by step, until it's nothing but pure static noise (forward process). Now, imagine doing that in reverse: starting with pure static and having a magical AI that knows how to wipe away the noise bit by bit until a completely new, perfectly clear picture emerges (reverse process). That's how Diffusion models like Midjourney and DALL-E work.
 
 ### Core Concept
 1. **Forward process**: Gradually add noise to data until it's pure Gaussian noise

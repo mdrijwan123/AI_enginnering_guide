@@ -36,6 +36,9 @@
 
 ### Supervised Fine-Tuning (SFT) Fundamentals
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> SFT is like taking an employee who knows generally how to do everything (the base model) and having them shadow your best worker for a month. They already know how to do the job; now they learn exactly how you want your specific reports formatted.
+
 **What is SFT?**
 Continue training a pre-trained LLM on a curated dataset of (instruction, response) pairs using standard cross-entropy loss.
 
@@ -80,6 +83,9 @@ PROMPT_TEMPLATE = """### Instruction:
 ---
 
 ### LoRA: Low-Rank Adaptation — Deep Dive
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Imagine a 1000-page textbook. Instead of printing completely new, customized textbooks for every student (full fine-tuning), you just give everyone a 10-page pamphlet of "errata and additions" to read alongside the main textbook. The original book is untouched, and the pamphlet is extremely cheap to print.
 
 **The Core Problem:** Full fine-tuning of a 7B model requires:
 - 7B parameters × 4 bytes (float32) = 28 GB just to store weights
@@ -142,6 +148,9 @@ dropout: 0.05-0.1 (regularisation)
 ---
 
 ### QLoRA: Quantised LoRA
+
+> 💡 **ELI5 (Explain Like I'm 5):**
+> QLoRA takes the "pamphlet" idea (LoRA) but additionally shrinks the 1000-page main textbook onto microfilm (4-bit quantization). You can now fit the entire operation into a tiny backpack (a single consumer GPU).
 
 **QLoRA stacks LoRA on top of a 4-bit quantised base model:**
 

@@ -6,6 +6,9 @@
 
 ## How to Use This Checklist
 
+> 💡 **ELI5 (Explain Like I'm 5):**
+> Think of this checklist like packing for a huge expedition. You don't try to memorize everything in your backpack; you just check it off as it goes in. Before the interview (the expedition), you scan the list one last time to make sure you didn't forget your tent (system design) or your boots (coding).
+
 - ✅ = confident, can explain and implement
 - 🔄 = reviewed, need more practice
 - ❌ = not yet studied

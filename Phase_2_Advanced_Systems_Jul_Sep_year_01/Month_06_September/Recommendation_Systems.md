@@ -1,11 +1,11 @@
 # Recommendation Systems — Complete Guide
 ### Phase 2 Supplementary | ML System Design Reference
 
-> Recommendation systems are asked in almost every FAANG ML System Design round. This guide covers classical and modern LLM-powered recsys from first principles.
+> Recommendation systems are asked in almost every ML System Design round. This guide covers classical and modern LLM-powered recsys from first principles.
 
 ---
 
-## Part 1 — Why Recommendation Systems Matter at FAANG
+## Part 1 — Why Recommendation Systems Matter in Production AI
 
 If you've ever wondered why Netflix always seems to know what you want to watch next, or why Amazon's "Customers also bought" section is eerily accurate, you've experienced the power of recommendation systems in action. These systems sit at the heart of engagement at every major technology company — and the impact numbers are staggering:
 
@@ -15,7 +15,7 @@ If you've ever wondered why Netflix always seems to know what you want to watch 
 - **Spotify** — Discover Weekly reaches over 30 million users every week and has become a defining product feature in its own right
 - **Meta** — recommendations power the news feed, friend suggestions, and ad targeting simultaneously
 
-This makes recommender systems one of the highest-impact ML domains in industry, and almost every FAANG ML System Design round will include a question along the lines of *"Design YouTube video recommendations"*, *"Design a news feed ranking system"*, or *"Design Spotify's Discover Weekly."*
+This makes recommender systems one of the highest-impact ML domains in industry, and almost every ML System Design round will include a question along the lines of *"Design YouTube video recommendations"*, *"Design a news feed ranking system"*, or *"Design Spotify's Discover Weekly."*
 
 **The fundamental challenge:** A user could theoretically see any of Netflix's 17,000 titles or Amazon's 350 million products — but they'll only see around 20 recommendations. The system must identify, with milliseconds of latency, the specific items most likely to be useful or engaging for *this* person *right now*. What makes this genuinely hard is that users have only interacted with a tiny fraction of available items, meaning the interaction matrix is extremely sparse — sometimes less than 0.1% filled. This sparsity is what makes recommendation systems such a rich engineering and machine learning challenge.
 
@@ -23,7 +23,7 @@ This makes recommender systems one of the highest-impact ML domains in industry,
 
 ## Part 2 — Types of Recommendation Approaches
 
-There is no single "best" approach to recommendations — every production system at FAANG is a hybrid, blending multiple strategies that each handle different aspects of the problem. Before jumping into code, it's worth building a clear mental model of the four core paradigms and what each one is genuinely good at. The right choice depends on whether you have user history, whether you have item features, and what failure modes you can tolerate.
+There is no single "best" approach to recommendations — every production recommendation system is a hybrid, blending multiple strategies that each handle different aspects of the problem. Before jumping into code, it's worth building a clear mental model of the four core paradigms and what each one is genuinely good at. The right choice depends on whether you have user history, whether you have item features, and what failure modes you can tolerate.
 
 ### 2.1 The 4 Approaches
 
@@ -183,7 +183,7 @@ def train_mf(model, train_pairs, n_epochs=20, lr=0.001):
 > 💡 **ELI5 (Explain Like I'm 5):**
 > Imagine an exclusive **bespoke matchmaking agency**. You have one department ("user tower") whose only job is to interview people and summarise their personality into a profile. You have another department ("item tower") that watches every movie and summarises its vibe. The magic happens when both departments are forced to write their summaries in the exact same language (a shared embedding space). To find a match, you just look for a user profile and a movie profile that are almost identical.
 
-The two-tower model is the dominant architecture for recommendation retrieval at scale, and understanding it deeply is arguably the single most important technical topic for a FAANG ML system design interview. The core idea is elegant: build two separate neural networks — one for users, one for items — and train them to project their respective inputs into a shared embedding space where a user's vector should land close to the items they'd enjoy.
+The two-tower model is the dominant architecture for recommendation retrieval at scale, and understanding it deeply is one of the most important technical topics for an AI/ML system design interview. The core idea is elegant: build two separate neural networks — one for users, one for items — and train them to project their respective inputs into a shared embedding space where a user's vector should land close to the items they'd enjoy.
 
 What makes this so powerful in production is the **online/offline decomposition**. Item embeddings can be computed offline for the entire catalogue and stored in a vector index. At serving time, you only need to run a single forward pass through the user tower (milliseconds), then perform an approximate nearest-neighbour search to retrieve candidates. This is how YouTube serves personalised recommendations from 800 million videos with sub-200ms latency — the heavy computation has already been done.
 

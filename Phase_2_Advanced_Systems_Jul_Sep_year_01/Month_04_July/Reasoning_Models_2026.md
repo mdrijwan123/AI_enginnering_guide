@@ -1,7 +1,7 @@
 # Reasoning Models & 2026 AI Landscape
 ### Supplementary Guide | Phase 2 | Study Reference
 
-> This guide covers the new class of "reasoning models" that have emerged in 2024–2026, which are critical knowledge for FAANG LLM engineer interviews and production AI systems.
+> This guide covers the new class of "reasoning models" that have emerged in 2024–2026, which are critical knowledge for top-tier AI engineer interviews and production AI systems.
 
 ---
 

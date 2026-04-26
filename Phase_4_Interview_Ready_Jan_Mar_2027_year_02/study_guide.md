@@ -1,5 +1,5 @@
 # Phase 4: Interview Ready — Jan–Mar 2027
-### Final Preparation for FAANG LLM/AI Engineer Roles
+### Final Preparation for AI Engineer Roles
 
 ---
 
@@ -142,7 +142,7 @@ Amazon values: **Leadership Principles expressed through code**, efficient solut
 
 ## Week 3: Behavioral Interview — STAR Stories
 
-> 📖 **Why behavioral prep matters as much as technical:** At FAANG L5+, everyone who makes it to interviews can code. Behavioral rounds differentiate candidates by leadership, ownership, and impact. A weak behavioral performance with a perfect technical round can still lead to rejection.
+> 📖 **Why behavioral prep matters as much as technical:** At senior AI roles, everyone who makes it to interviews can code. Behavioral rounds differentiate candidates by leadership, ownership, and impact. A weak behavioral performance with a perfect technical round can still lead to rejection.
 >
 > **STAR stories aren’t memorised scripts — they’re structured recall.** The goal is to have 8-10 clear stories from your career that can be adapted to different questions. The same story about a production incident might answer "tell me about a time you failed", "tell me about working under pressure", and "tell me about a time you made a technical decision others disagreed with."
 
@@ -401,13 +401,13 @@ R: - 4 of 5 squads now use the standard pattern (1 grandfathered in)
 
 ## Week 4: Resume, Portfolio, and Applications
 
-### Resume Checklist for FAANG AI Engineer
+### Resume Checklist for AI Engineer
 
 **Contact & Header:**
 - [ ] Professional email
 - [ ] LinkedIn URL
 - [ ] GitHub URL with projects visible
-- [ ] No photo (FAANG blind review)
+- [ ] No photo (blind review is standard at top companies)
 
 **Summary (2-3 lines):**
 ```
@@ -509,7 +509,7 @@ Minutes 40-45: Discuss trade-offs and alternatives
 
 ### Resources for Mock Interviews
 
-- **Interviewing.io** (paid, real FAANG interviewers): https://interviewing.io
+- **Interviewing.io** (paid, real industry interviewers): https://interviewing.io
 - **Pramp** (free peer mock): https://www.pramp.com
 - **Exponent** (ML system design mocks): https://www.tryexponent.com
 - **LeetCode**: company-specific premium problem sets
@@ -562,7 +562,7 @@ Performance bonus: Annual bonus (typically 10-20% of base)
 
 Total Comp = Base + (RSU / 4) + Bonus
 
-Example FAANG AI Engineer L5/E5:
+Example Senior AI Engineer (L5/E5-equivalent):
   Base: $180K
   RSU: $600K over 4 years = $150K/year
   Bonus: ~$36K (20% base)
@@ -611,7 +611,7 @@ Key rules:
 
 **Behavioral:**
 - [ ] 8 STAR stories ready (can adapt to any behavioral question)
-- [ ] Know your "Why FAANG?" answer cold
+- [ ] Know your "Why this company?" answer cold
 - [ ] Know your "Why this specific company/team?" for each target
 
 **Portfolio:**
@@ -639,9 +639,9 @@ Key rules:
 - Negotiation guide: https://haseebq.com/my-ten-rules-for-negotiating-a-job-offer
 
 **Community:**
-- r/cscareerquestions — general FAANG prep advice
+- r/cscareerquestions — general AI/CS interview prep advice
 - r/MachineLearning — research and industry
-- Blind (app) — insider FAANG compensation and interview intel
+- Blind (app) — insider compensation and interview intel
 - LeetCode Discuss — company-specific interview reports
 
 ---

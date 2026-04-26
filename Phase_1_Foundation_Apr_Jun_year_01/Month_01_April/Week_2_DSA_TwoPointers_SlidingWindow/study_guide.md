@@ -220,7 +220,7 @@ def maxSumSubarrayK(nums, k):
     return max_sum
 ```
 
-### 2.3 Pattern B: Variable-Size Window (Most Common at FAANG)
+### 2.3 Pattern B: Variable-Size Window (Most Common in Interviews)
 
 Expand `right` to include more elements.  
 When window becomes **invalid**, advance `left` until valid again.  

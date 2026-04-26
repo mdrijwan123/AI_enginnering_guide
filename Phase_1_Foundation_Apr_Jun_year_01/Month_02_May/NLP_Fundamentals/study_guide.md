@@ -392,7 +392,7 @@ BERT    "bank" → deeply contextual across all layers
 
 > 📖 **Big picture:** Text classification is the task of assigning a label to a piece of text. It's one of the most common NLP tasks in production: spam detection, sentiment analysis, content moderation, intent classification for chatbots, ticket routing in customer support.
 >
-> **The evolution of approaches:** In 2015, you'd use TF-IDF + Logistic Regression. In 2019, you'd fine-tune BERT. In 2024, you'd either fine-tune a smaller model for cost efficiency OR use a large LLM with a well-crafted prompt for zero/few-shot classification. Knowing all three approaches and *when to use each* is what FAANG interviewers want to hear.
+> **The evolution of approaches:** In 2015, you'd use TF-IDF + Logistic Regression. In 2019, you'd fine-tune BERT. In 2024, you'd either fine-tune a smaller model for cost efficiency OR use a large LLM with a well-crafted prompt for zero/few-shot classification. Knowing all three approaches and *when to use each* is what AI engineer interviewers want to hear.
 >
 > **Interview insight:** When asked "how would you build a text classifier?", the right answer isn't just one approach — it's a decision tree: "For low data, start with zero-shot LLM. For high accuracy with labeled data, fine-tune. For production at scale, distil to a small model."
 
@@ -846,7 +846,7 @@ Self-Attention Only → fast (parallel), better accuracy = TRANSFORMER
 > - **BERT (encoder-only):** Reads the whole sentence at once, understanding each word in context of the words before *and after* it. Great for understanding tasks: classification, NER, question answering, similarity.
 > - **GPT (decoder-only):** Generates text left-to-right, predicting the next word. Great for generation tasks: completion, summarisation, instruction following.
 >
-> **The analogy:** BERT reads an essay and answers questions about it (comprehension). GPT writes the essay (generation). For FAANG AI roles, you need to know both cold: when to use each, how they're pre-trained, and what fine-tuning looks like for each family.
+> **The analogy:** BERT reads an essay and answers questions about it (comprehension). GPT writes the essay (generation). For AI engineer roles, you need to know both cold: when to use each, how they're pre-trained, and what fine-tuning looks like for each family.
 
 ### BERT (Bidirectional Encoder Representations from Transformers)
 

@@ -1,7 +1,7 @@
 # Weeks 3–4: ReAct Agents & LangGraph
 ### Phase 1 | Month 3 | June 16–30, 2026
 
-> Agentic AI is the fastest-growing area at FAANG. This knowledge directly maps to your portfolio Project #3.
+> Agentic AI is the fastest-growing area across AI industry. This knowledge directly maps to your portfolio Project #3.
 
 ---
 
@@ -11,7 +11,7 @@
 - Build an agent with tool calling from scratch
 - Implement a LangGraph stateful agent with memory
 - Understand multi-agent coordination patterns
-- Answer all FAANG agent system design questions
+- Answer all agent system design questions in AI engineer interviews
 
 ---
 
@@ -659,7 +659,7 @@ reviewer = Agent(
 
 # Define tasks
 research_task = Task(
-    description="Research the top 5 LLM deployment patterns used at FAANG companies in 2024-2025",
+    description="Research the top 5 LLM deployment patterns used at leading AI companies in 2024-2025",
     expected_output="Detailed report with architecture diagrams and trade-offs",
     agent=researcher
 )
@@ -717,7 +717,7 @@ crew = Crew(
 > 2. **Runaway execution** — the agent gets into an infinite loop or keeps calling expensive tools indefinitely
 > 3. **Scope creep** — the agent takes actions outside its intended scope ("while I'm at it, I'll also delete these old files")
 >
-> FAANG interviewers ask about safety because production AI systems are increasingly agentic, and "my agent went rogue" is a real risk they care about mitigating.
+> AI engineer interviewers ask about safety because production AI systems are increasingly agentic, and "my agent went rogue" is a real risk they care about mitigating.
 
 ### 9.1 Why Agent Safety Matters
 

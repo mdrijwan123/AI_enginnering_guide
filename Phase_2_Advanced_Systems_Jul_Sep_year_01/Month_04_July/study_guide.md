@@ -210,7 +210,7 @@ def minDistance(word1, word2):
 >
 > Multi-agent systems solve this by having multiple specialised agents collaborate — like a software development team where the PM, developer, code reviewer, and QA engineer each do their part. Each agent has a focused role, clear inputs/outputs, and they hand off work to each other.
 >
-> **FAANG relevance:** Multi-agent is exactly what’s being built at Google (Gemini agents), OpenAI (operator framework), Anthropic (computer use), and Amazon (Bedrock agents). This is where the industry is going. Understanding it well differentiates you in LLM system design interviews.
+> **Industry relevance:** Multi-agent is exactly what’s being built at Google (Gemini agents), OpenAI (operator framework), Anthropic (computer use), and Amazon (Bedrock agents). This is where the industry is going. Understanding it well differentiates you in LLM system design interviews.
 
 ### Why Multi-Agent?
 

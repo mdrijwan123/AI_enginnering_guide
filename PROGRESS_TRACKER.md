@@ -1,4 +1,4 @@
-# 📊 Progress Tracker — FAANG LLM/AI Study Plan
+# 📊 Progress Tracker — AI Engineering Study Plan
 > **Start Date:** April 6, 2026 | **Target:** April 2027
 > Update this file daily. Mark items ✅ when done, 🔄 in-progress, ⏳ not started.
 

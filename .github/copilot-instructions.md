@@ -1,4 +1,4 @@
-# FAANG LLM/AI Engineer Study Plan — Workspace Instructions
+# AI Engineering Study Plan — Workspace Instructions
 
 This workspace is a **personal self-study plan** (not a code project).  
 Goal: MLOps Engineer → FAANG LLM/AI Engineer | April 2026 → April 2027  

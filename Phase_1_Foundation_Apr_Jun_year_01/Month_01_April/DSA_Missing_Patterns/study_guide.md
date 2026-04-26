@@ -1,7 +1,7 @@
 # DSA Missing Patterns — Backtracking, Tries, Intervals, Greedy & Bit Manipulation
-### Gap-Filler Study Guide for FAANG Coding Interviews
+### Gap-Filler Study Guide for AI Engineer Coding Interviews
 
-> **Why this file exists:** The main study guides cover arrays, hashing, two pointers, sliding window, stack, binary search, linked lists, trees, heaps, graphs, and DP. But FAANG consistently asks these additional patterns too. Missing ANY of these in an interview round is a fail.
+> **Why this file exists:** The main study guides cover arrays, hashing, two pointers, sliding window, stack, binary search, linked lists, trees, heaps, graphs, and DP. But top-tier companies consistently ask these additional patterns too. Missing ANY of these in an interview round is a fail.
 
 ---
 
@@ -734,7 +734,7 @@ class WordDictionary:
 <a name="part-3"></a>
 ## Part 3 — Intervals
 
-> 📖 **Big picture:** Interval problems are about managing time slots, ranges, or spans. They come up constantly in real life (meeting scheduler, calendar conflicts, merging date ranges from a database) and in FAANG interviews.
+> 📖 **Big picture:** Interval problems are about managing time slots, ranges, or spans. They come up constantly in real life (meeting scheduler, calendar conflicts, merging date ranges from a database) and in coding interviews.
 >
 > **The calendar analogy:** Imagine you have a list of meeting time slots on a calendar. You want to find if any meetings overlap, or merge all adjacent ones, or find the first free slot. Sorting the meetings by start time is the key move — once sorted, overlapping intervals are always adjacent, so you can process them in a simple left-to-right sweep.
 >
@@ -1456,4 +1456,4 @@ def longestCommonPrefix_zip(strs):
 - **AlgoMonster** — Pattern-based teaching with these exact categories: https://algo.monster
 - **Blind 75** — The original curated list covering all patterns: https://neetcode.io/practice
 
-> **With this file + the main study guides, you now have complete coverage of every DSA pattern tested at FAANG.** No gaps remain.
+> **With this file + the main study guides, you now have complete coverage of every DSA pattern tested at top AI companies.** No gaps remain.

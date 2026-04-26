@@ -151,7 +151,7 @@ def largestRectangleArea(heights):
 
 > 📖 **Big picture:** Binary search is the algorithm that turns O(n) linear scans into O(log n) searches by exploiting a sorted order. With each comparison, you eliminate *half* the remaining search space. 1,000,000 elements? Find any value in 20 comparisons (log₂ 1,000,000 ≈ 20).
 >
-> **Beyond plain sorted arrays:** The real power of binary search at FAANG level is applying it to *abstract sorted spaces* — "what’s the minimum speed to complete a task in D days?" is a binary search where the answer space is the range of possible speeds, ordered from smallest to largest. If speed X works, anything faster works too. Binary search on this monotonic property finds the minimum in O(log(max_speed)) steps.
+> **Beyond plain sorted arrays:** The real power of binary search at senior interview level is applying it to *abstract sorted spaces* — "what’s the minimum speed to complete a task in D days?" is a binary search where the answer space is the range of possible speeds, ordered from smallest to largest. If speed X works, anything faster works too. Binary search on this monotonic property finds the minimum in O(log(max_speed)) steps.
 >
 > **The off-by-one trap:** Most binary search bugs come from the exit condition and mid-pointer update. The template below is battle-tested — memorise it and adapt `while left < right` vs `while left <= right` based on whether you want `left` to converge into the answer or `left` to converge past it.
 
@@ -187,7 +187,7 @@ def binary_search(arr, target):
 
 ### 2.2 Binary Search on Answer Space
 
-This is a key FAANG pattern: binary search on the **answer** rather than array indices.
+This is a key industry pattern: binary search on the **answer** rather than array indices.
 
 ```python
 # Koko Eating Bananas (LC #875)

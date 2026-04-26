@@ -13,7 +13,7 @@ By the end of this week you will:
 - Be able to derive FlashAttention's memory advantage
 - Know RoPE, GQA, MoE, and how LLaMA 3 / Mistral differ from GPT-2
 - Calculate memory requirements for any model
-- Answer deep architecture questions at FAANG L5/L6 level
+- Answer deep architecture questions at senior AI engineer level
 
 ---
 
@@ -22,7 +22,7 @@ By the end of this week you will:
 > 💡 **ELI5 (Explain Like I'm 5):**
 > Think of a transformer in production like a car factory assembly line. Our previous lessons gave you the *blueprint* of the machines. This week is about: how much does the factory physically cost to run? Where are the bottlenecks? How do you speed up production without sacrificing quality? Every concept here (KV cache, FlashAttention, quantisation) is a specific engineering answer to a specific bottleneck in that factory.
 
-> 📖 **Big picture:** Week 3 taught you *what* a transformer is. This week is about *what happens in practice* when you actually run one. After all, understanding the architecture is one thing — but FAANG L5/L6 interviews for AI engineers will ask "how much memory does a 70B model use?" or "why is your service slow at long context lengths?" or "how does vLLM improve throughput?" These are engineering questions, not theory questions.
+> 📖 **Big picture:** Week 3 taught you *what* a transformer is. This week is about *what happens in practice* when you actually run one. After all, understanding the architecture is one thing — but Senior AI engineer interviews will ask "how much memory does a 70B model use?" or "why is your service slow at long context lengths?" or "how does vLLM improve throughput?" These are engineering questions, not theory questions.
 
 ### 1.1 Two Phases: Prefill vs Decode
 
@@ -190,7 +190,7 @@ output = F.scaled_dot_product_attention(q, k, v,
 
 ## Part 4 — Modern Positional Encodings
 
-> 📖 **Why this section exists:** Week 3 introduced positional embeddings (sinusoidal and learned). Modern LLMs use better alternatives that let models *generalise to longer sequences than seen in training*. This matters enormously for FAANG interviews because "how does your model handle 100K-token contexts?" is a real system design question.
+> 📖 **Why this section exists:** Week 3 introduced positional embeddings (sinusoidal and learned). Modern LLMs use better alternatives that let models *generalise to longer sequences than seen in training*. This matters enormously for interviews because "how does your model handle 100K-token contexts?" is a real system design question.
 >
 > **The core problem they solve:** If a model is only trained on sequences up to 4096 tokens, what happens when you give it 8192 tokens? Sinusoidal and learned positional embeddings both fail here — the model has never seen those position values. RoPE and ALiBi are specifically designed to extrapolate gracefully.
 
@@ -240,7 +240,7 @@ Where `m` is a head-specific slope. This naturally penalises attending to distan
 
 > 📖 **Why this exists:** Standard Multi-Head Attention (MHA) is memory-hungry during inference. For each request, you have to store K and V caches for *every head*. With 32 heads, that’s 32 sets of K and V tensors. On long contexts or with many concurrent users, this becomes the GPU memory bottleneck.
 >
-> Three variants address this with a key trade-off: fewer KV heads means less memory but potentially lower quality. The industry trend is towards GQA (Grouped Query Attention) — it’s what LLaMA 3, Mistral, and most modern open-source models use. You will be asked about this in FAANG LLM system design interviews.
+> Three variants address this with a key trade-off: fewer KV heads means less memory but potentially lower quality. The industry trend is towards GQA (Grouped Query Attention) — it’s what LLaMA 3, Mistral, and most modern open-source models use. You will be asked about this in LLM system design interviews.
 
 ### 5.1 Multi-Head Attention (MHA) — Original
 
@@ -543,7 +543,7 @@ Total: ~151 GB → need 2× A100 80GB minimum
 **Q18: What is the TTFT and TBT metric for LLM serving?**
 > - **TTFT (Time to First Token):** Latency from user request to first token generated. Measures prefill speed. User experience: the loading indicator duration.
 > - **TBT (Time Between Tokens):** Latency per decode step. Determines the typing speed the user sees.
-> FAANG metric: "P99 TTFT < 2 seconds, TBT < 50ms" is a reasonable target.
+> Industry metric: "P99 TTFT < 2 seconds, TBT < 50ms" is a reasonable target.
 
 **Q19: What is a system prompt and how is it cached?**
 > System prompt: instructions prepended to every request (e.g. "You are a helpful assistant"). For high-volume applications, pre-computing and caching the system prompt's KV vectors (called "prompt caching" in Anthropic/OpenAI APIs) saves prefill cost on every request. Anthropic charges 10% of normal cost for cached tokens.
@@ -687,7 +687,7 @@ models = api.list_models(filter="text-generation", sort="downloads", direction=-
 
 > 📖 **Big picture:** The transformer architecture designed for text sequences can also work on images — you just need to convert the image into a sequence. ViT does this by splitting an image into fixed-size *patches* and treating each patch like a "word token."
 >
-> **Why this matters:** Vision transformers are the backbone of modern multimodal AI (GPT-4V, Gemini, CLIP). Image embeddings are created by ViT-style encoders. Understanding ViT is the bridge between NLP transformers and multimodal systems — a topic that appears increasingly in FAANG AI engineer interviews.
+> **Why this matters:** Vision transformers are the backbone of modern multimodal AI (GPT-4V, Gemini, CLIP). Image embeddings are created by ViT-style encoders. Understanding ViT is the bridge between NLP transformers and multimodal systems — a topic that appears increasingly in AI engineer interviews.
 
 ### 12.1 How ViT Works
 
@@ -762,7 +762,7 @@ probs = outputs.logits_per_image.softmax(dim=1)  # [0.95, 0.05]
 
 > 📖 **Big picture:** Part 6 introduced MoE conceptually. This section goes deeper into the engineering challenges: how do you *prevent all tokens from routing to the same expert* (expert collapse)? How does training differ from dense models? How does inference serve MoE models at scale?
 >
-> **Why it matters now:** GPT-4 is rumoured to be MoE. Mixtral 8x7B is open-source MoE. DeepSeek-V3 uses a novel MoE design that achieved GPT-4 quality at a fraction of the training cost. MoE is the dominant frontier for scaling transformers efficiently, making it a frequent topic in FAANG AI infrastructure interviews.
+> **Why it matters now:** GPT-4 is rumoured to be MoE. Mixtral 8x7B is open-source MoE. DeepSeek-V3 uses a novel MoE design that achieved GPT-4 quality at a fraction of the training cost. MoE is the dominant frontier for scaling transformers efficiently, making it a frequent topic in AI infrastructure interviews.
 
 > **See also:** The definitive MoE deep-dive is in **Section 8.5** of [generative_ai_complete.md](../../Phase_2_Advanced_Systems_Jul_Sep_year_01/Month_04_July/generative_ai_complete.md) — includes the load-balancing auxiliary loss, DeepSeek-V3 innovations, and dense vs MoE inference trade-off analysis.
 

@@ -7,7 +7,7 @@
 
 > 📖 **Big picture:** By now you know how a single LLM agent works (ReAct loop, tool calling, memory). Month 6 Week 1–2 asks: what does a *production-grade* agentic system look like at a company like Google, Meta, or Stripe? The answer involves RLHF (how models learn human preferences), constitutional AI (how models self-correct), and multi-agent orchestration patterns used in real products.
 >
-> **Why it matters for interviews:** FAANG AI engineer roles increasingly require you to discuss not just "can this agent do the task" but "how do we make this agent *reliably* helpful, safe, and auditable at scale?" This week builds the vocabulary and intuition for those discussions.
+> **Why it matters for interviews:** AI engineer roles at top companies increasingly require you to discuss not just "can this agent do the task" but "how do we make this agent *reliably* helpful, safe, and auditable at scale?" This week builds the vocabulary and intuition for those discussions.
 
 ### RLHF Concepts (Preview — Deep dive in Month 9)
 
@@ -277,7 +277,7 @@ Total: 50 + 10 + 5 = 65ms ✅ well under 200ms target
 
 ---
 
-### Design 3: LLM Serving Platform (FAANG L6 Question)
+### Design 3: LLM Serving Platform (Senior AI Engineer Question)
 
 **"Design a serving platform for running LLMs at 10,000 requests/minute"**
 
@@ -319,7 +319,7 @@ Observability:
 > "What is the expected QPS? Number of users? Acceptable latency?" This determines whether you use managed APIs, self-hosted models, or edge devices.
 
 **Tip 2: State trade-offs explicitly**
-> Interviewers at FAANG want to hear you reason through trade-offs, not the "perfect" answer. "I'd use gpt-4o-mini for cost, but would switch to gpt-4o if quality is insufficient" shows good engineering judgment.
+> Interviewers want to hear you reason through trade-offs, not the "perfect" answer. "I'd use gpt-4o-mini for cost, but would switch to gpt-4o if quality is insufficient" shows good engineering judgment.
 
 **Tip 3: Always mention evaluation**
 > Many candidates design the training/serving but forget evaluation. How will you know the system is working? What metrics matter? How do you A/B test changes?
@@ -328,7 +328,7 @@ Observability:
 > What happens when: the LLM API goes down (fallback to cached response or smaller local model), the vector DB is slow (cache frequent queries), the embedding model gives poor results (fallback to BM25)?
 
 **Tip 5: Cost awareness is a signal**
-> FAANG engineers are cost-conscious. Mention: "This would cost approximately $X/month at target scale" and propose optimisations. Shows you think like a senior engineer.
+> Senior AI engineers are cost-conscious. Mention: "This would cost approximately $X/month at target scale" and propose optimisations. Shows you think like a senior engineer.
 
 ---
 

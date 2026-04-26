@@ -12,7 +12,7 @@
 - ✅ = confident, can explain and implement
 - 🔄 = reviewed, need more practice
 - ❌ = not yet studied
-- Mark each item as you study. Target 100% ✅ before your FAANG interview.
+- Mark each item as you study. Target 100% ✅ before your AI engineer interview.
 
 ---
 

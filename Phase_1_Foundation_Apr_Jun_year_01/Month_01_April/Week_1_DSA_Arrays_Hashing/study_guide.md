@@ -12,13 +12,13 @@ By the end of this week you will be able to:
 - Implement a hash table from scratch and explain collision resolution
 - Recognise and apply the key array+hashing patterns: frequency counting, complement lookup, grouping by key
 - Solve all 15 LeetCode problems in this guide within the time limits
-- Answer any FAANG-level interview question on arrays and hash tables with confidence
+- Answer any senior AI engineer interview question on arrays and hash tables with confidence
 
 ---
 
 ## Part 1 — Arrays: Deep Dive
 
-> 📖 **Big picture:** An array is the simplest data structure imaginable — a row of boxes in memory, each holding one value, each with a numbered label (index 0, 1, 2...). Almost every algorithm problem in FAANG interviews starts with an array. Before jumping to tricks and patterns, you need to understand *why* certain operations are fast and others are slow — this understanding is what lets you choose the right approach under interview pressure.
+> 📖 **Big picture:** An array is the simplest data structure imaginable — a row of boxes in memory, each holding one value, each with a numbered label (index 0, 1, 2...). Almost every algorithm problem in coding interviews starts with an array. Before jumping to tricks and patterns, you need to understand *why* certain operations are fast and others are slow — this understanding is what lets you choose the right approach under interview pressure.
 >
 > Think of memory like a very long street of houses, each with a unique address. An array is like booking a row of consecutive houses so you can find your neighbour by just adding 1 to the address. This consecutive layout is what makes **random access O(1)** — the CPU can jump directly to any index without searching.
 
@@ -71,7 +71,7 @@ for i in range(10):
 # Output shows memory jumps at 0, 4, 8, 16, 25... (growth factor ~1.125 in CPython)
 ```
 
-### 1.4 Key Array Patterns for FAANG
+### 1.4 Key Array Patterns for Coding Interviews
 
 > 📖 **Before the code:** These three array patterns solve a huge portion of interview questions. The underlying thread in all three is: *avoid recomputing the same thing twice*. Prefix sums avoid re-summing ranges. Kadane's avoids trying every subarray. Two-pass avoids using division. Each is a lesson in "precompute now, answer cheaply later."
 
@@ -217,7 +217,7 @@ c["a"]                   # 2 (no KeyError for missing keys — returns 0)
 
 ### 2.5 Key Hash Table Patterns
 
-> 📖 **Why these patterns matter:** Most FAANG array problems reduce to one of these three templates. Once you see the pattern name, the code almost writes itself. The goal is to get fast enough at recognising "oh, this is a frequency counting problem" that you start explaining your approach within 30 seconds of reading the problem.
+> 📖 **Why these patterns matter:** Most coding interview array problems reduce to one of these three templates. Once you see the pattern name, the code almost writes itself. The goal is to get fast enough at recognising "oh, this is a frequency counting problem" that you start explaining your approach within 30 seconds of reading the problem.
 
 #### Pattern 1: Frequency Counting
 ```python
@@ -747,7 +747,7 @@ class LRUCache:
 
 ### Go Deeper
 - **Python's internal hash table implementation:** Read CPython source `Objects/dictobject.c` if you want to understand the actual implementation
-- **"Cracking the Coding Interview" Chapter 1** (Arrays and Strings) by Gayle McDowell — classic FAANG interview prep
+- **"Cracking the Coding Interview" Chapter 1** (Arrays and Strings) by Gayle McDowell — classic coding interview prep
 - **"Programming Pearls" by Jon Bentley** — Column 1 covers the "use the right data structure" mindset
 - **LeetCode Hash Table tag** — sort by "Most Liked" for high-quality problems
 
@@ -770,7 +770,7 @@ class LRUCache:
 
 ---
 
-> ✅ **End of Week 1.** When you can consistently solve the Medium problems in < 20 minutes and the Hard problems in < 35 minutes, you're ready for FAANG coding rounds on these topics.
+> ✅ **End of Week 1.** When you can consistently solve the Medium problems in < 20 minutes and the Hard problems in < 35 minutes, you're ready for coding round interviews on these topics.
 
 ---
 

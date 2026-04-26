@@ -1,7 +1,7 @@
 # Classical ML Fundamentals — The Complete Interview Guide
-### Prerequisite Knowledge for Every FAANG ML/AI Engineer Interview
+### Prerequisite Knowledge for Every AI Engineer Interview
 
-> **Why this matters:** Even for LLM/AI Engineer roles, FAANG interviews include an ML Fundamentals round. You WILL be asked about bias-variance, gradient descent, regularisation, evaluation metrics, and classical algorithms. Candidates who ace the LLM round but stumble on "explain the bias-variance tradeoff" get rejected.
+> **Why this matters:** Even for LLM/AI Engineer roles, top-tier interviews include an ML Fundamentals round. You WILL be asked about bias-variance, gradient descent, regularisation, evaluation metrics, and classical algorithms. Candidates who ace the LLM round but stumble on "explain the bias-variance tradeoff" get rejected.
 
 > **How to use this file:** Read top-to-bottom. Every concept builds on the previous one. The code is runnable Python — copy-paste and experiment. The interview Q&As at the end cover the exact questions asked.
 
@@ -600,7 +600,7 @@ If not (e.g., XOR problem), you need a non-linear model (SVM with kernel, neural
 <a name="part-5"></a>
 ## Part 5 — The Bias-Variance Tradeoff
 
-> **This is the #1 most-asked ML fundamentals question at FAANG.**
+> **This is the #1 most-asked ML fundamentals question in AI engineer interviews.**
 
 > 💡 **ELI5 (Explain Like I'm 5):** 
 > Imagine studying for a test by taking practice exams. 
@@ -2079,4 +2079,4 @@ Better: Benjamini-Hochberg (controls false discovery rate instead of FWER)
 - Scikit-learn documentation: https://scikit-learn.org (examples for every algorithm)
 - Kaggle Learn: https://www.kaggle.com/learn (free micro-courses with hands-on exercises)
 
-> **This file covers the entire "ML Fundamentals" round at FAANG.** Combine this knowledge with the LLM-specific content in the other study guides, and you'll be able to handle any question they throw at you.
+> **This file covers the entire "ML Fundamentals" round for AI engineer interviews.** Combine this knowledge with the LLM-specific content in the other study guides, and you'll be able to handle any question they throw at you.

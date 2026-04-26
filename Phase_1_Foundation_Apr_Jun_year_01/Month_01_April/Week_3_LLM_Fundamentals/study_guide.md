@@ -1,7 +1,7 @@
 # Week 3: LLM Fundamentals — How Language Models Work
 ### Phase 1 | Month 1 | April 21–27, 2026
 
-> This week shifts from DSA to AI/LLM theory — the core knowledge tested in FAANG's LLM/GenAI interview rounds.  
+> This week shifts from DSA to AI/LLM theory — the core knowledge tested in top-tier LLM/GenAI interview rounds.  
 > Continue DSA mornings (review Week 1–2 problems). Use evenings for this content.
 
 ---
@@ -13,7 +13,7 @@ By the end of this week you will be able to:
 - Describe tokenization, embeddings, and why they matter
 - Explain attention and transformer architecture at an intuitive level
 - Contrast BERT vs GPT architectures and use cases
-- Answer 30+ FAANG-level LLM interview questions with confidence
+- Answer 30+ senior-level LLM interview questions with confidence
 
 ---
 
@@ -781,7 +781,7 @@ probs = softmax(logits / 2.0)  # [0.42, 0.34, 0.24]
 > Reinforcement Learning from Human Feedback. Pre-trained models predict likely text, not helpful/safe text. RLHF trains a reward model on human preferences, then uses PPO to optimise the LLM to generate text that maximises that reward. Result: helpful, harmless, honest assistants.
 
 **Q29: What's the difference between a 7B and a 70B model for your specific use case?**
-> Factors: task complexity (7B is great for factual QA, 70B needed for multi-step reasoning), latency requirements (7B ~5× faster), cost (7B ~10× cheaper to serve), quality delta (70B generally better but gap narrowing). For FAANG interview: "Start with smaller model, measure quality gap, scale up only if needed."
+> Factors: task complexity (7B is great for factual QA, 70B needed for multi-step reasoning), latency requirements (7B ~5× faster), cost (7B ~10× cheaper to serve), quality delta (70B generally better but gap narrowing). For interviews: "Start with smaller model, measure quality gap, scale up only if needed."
 
 **Q30: You're asked to reduce LLM API costs by 50%. What are your options?**
 > 1. **Prompt compression** — remove redundant context tokens (LLMLingua)

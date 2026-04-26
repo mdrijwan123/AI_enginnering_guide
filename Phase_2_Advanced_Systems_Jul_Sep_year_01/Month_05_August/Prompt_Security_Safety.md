@@ -42,7 +42,7 @@ The core insight: **your system prompt, retrieved documents, and tool return val
 
 ## Part 2 — OWASP LLM Top 10 (2025)
 
-The Open Worldwide Application Security Project maintains a Top 10 specifically for LLM applications. Every AI engineer at a FAANG-level company is expected to know this list and be able to give a concrete defence for each.
+The Open Worldwide Application Security Project maintains a Top 10 specifically for LLM applications. Every production AI engineer is expected to know this list and be able to give a concrete defence for each.
 
 ### LLM01 — Prompt Injection
 

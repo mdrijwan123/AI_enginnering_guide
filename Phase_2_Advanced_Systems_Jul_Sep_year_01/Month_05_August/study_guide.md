@@ -7,7 +7,7 @@
 
 > 📖 **Why revisit this?** You covered these concepts in Month 1 Week 4. This month is about going deeper with *production implementation focus*. Month 1 was "understand the concepts". Month 5 is "calculate memory budgets, implement quantisation, profile throughput, justify architectural choices in a system design interview."
 >
-> **The practical stakes:** At FAANG scale, the difference between serving a 7B model at 100 requests/second vs 500 requests/second is worth millions of dollars. Every optimisation in this section — quantisation, speculative decoding, continuous batching — directly translates to cost savings and latency improvements.
+> **The practical stakes:** At production scale, the difference between serving a 7B model at 100 requests/second vs 500 requests/second is worth millions of dollars. Every optimisation in this section — quantisation, speculative decoding, continuous batching — directly translates to cost savings and latency improvements.
 
 ### KV Cache Memory Budget Planning
 

@@ -1,6 +1,6 @@
-# 🎯 FAANG LLM/AI Engineer Study Plan — 2026–2027
+# 🎯 AI Engineering Study Plan — 2026–2027
 
-> **Goal:** Transition from MLOps Engineer → FAANG LLM/AI Engineer  
+> **Goal:** Transition from MLOps Engineer → AI Engineer at top-tier tech companies  
 > **Timeline:** April 2026 → April 2027  
 > **Daily Commitment:** ~2.5 hrs weekdays | 3–4 hrs Saturday | 3 hrs Sunday
 
@@ -25,7 +25,7 @@
 
 ---
 
-## �📋 Interview Rounds at FAANG (What Gets Tested)
+## �📋 AI Engineer Interview Rounds (What Gets Tested)
 
 | Round | Topics | Your Weight |
 |---|---|---|
@@ -222,7 +222,7 @@ Added after a comprehensive cross-reference of Braintrust, Simplilearn GenAI 202
 |---|---|---|---|
 | `Tokenization_Deep_Dive.md` | Phase_1/.../Week_3_LLM_Fundamentals/ | BPE from scratch (Python impl), WordPiece, SentencePiece, byte-level BPE, tiktoken, vocab size comparison, cost estimation, chat templates (ChatML/LLaMA/Mistral), failure modes | 5 |
 | `LLM_Evaluation_Metrics.md` | Phase_2/.../Month_05_August/ | Perplexity, BLEU, ROUGE, BERTScore, RAGAS deep-dive (faithfulness/answer relevancy/context precision/recall), LLM-as-Judge, G-Eval, MMLU/HumanEval/TruthfulQA benchmarks, production evaluation pipeline, A/B testing | 7 |
-| `Recommendation_Systems.md` | Phase_2/.../Month_06_September/ | User-based CF, matrix factorisation (PyTorch MF with biases), two-tower model (full implementation + in-batch negatives), feature engineering, production pipeline (5 stages), cold start solutions, LLM-hybrid recommender, NDCG/MAP/P@K, 5 FAANG interview Q&As | 5 |
+| `Recommendation_Systems.md` | Phase_2/.../Month_06_September/ | User-based CF, matrix factorisation (PyTorch MF with biases), two-tower model (full implementation + in-batch negatives), feature engineering, production pipeline (5 stages), cold start solutions, LLM-hybrid recommender, NDCG/MAP/P@K, 5 AI interview Q&As | 5 |
 | `AI_INTERVIEW_MASTER_CHECKLIST.md` | Root | 124-item topic checklist mapped to every study guide, organised by round type (Coding/ML Theory/NLP/Evaluation/RAG/Fine-tuning/Inference/System Design/Behavioural), pre-interview day plan | — |
 
 > **Total files: 34 study guides + 4 reference files | 600+ interview Q&As | 124-topic interview checklist**
@@ -249,6 +249,19 @@ Added after comprehensive full-workspace audit — filling the final critical ga
 > **Total files: 36 study guides + 4 reference files | 620+ interview Q&As**
 
 ---
+
+## 🧩 April 2026 Curriculum Gap-Fill (Session 4)
+
+Added to close final structural gaps identified by full syllabus audit:
+
+| File | Location | Covers | Q&As |
+|---|---|---|---|
+| `Dynamic_Programming_Deep_Dive/study_guide.md` | Phase_2/.../Month_04_July/ | 1D DP (Climbing Stairs, House Robber, LIS, Coin Change, Word Break, Decode Ways) + 2D DP (LCS, Edit Distance, Knapsack, Unique Paths, Maximal Square) + Interval DP + State Machine DP — 25 LeetCode problems | 8 |
+| `Advanced_Graph_Algorithms/study_guide.md` | Phase_1/.../Month_03_June/ | Dijkstra (standard + path reconstruction + grid), Union-Find (path compression + rank + Kruskal MST), Topological Sort (Kahn's BFS + DFS + Alien Dictionary), Bipartite check, Tarjan SCC — 15 LeetCode problems | 6 |
+| `MCP_Protocol/study_guide.md` | Phase_2/.../Month_05_August/ | MCP architecture, Tools/Resources/Prompts primitives, building stdio + SSE servers, GCP BigQuery MCP server, LLM client integration with Claude, security best practices, official server catalog | 5 |
+| `LLMOps_Observability/study_guide.md` | Phase_2/.../Month_05_August/ | LangSmith tracing (@traceable, feedback), Prometheus metrics (latency/tokens/cost), Grafana alerts, prompt versioning, hallucination monitoring with RAGAS sampling, data drift detection, daily budget enforcement, model routing by complexity, structured logging | 5 |
+
+> **Total files: 40 study guides + 4 reference files | 644+ interview Q&As**
 
 ## ✅ How to Use These Materials
 

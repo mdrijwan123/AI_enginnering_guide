@@ -3,7 +3,7 @@
 
 Fine-tuning and quantisation are not the only ways to make a large model smaller and cheaper to run. Knowledge distillation takes a fundamentally different approach: instead of compressing an existing model, it *trains a new, smaller model to mimic the behaviour of the large one*. The result is a compact model that punches well above its weight class — because it learned from a teacher that already solved the hard problem of generalisation.
 
-Understanding distillation is essential in 2026 because the entire Small Language Model revolution (Phi-3, Gemma 2, DeepSeek-R1-Distill, LLaMA 3 8B) is powered by it. FAANG interviewers routinely ask: "How would you deploy this system cheaply at scale?" Distillation is one of the most powerful answers available.
+Understanding distillation is essential in 2026 because the entire Small Language Model revolution (Phi-3, Gemma 2, DeepSeek-R1-Distill, LLaMA 3 8B) is powered by it. AI engineer interviewers routinely ask: "How would you deploy this system cheaply at scale?" Distillation is one of the most powerful answers available.
 
 ---
 

@@ -14,7 +14,7 @@
 > - **LoRA/QLoRA:** Efficiently fine-tunes by only training small adapter matrices — same quality as full fine-tuning at 1% of the cost
 > - **RLHF/DPO:** Aligns the model with human preferences beyond just instruction following
 >
-> **Why LoRA matters for you specifically:** Fine-tuning a 7B model requires 112 GB of GPU memory (full fine-tuning). LoRA reduces this to ~10 GB. This makes fine-tuning accessible on a single A100 or even on consumer hardware (RTX 4090). Every FAANG team doing custom model training uses LoRA or QLoRA.
+> **Why LoRA matters for you specifically:** Fine-tuning a 7B model requires 112 GB of GPU memory (full fine-tuning). LoRA reduces this to ~10 GB. This makes fine-tuning accessible on a single A100 or even on consumer hardware (RTX 4090). Every production AI team doing custom model training uses LoRA or QLoRA.
 
 ### Why Fine-Tune vs Prompt Engineer vs RAG?
 
@@ -281,7 +281,7 @@ merged_model.save_pretrained("./llama3-8b-merged")
 
 ### LoRA Variants — What's Beyond the Original
 
-Base LoRA changed everything when it appeared in 2021. Since then, researchers have proposed targeted improvements that address specific weaknesses. FAANG interviews frequently ask "what improvements have been made to LoRA?" — knowing the answer signals genuine depth.
+Base LoRA changed everything when it appeared in 2021. Since then, researchers have proposed targeted improvements that address specific weaknesses. AI engineer interviews frequently ask "what improvements have been made to LoRA?" — knowing the answer signals genuine depth.
 
 #### DoRA — Weight-Decomposed Low-Rank Adaptation (2024)
 

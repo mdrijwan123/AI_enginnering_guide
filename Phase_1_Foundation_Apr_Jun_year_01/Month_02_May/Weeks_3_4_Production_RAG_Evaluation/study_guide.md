@@ -12,7 +12,7 @@ By the end of these two weeks you will be able to:
 - Implement chunking, embedding, and vector search
 - Build re-ranking pipelines
 - Evaluate RAG quality with RAGAS and LangSmith
-- Answer all RAG system design questions in FAANG interviews
+- Answer all RAG system design questions in AI engineer interviews
 
 ---
 
@@ -67,7 +67,7 @@ Response: "According to the Q3 2025 report, revenue was $2.3B, up 12% YoY"
 
 > 📖 **Big picture:** RAG has two distinct phases that run at different times. The **indexing pipeline** runs *offline* (ahead of time) and converts your documents into searchable vectors. The **query pipeline** runs *online* (at request time) and retrieves the right chunks to answer the user's question.
 >
-> Understanding both pipelines — and where each can fail — is what separates someone who has used LangChain once from a production AI engineer. FAANG system design interviews often ask you to design a RAG system end-to-end; this section is the blueprint.
+> Understanding both pipelines — and where each can fail — is what separates someone who has used LangChain once from a production AI engineer. AI engineer system design interviews often ask you to design a RAG system end-to-end; this section is the blueprint.
 
 ### 2.1 Indexing Pipeline (Offline)
 
@@ -583,7 +583,7 @@ with tracing_v2_enabled(project_name="RAG-Production"):
 > - **Query rewriting / HyDE:** Rewrite the user's query or generate a hypothetical answer before embedding — often retrieves better results
 > - **Self-RAG:** The LLM decides *whether* to retrieve and *critiques* its own outputs
 >
-> These patterns are frequently asked about in FAANG system design rounds: "Your RAG system isn't accurate enough — what would you improve?"
+> These patterns are frequently asked in AI engineer system design rounds: "Your RAG system isn't accurate enough — what would you improve?"
 
 ### 8.1 Contextual Compression
 

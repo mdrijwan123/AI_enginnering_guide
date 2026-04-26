@@ -1,14 +1,14 @@
 # Behavioral Interview — STAR Stories Bank
-### Phase 4 | FAANG Interview Prep | Start Drafting: January 2027
+### Phase 4 | AI Interview Prep | Start Drafting: January 2027
 
 > **Start drafting these NOW** — great behavioral stories take months to refine.
 > The best STAR stories are specific, quantified, and showcase your engineering leadership.
 
 ---
 
-## 🎯 FAANG Behavioral Philosophy
+## 🎯 Behavioral Interview Philosophy
 
-FAANG companies each have distinct behavioral lenses:
+Top tech companies each have distinct behavioral lenses:
 
 | Company | Framework | Key Values Tested |
 |---|---|---|
@@ -325,7 +325,7 @@ Result: [Changed minds or direction; what the outcome was]
 ### Story 12: Most Challenging Technical Problem
 **Amazon LPs:** Dive Deep  
 **Google:** Technical depth  
-*Common opening question at all FAANGs*
+*Common opening question at top tech companies*
 
 ```
 Situation: [A hard engineering problem — debugging, algorithmic, architectural]

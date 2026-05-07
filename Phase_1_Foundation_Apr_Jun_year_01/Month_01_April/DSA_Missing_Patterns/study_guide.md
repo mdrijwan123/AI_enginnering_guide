@@ -1449,11 +1449,465 @@ def longestCommonPrefix_zip(strs):
 
 ---
 
+## Part 6 — Binary Search on Answer (Gist Q55–64)
+
+> 📖 **Big picture:** Binary search isn't just for searching arrays — you can binary search on the **answer** when: the answer space is a range of integers, and you can check "is X feasible?" in O(n). This pattern converts hard optimization problems into simple feasibility checks.
+
+> **Template:**
+> ```
+> lo, hi = min_possible_answer, max_possible_answer
+> while lo < hi:
+>     mid = (lo + hi) // 2
+>     if is_feasible(mid):
+>         hi = mid       # try smaller
+>     else:
+>         lo = mid + 1   # need larger
+> return lo
+> ```
+
+### Q55 & Q63. Minimize Maximum Pages / Split Array (LC #410)
+
+> Split array into k subarrays to minimize the largest subarray sum.
+
+```python
+def splitArray(nums: list[int], k: int) -> int:
+    def can_split(max_sum):
+        """Can we split nums into k parts each with sum <= max_sum?"""
+        parts = 1
+        current = 0
+        for n in nums:
+            if current + n > max_sum:
+                parts += 1
+                current = n
+                if parts > k:
+                    return False
+            else:
+                current += n
+        return True
+
+    lo = max(nums)         # minimum possible: largest element must be in some part
+    hi = sum(nums)         # maximum possible: one part with everything
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if can_split(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+# nums=[7,2,5,10,8], k=2 → 18 (split into [7,2,5] and [10,8])
+```
+
+---
+
+### Q61. Maximize Minimum Distance Between Items (LC #2517 / Aggressive Cows)
+
+> Place k items in positions. Maximize the minimum distance between any two items.
+
+```python
+def maxMinDistance(positions: list[int], k: int) -> int:
+    positions.sort()
+
+    def can_place(min_dist):
+        """Can we place k items with minimum distance >= min_dist?"""
+        count = 1
+        last = positions[0]
+        for pos in positions[1:]:
+            if pos - last >= min_dist:
+                count += 1
+                last = pos
+                if count == k:
+                    return True
+        return False
+
+    lo = 1
+    hi = positions[-1] - positions[0]
+    while lo < hi:
+        mid = (lo + hi + 1) // 2  # upper mid to avoid infinite loop
+        if can_place(mid):
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo
+
+# positions=[1,2,3,4,7], k=3 → 3 (place at 1, 4, 7)
+```
+
+> 🔑 **Note:** When you want to **maximize** the answer (larger lo is better), use `hi = mid - 1` when feasible and `lo = mid + 1` when not — opposite of the minimize case.
+
+---
+
+### Q62. Minimum Ship Capacity to Deliver in D Days (LC #1011)
+
+```python
+def shipWithinDays(weights: list[int], days: int) -> int:
+    def can_ship(capacity):
+        day = 1
+        load = 0
+        for w in weights:
+            if load + w > capacity:
+                day += 1
+                load = 0
+            load += w
+        return day <= days
+
+    lo = max(weights)   # must carry heaviest package
+    hi = sum(weights)   # carry everything in 1 day
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if can_ship(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+# weights=[1,2,3,4,5,6,7,8,9,10], days=5 → 15
+```
+
+---
+
+### Q64. Minimum Time to Finish Jobs (LC #1870 / similar)
+
+> k workers, each can do 1 job. Find minimum time when each job takes 1 unit and workers run in parallel.
+
+```python
+def minimumTime(time: list[int], totalTrips: int) -> int:
+    """Minimum time for buses to complete totalTrips total."""
+    def can_finish(t):
+        return sum(t // trip_time for trip_time in time) >= totalTrips
+
+    lo = 1
+    hi = min(time) * totalTrips
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if can_finish(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+# time=[1,2,3], totalTrips=5 → 3  (at t=3: bus1 does 3, bus2 does 1, bus3 does 1 = 5)
+```
+
+---
+
+### Binary Search on Answer — Cheat Sheet
+
+| Problem | lo | hi | feasible(mid) check |
+|---|---|---|---|
+| Split array (minimize max) | max(arr) | sum(arr) | can fit in k parts? |
+| Ship packages | max(weights) | sum(weights) | ship in ≤ days? |
+| Minimize max pages | max(pages) | sum(pages) | assign to ≤ k students? |
+| Maximize min distance | 1 | max_gap | place k items? |
+| Kth smallest in matrix | matrix[0][0] | matrix[-1][-1] | count ≤ mid ≥ k? |
+
+---
+
+## Part 7 — Segment Tree & Fenwick Tree (Gist Q290–298)
+
+> 📖 **Big picture:** When you need to answer **range queries** (sum/min/max of a[i..j]) AND **update** individual elements, a flat array is O(n) per query or O(n) per update. Segment trees and Fenwick trees give you O(log n) for both.
+
+> **When to use:**
+> - Fenwick/BIT: simpler, prefix sum queries + point updates
+> - Segment Tree: more powerful — range updates, custom queries (range min, range max, range GCD)
+
+### Q290 & Q292. Fenwick Tree (Binary Indexed Tree)
+
+```python
+class FenwickTree:
+    """
+    1-indexed. Supports:
+    - update(i, delta): add delta to position i
+    - query(i): sum of a[1..i]
+    - range_query(l, r): sum of a[l..r]
+    """
+    def __init__(self, n: int):
+        self.n = n
+        self.tree = [0] * (n + 1)
+
+    def update(self, i: int, delta: int) -> None:
+        while i <= self.n:
+            self.tree[i] += delta
+            i += i & (-i)   # move to parent
+
+    def query(self, i: int) -> int:
+        total = 0
+        while i > 0:
+            total += self.tree[i]
+            i -= i & (-i)   # move to responsible range
+        return total
+
+    def range_query(self, l: int, r: int) -> int:
+        return self.query(r) - self.query(l - 1)
+
+# Usage:
+# ft = FenwickTree(5)
+# ft.update(1, 3)  # a[1] += 3
+# ft.update(3, 7)  # a[3] += 7
+# ft.query(3)      # sum of a[1..3] = 10
+# ft.range_query(2, 4)  # sum of a[2..4] = 7
+```
+
+> 🔑 **The trick:** `i & (-i)` (lowest set bit) determines the range each node is responsible for. It's surprisingly elegant — each node covers a range of length equal to its lowest set bit.
+
+---
+
+### Q293. Count Inversions Using Fenwick Tree
+
+> Count pairs (i, j) where i < j but arr[i] > arr[j].
+
+```python
+def countInversions(arr: list[int]) -> int:
+    # Coordinate compress values to [1..n]
+    sorted_vals = sorted(set(arr))
+    rank = {v: i+1 for i, v in enumerate(sorted_vals)}
+
+    ft = FenwickTree(len(arr))
+    inversions = 0
+
+    for x in arr:
+        r = rank[x]
+        # Elements already inserted that are GREATER than x
+        inversions += ft.query(len(arr)) - ft.query(r)
+        ft.update(r, 1)
+
+    return inversions
+
+# arr=[3,1,2] → 2 (pairs: (3,1), (3,2))
+```
+
+---
+
+### Q290. Segment Tree — Range Sum Queries
+
+```python
+class SegmentTree:
+    """
+    0-indexed. Supports range sum queries and point updates in O(log n).
+    """
+    def __init__(self, nums: list[int]):
+        self.n = len(nums)
+        self.tree = [0] * (4 * self.n)
+        self._build(nums, 0, 0, self.n - 1)
+
+    def _build(self, nums, node, start, end):
+        if start == end:
+            self.tree[node] = nums[start]
+        else:
+            mid = (start + end) // 2
+            self._build(nums, 2*node+1, start, mid)
+            self._build(nums, 2*node+2, mid+1, end)
+            self.tree[node] = self.tree[2*node+1] + self.tree[2*node+2]
+
+    def update(self, idx: int, val: int, node=0, start=0, end=None) -> None:
+        if end is None: end = self.n - 1
+        if start == end:
+            self.tree[node] = val
+        else:
+            mid = (start + end) // 2
+            if idx <= mid:
+                self.update(idx, val, 2*node+1, start, mid)
+            else:
+                self.update(idx, val, 2*node+2, mid+1, end)
+            self.tree[node] = self.tree[2*node+1] + self.tree[2*node+2]
+
+    def query(self, l: int, r: int, node=0, start=0, end=None) -> int:
+        if end is None: end = self.n - 1
+        if r < start or end < l:
+            return 0   # out of range
+        if l <= start and end <= r:
+            return self.tree[node]   # fully covered
+        mid = (start + end) // 2
+        return (self.query(l, r, 2*node+1, start, mid) +
+                self.query(l, r, 2*node+2, mid+1, end))
+
+# LC 307: Range Sum Query — Mutable
+# st = SegmentTree([1,3,5])
+# st.query(0, 2) → 9
+# st.update(1, 2)
+# st.query(0, 2) → 8
+```
+
+---
+
+### Q298. Sparse Table — Static Range Minimum Query (O(1) query)
+
+> When the array doesn't change, sparse table answers range min/max queries in O(1) after O(n log n) preprocessing.
+
+```python
+import math
+
+class SparseTable:
+    def __init__(self, arr: list[int]):
+        n = len(arr)
+        LOG = math.floor(math.log2(n)) + 1 if n > 0 else 1
+        self.table = [[0]*n for _ in range(LOG)]
+        self.log = [0] * (n + 1)
+
+        self.table[0] = arr[:]
+        for j in range(1, n+1):
+            self.log[j] = math.floor(math.log2(j))
+
+        for k in range(1, LOG):
+            for i in range(n - (1 << k) + 1):
+                self.table[k][i] = min(
+                    self.table[k-1][i],
+                    self.table[k-1][i + (1 << (k-1))]
+                )
+
+    def query(self, l: int, r: int) -> int:
+        """Range minimum query in O(1)."""
+        k = self.log[r - l + 1]
+        return min(self.table[k][l], self.table[k][r - (1 << k) + 1])
+
+# st = SparseTable([2,4,3,1,6,7,8,9,1,7])
+# st.query(0, 4) → 1
+# st.query(2, 6) → 1
+```
+
+---
+
+## Part 8 — Hard Arrays Problems (Gist Q3, 5, 6, 19)
+
+### Q3. Two Numbers Appearing Once (Others Appear Twice)
+
+```python
+def singleNumbers(nums: list[int]) -> list[int]:
+    xor = 0
+    for n in nums:
+        xor ^= n   # XOR of the two unique numbers
+
+    # Find rightmost set bit that differs between the two numbers
+    diff_bit = xor & (-xor)
+
+    a = 0
+    for n in nums:
+        if n & diff_bit:   # partition into two groups
+            a ^= n
+    return [a, xor ^ a]
+
+# [1,2,1,3,2,5] → [3,5]
+```
+
+---
+
+### Q5. Elements Appearing More Than n/3 Times (LC #229)
+
+```python
+def majorityElement(nums: list[int]) -> list[int]:
+    # Boyer-Moore Extended Voting — at most 2 candidates
+    cand1 = cand2 = None
+    count1 = count2 = 0
+
+    for n in nums:
+        if n == cand1:
+            count1 += 1
+        elif n == cand2:
+            count2 += 1
+        elif count1 == 0:
+            cand1, count1 = n, 1
+        elif count2 == 0:
+            cand2, count2 = n, 1
+        else:
+            count1 -= 1
+            count2 -= 1
+
+    # Verify (candidates must appear > n/3 times)
+    return [c for c in [cand1, cand2]
+            if c is not None and nums.count(c) > len(nums) // 3]
+
+# [3,2,3] → [3]
+# [1,1,1,3,3,2,2,2] → [1,2]
+```
+
+---
+
+### Q6. Count Inversions — Merge Sort Approach
+
+```python
+def countInversions_mergeSort(arr: list[int]) -> int:
+    def merge_sort(arr):
+        if len(arr) <= 1:
+            return arr, 0
+        mid = len(arr) // 2
+        left, l_inv = merge_sort(arr[:mid])
+        right, r_inv = merge_sort(arr[mid:])
+
+        merged = []
+        inversions = l_inv + r_inv
+        i = j = 0
+        while i < len(left) and j < len(right):
+            if left[i] <= right[j]:
+                merged.append(left[i]); i += 1
+            else:
+                merged.append(right[j]); j += 1
+                inversions += len(left) - i  # all remaining left[] > right[j]
+
+        merged.extend(left[i:])
+        merged.extend(right[j:])
+        return merged, inversions
+
+    _, inv = merge_sort(arr)
+    return inv
+
+# [3,1,2] → 2
+# [5,4,3,2,1] → 10
+```
+
+---
+
+### Q19. Subarrays with Equal 0s and 1s (LC #525)
+
+```python
+def findMaxLength(nums: list[int]) -> int:
+    # Replace 0s with -1s → find longest subarray with sum 0
+    prefix_sum = 0
+    first_seen = {0: -1}   # prefix_sum → first index
+    max_len = 0
+
+    for i, n in enumerate(nums):
+        prefix_sum += 1 if n == 1 else -1
+        if prefix_sum in first_seen:
+            max_len = max(max_len, i - first_seen[prefix_sum])
+        else:
+            first_seen[prefix_sum] = i
+
+    return max_len
+
+# [0,1,0] → 2 (subarray [0,1] or [1,0])
+# [0,1,0,1,1,1,0] → 4
+```
+
+---
+
+## Updated Problem Tracker (New Additions)
+
+### Binary Search on Answer
+| LC# | Problem | Difficulty | Status |
+|---|---|---|---|
+| 410 | Split Array Largest Sum | Hard | ☐ |
+| 1011 | Ship Packages D Days | Medium | ☐ |
+| 1870 | Minimum Speed to Arrive | Medium | ☐ |
+| 378 | Kth Smallest in Sorted Matrix | Medium | ☐ |
+| 875 | Koko Eating Bananas | Medium | ☐ |
+
+### Segment Tree / Fenwick
+| LC# | Problem | Difficulty | Status |
+|---|---|---|---|
+| 307 | Range Sum Query Mutable | Medium | ☐ |
+| 315 | Count of Smaller Numbers After Self | Hard | ☐ |
+| 493 | Reverse Pairs | Hard | ☐ |
+| 327 | Count of Range Sum | Hard | ☐ |
+
+---
+
 ## 📚 Further Resources
 
 - **NeetCode Roadmap** (covers all these patterns with video explanations): https://neetcode.io/roadmap
 - **"Cracking the Coding Interview" by Gayle Laakmann McDowell** — Chapter on backtracking and bit manipulation
 - **AlgoMonster** — Pattern-based teaching with these exact categories: https://algo.monster
 - **Blind 75** — The original curated list covering all patterns: https://neetcode.io/practice
+- **CP Algorithms — Fenwick Tree** — https://cp-algorithms.com/data_structures/fenwick.html
+- **CP Algorithms — Segment Tree** — https://cp-algorithms.com/data_structures/segment_tree.html
 
-> **With this file + the main study guides, you now have complete coverage of every DSA pattern tested at top AI companies.** No gaps remain.
+> **With this file + the new Strings, Custom Data Structures files, and the extended DP + Graph files, you now have complete coverage of every DSA pattern tested at top AI companies. No gaps remain.**

@@ -640,6 +640,367 @@ def rob_tree(root) -> int:
 
 ---
 
+## Part 5 — Hard DP Problems (Gist Q265–282)
+
+### Q266. Wildcard Matching (LC #44) — Hard
+
+> `?` matches any single character, `*` matches any sequence (including empty).
+
+```python
+def isMatch_wildcard(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    # dp[i][j] = does s[:i] match p[:j]?
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+
+    # '*' in pattern can match empty string
+    for j in range(1, n + 1):
+        if p[j-1] == '*':
+            dp[0][j] = dp[0][j-1]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j-1] == '*':
+                # '*' matches empty (dp[i][j-1]) OR matches s[i] (dp[i-1][j])
+                dp[i][j] = dp[i][j-1] or dp[i-1][j]
+            elif p[j-1] == '?' or p[j-1] == s[i-1]:
+                dp[i][j] = dp[i-1][j-1]
+
+    return dp[m][n]
+
+# s="adceb", p="*a*b" → True
+# s="acdcb", p="a*c?b" → False
+```
+**Time:** O(m×n) | **Space:** O(m×n)
+
+---
+
+### Q267. Regex Matching with `.` and `*` (LC #10) — Hard
+
+> `.` matches any single character, `*` matches zero or more of the preceding element.
+
+```python
+def isMatch_regex(s: str, p: str) -> bool:
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+
+    # Pattern like "a*b*c*" can match empty string
+    for j in range(2, n + 1):
+        if p[j-1] == '*':
+            dp[0][j] = dp[0][j-2]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if p[j-1] == '*':
+                # Zero occurrences of p[j-2]
+                dp[i][j] = dp[i][j-2]
+                # One or more: p[j-2] must match s[i-1]
+                if p[j-2] == '.' or p[j-2] == s[i-1]:
+                    dp[i][j] = dp[i][j] or dp[i-1][j]
+            elif p[j-1] == '.' or p[j-1] == s[i-1]:
+                dp[i][j] = dp[i-1][j-1]
+
+    return dp[m][n]
+
+# s="aa", p="a*"  → True
+# s="ab", p=".*"  → True
+# s="aab", p="c*a*b" → True
+```
+
+> 💡 **Key difference from wildcard:** `*` in regex refers to the *preceding element*, not itself. `a*` means zero or more `a`s. So when you see `*`, look back one character in the pattern.
+
+---
+
+### Q270 & Q271. Word Break II (LC #140) — Hard
+
+> Return all ways to segment s into dictionary words.
+
+```python
+from functools import lru_cache
+
+def wordBreak_II(s: str, wordDict: list[str]) -> list[str]:
+    words = set(wordDict)
+
+    @lru_cache(None)
+    def dp(start):
+        """Return list of all valid sentences from s[start:]."""
+        if start == len(s):
+            return [""]
+        result = []
+        for end in range(start + 1, len(s) + 1):
+            word = s[start:end]
+            if word in words:
+                for rest in dp(end):
+                    result.append(word + (" " + rest if rest else ""))
+        return result
+
+    return dp(0)
+
+# s="catsanddog", wordDict=["cat","cats","and","sand","dog"]
+# → ["cats and dog", "cat sand dog"]
+```
+
+---
+
+### Q272. Interleaving String (LC #97) — Medium/Hard
+
+> Check if s3 is formed by interleaving s1 and s2 in order.
+
+```python
+def isInterleave(s1: str, s2: str, s3: str) -> bool:
+    m, n = len(s1), len(s2)
+    if m + n != len(s3):
+        return False
+    # dp[i][j] = can s3[:i+j] be formed by s1[:i] and s2[:j]?
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    dp[0][0] = True
+
+    for i in range(1, m + 1):
+        dp[i][0] = dp[i-1][0] and s1[i-1] == s3[i-1]
+    for j in range(1, n + 1):
+        dp[0][j] = dp[0][j-1] and s2[j-1] == s3[j-1]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            dp[i][j] = (
+                (dp[i-1][j] and s1[i-1] == s3[i+j-1]) or
+                (dp[i][j-1] and s2[j-1] == s3[i+j-1])
+            )
+
+    return dp[m][n]
+
+# s1="aab", s2="axy", s3="aaxaby" → True
+```
+
+---
+
+### Q273. Longest Arithmetic Subsequence (LC #1027)
+
+```python
+def longestArithSeqLength(nums: list[int]) -> int:
+    # dp[i][diff] = length of longest arithmetic subsequence ending at i with difference diff
+    from collections import defaultdict
+    n = len(nums)
+    dp = [defaultdict(int) for _ in range(n)]
+    result = 2
+
+    for i in range(1, n):
+        for j in range(i):
+            diff = nums[i] - nums[j]
+            dp[i][diff] = dp[j][diff] + 1
+            result = max(result, dp[i][diff] + 1)
+
+    return result
+
+# [3,6,9,12] → 4 (diff=3)
+# [9,4,7,2,10] → 3 ([4,7,10], diff=3)
+```
+**Time:** O(n²) | **Space:** O(n²)
+
+---
+
+### Q275. Weighted Job Scheduling (LC #1235)
+
+> Jobs with [start, end, profit]. Pick non-overlapping jobs to maximize profit.
+
+```python
+from bisect import bisect_right
+
+def jobScheduling(startTime, endTime, profit) -> int:
+    jobs = sorted(zip(startTime, endTime, profit), key=lambda x: x[1])
+    n = len(jobs)
+    # dp[i] = max profit using first i jobs (sorted by end time)
+    dp = [0] * (n + 1)
+    end_times = [0] + [j[1] for j in jobs]
+
+    for i in range(1, n + 1):
+        start, end, p = jobs[i-1]
+        # Find latest job that ends <= start of current job
+        j = bisect_right(end_times, start, 0, i) - 1
+        # Take current job OR skip it
+        dp[i] = max(dp[i-1], dp[j] + p)
+
+    return dp[n]
+
+# startTime=[1,2,3,3], endTime=[3,4,5,6], profit=[50,10,40,70] → 120
+```
+
+---
+
+### Q277. Matrix Chain Multiplication — Interval DP
+
+> Find minimum cost to multiply a chain of matrices.
+
+```python
+def matrixChainOrder(dims: list[int]) -> int:
+    """
+    dims[i-1] x dims[i] = dimensions of matrix i.
+    Cost of multiplying A(p×q) × B(q×r) = p*q*r operations.
+    """
+    n = len(dims) - 1   # number of matrices
+    # dp[i][j] = min cost to multiply matrices i..j
+    dp = [[0] * n for _ in range(n)]
+
+    for length in range(2, n + 1):      # chain length
+        for i in range(n - length + 1):
+            j = i + length - 1
+            dp[i][j] = float('inf')
+            for k in range(i, j):       # split point
+                cost = dp[i][k] + dp[k+1][j] + dims[i] * dims[k+1] * dims[j+1]
+                dp[i][j] = min(dp[i][j], cost)
+
+    return dp[0][n-1]
+
+# dims = [10,30,5,60]  → matrices: 10×30, 30×5, 5×60
+# Optimal: (A×B)×C → 10*30*5 + 10*5*60 = 1500+3000 = 4500
+```
+
+---
+
+### Q278. Boolean Parenthesization
+
+> Count ways to parenthesize expression of T/F and &, |, ^ to get True.
+
+```python
+def countWays(expr: str) -> int:
+    symbols = expr[0::2]   # T/F at even indices
+    operators = expr[1::2] # &/|/^ at odd indices
+    n = len(symbols)
+
+    # dp_T[i][j] = ways to make symbols[i..j] True
+    # dp_F[i][j] = ways to make symbols[i..j] False
+    dp_T = [[0]*n for _ in range(n)]
+    dp_F = [[0]*n for _ in range(n)]
+
+    for i in range(n):
+        dp_T[i][i] = 1 if symbols[i] == 'T' else 0
+        dp_F[i][i] = 1 if symbols[i] == 'F' else 0
+
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            for k in range(i, j):
+                op = operators[k]
+                lt, lf = dp_T[i][k], dp_F[i][k]
+                rt, rf = dp_T[k+1][j], dp_F[k+1][j]
+                if op == '&':
+                    dp_T[i][j] += lt * rt
+                    dp_F[i][j] += lt*rf + lf*rt + lf*rf
+                elif op == '|':
+                    dp_T[i][j] += lt*rt + lt*rf + lf*rt
+                    dp_F[i][j] += lf * rf
+                elif op == '^':
+                    dp_T[i][j] += lt*rf + lf*rt
+                    dp_F[i][j] += lt*rt + lf*rf
+
+    return dp_T[0][n-1]
+```
+
+---
+
+### Q279. Longest Increasing Path in a Matrix (LC #329)
+
+```python
+from functools import lru_cache
+
+def longestIncreasingPath(matrix: list[list[int]]) -> int:
+    m, n = len(matrix), len(matrix[0])
+    DIRS = [(0,1),(0,-1),(1,0),(-1,0)]
+
+    @lru_cache(None)
+    def dfs(r, c):
+        best = 1
+        for dr, dc in DIRS:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < m and 0 <= nc < n and matrix[nr][nc] > matrix[r][c]:
+                best = max(best, 1 + dfs(nr, nc))
+        return best
+
+    return max(dfs(r, c) for r in range(m) for c in range(n))
+
+# [[9,9,4],[6,6,8],[2,1,1]] → 4 ([1,2,6,9])
+```
+**Time:** O(m×n) with memoization | Each cell computed once.
+
+---
+
+### Q280. Cherry Pickup II (LC #1463) — 2-Agent Grid DP
+
+> Two robots start at top-left and top-right of a grid. Both move down simultaneously. Maximize total cherries collected.
+
+```python
+def cherryPickup(grid: list[list[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    from functools import lru_cache
+
+    @lru_cache(None)
+    def dp(row, col1, col2):
+        """Both robots at same row. col1=robot1 col, col2=robot2 col."""
+        if col1 < 0 or col1 >= n or col2 < 0 or col2 >= n:
+            return float('-inf')
+
+        cherries = grid[row][col1]
+        if col1 != col2:
+            cherries += grid[row][col2]   # don't double-count same cell
+
+        if row == m - 1:
+            return cherries
+
+        best = float('-inf')
+        for d1 in [-1, 0, 1]:
+            for d2 in [-1, 0, 1]:
+                best = max(best, dp(row + 1, col1 + d1, col2 + d2))
+
+        return cherries + best
+
+    return dp(0, 0, n - 1)
+
+# grid=[[3,1,1],[2,5,1],[1,5,5],[2,1,1]] → 24
+```
+
+---
+
+### Q281. Maximum Subarray Sum With One Deletion (LC #1186)
+
+```python
+def maximumSum(arr: list[int]) -> int:
+    n = len(arr)
+    # no_del[i] = max subarray sum ending at i with 0 deletions
+    # one_del[i] = max subarray sum ending at i with 1 deletion used
+    no_del = arr[0]
+    one_del = 0
+    result = arr[0]
+
+    for i in range(1, n):
+        one_del = max(one_del + arr[i], no_del)   # delete arr[i] or extend with deletion
+        no_del = max(no_del + arr[i], arr[i])      # extend or restart
+        result = max(result, no_del, one_del)
+
+    return result
+
+# [1,-2,0,3] → 4 (delete -2: [1,0,3])
+# [1,-2,-2,3] → 4 (delete one -2: [1,-2,3] or [1,3])
+```
+
+---
+
+## Updated LeetCode Problem List (Extended)
+
+| # | Problem | Pattern | Difficulty |
+|---|---|---|---|
+| 44 | Wildcard Matching | 2D DP | Hard |
+| 10 | Regular Expression Matching | 2D DP | Hard |
+| 140 | Word Break II | DP + Backtrack | Hard |
+| 97 | Interleaving String | 2D DP | Medium |
+| 1027 | Longest Arithmetic Subsequence | DP + Hash | Medium |
+| 1235 | Maximum Profit in Job Scheduling | DP + Binary Search | Hard |
+| 329 | Longest Increasing Path in Matrix | DFS + Memo | Hard |
+| 1463 | Cherry Pickup II | 3D DP | Hard |
+| 1186 | Maximum Subarray Sum With One Deletion | 1D DP | Medium |
+
+---
+
 ## Further Resources
 
 - **NeetCode DP Playlist** — https://neetcode.io/roadmap (Dynamic Programming section)

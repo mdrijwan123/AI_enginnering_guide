@@ -522,6 +522,411 @@ def tarjan_scc(graph: dict, n: int) -> list[list[int]]:
 
 ---
 
+## Part 6 — Hard Graph Problems (Gist Q209–228)
+
+### Q209. Water Jug Problem — BFS + GCD
+
+> Two jugs with capacity x and y. Can you measure exactly z litres?
+
+```python
+from collections import deque
+from math import gcd
+
+def canMeasureWater(x: int, y: int, target: int) -> bool:
+    # GCD reasoning: you can measure any multiple of gcd(x, y)
+    # So target is achievable iff target % gcd(x,y) == 0 AND target <= x+y
+    if target > x + y:
+        return False
+    if target % gcd(x, y) != 0:
+        return False
+    return True
+
+# BFS approach (if you need to find the steps):
+def canMeasureWater_BFS(x: int, y: int, target: int) -> bool:
+    visited = set()
+    queue = deque([(0, 0)])   # (jug1, jug2)
+
+    while queue:
+        a, b = queue.popleft()
+        if a == target or b == target or a + b == target:
+            return True
+        if (a, b) in visited:
+            continue
+        visited.add((a, b))
+        # All possible moves
+        states = [
+            (x, b),        # fill jug1
+            (a, y),        # fill jug2
+            (0, b),        # empty jug1
+            (a, 0),        # empty jug2
+            (min(a+b, x), max(0, a+b-x)),   # pour jug2→jug1
+            (max(0, a+b-y), min(a+b, y)),   # pour jug1→jug2
+        ]
+        for state in states:
+            if state not in visited:
+                queue.append(state)
+    return False
+```
+
+---
+
+### Q211. Number of Islands II — Dynamic DSU (LC #305)
+
+> Islands are added one by one. After each addition, report number of islands.
+
+```python
+def numIslands2(m: int, n: int, positions: list[list[int]]) -> list[int]:
+    parent = {}
+    rank = {}
+    count = [0]
+
+    def find(x):
+        if parent[x] != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+
+    def union(x, y):
+        px, py = find(x), find(y)
+        if px == py: return
+        if rank.get(px, 0) < rank.get(py, 0): px, py = py, px
+        parent[py] = px
+        rank[px] = max(rank.get(px, 0), rank.get(py, 0) + 1)
+        count[0] -= 1
+
+    result = []
+    for r, c in positions:
+        if (r, c) in parent:
+            result.append(count[0])
+            continue
+        parent[(r, c)] = (r, c)
+        count[0] += 1
+        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+            nr, nc = r+dr, c+dc
+            if (nr, nc) in parent:
+                union((r,c), (nr,nc))
+        result.append(count[0])
+    return result
+```
+
+---
+
+### Q212. Critical Connections / Bridges (LC #1192) — Tarjan's Bridge Finding
+
+> A bridge is an edge whose removal increases the number of connected components.
+
+```python
+def criticalConnections(n: int, connections: list[list[int]]) -> list[list[int]]:
+    graph = [[] for _ in range(n)]
+    for u, v in connections:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    disc = [-1] * n    # discovery time
+    low = [0] * n      # lowest disc reachable via back edges
+    timer = [0]
+    bridges = []
+
+    def dfs(u, parent):
+        disc[u] = low[u] = timer[0]
+        timer[0] += 1
+        for v in graph[u]:
+            if disc[v] == -1:           # tree edge
+                dfs(v, u)
+                low[u] = min(low[u], low[v])
+                if low[v] > disc[u]:    # bridge condition
+                    bridges.append([u, v])
+            elif v != parent:           # back edge
+                low[u] = min(low[u], disc[v])
+
+    for i in range(n):
+        if disc[i] == -1:
+            dfs(i, -1)
+
+    return bridges
+
+# n=4, connections=[[0,1],[1,2],[2,0],[1,3]] → [[1,3]]
+```
+
+> 🔑 **Bridge condition:** Edge (u,v) is a bridge if `low[v] > disc[u]` — meaning v cannot reach u or any ancestor of u via back edges.
+
+---
+
+### Q213. Articulation Points — Tarjan's
+
+> An articulation point is a vertex whose removal disconnects the graph.
+
+```python
+def findArticulationPoints(n: int, edges: list[list[int]]) -> list[int]:
+    graph = [[] for _ in range(n)]
+    for u, v in edges:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    disc = [-1] * n
+    low = [0] * n
+    timer = [0]
+    ap = set()
+    parent = [-1] * n
+
+    def dfs(u):
+        disc[u] = low[u] = timer[0]
+        timer[0] += 1
+        children = 0
+        for v in graph[u]:
+            if disc[v] == -1:
+                children += 1
+                parent[v] = u
+                dfs(v)
+                low[u] = min(low[u], low[v])
+                # u is AP if: root with 2+ children, OR non-root with low[v] >= disc[u]
+                if parent[u] == -1 and children > 1:
+                    ap.add(u)
+                if parent[u] != -1 and low[v] >= disc[u]:
+                    ap.add(u)
+            elif v != parent[u]:
+                low[u] = min(low[u], disc[v])
+
+    for i in range(n):
+        if disc[i] == -1:
+            dfs(i)
+    return list(ap)
+```
+
+---
+
+### Q214. Eventual Safe States (LC #802)
+
+> In a directed graph, a node is "safe" if every path from it leads to a terminal node (no cycle).
+
+```python
+def eventualSafeNodes(graph: list[list[int]]) -> list[int]:
+    n = len(graph)
+    # 0=unvisited, 1=visiting (in current path), 2=safe
+    state = [0] * n
+
+    def dfs(node) -> bool:
+        if state[node] == 1: return False  # cycle
+        if state[node] == 2: return True   # already verified safe
+        state[node] = 1
+        for neighbour in graph[node]:
+            if not dfs(neighbour):
+                return False
+        state[node] = 2
+        return True
+
+    return [i for i in range(n) if dfs(i)]
+
+# graph=[[1,2],[2,3],[5],[0],[5],[],[]] → [2,4,5,6]
+```
+
+---
+
+### Q217. Cheapest Flights Within K Stops (LC #787)
+
+> Find cheapest path from src to dst with at most k stops. Use Bellman-Ford (not Dijkstra — k constraint).
+
+```python
+def findCheapestPrice(n: int, flights: list[list[int]], src: int, dst: int, k: int) -> int:
+    # Bellman-Ford: relax edges k+1 times
+    prices = [float('inf')] * n
+    prices[src] = 0
+
+    for _ in range(k + 1):  # k stops = k+1 edges
+        temp = prices[:]
+        for u, v, cost in flights:
+            if prices[u] != float('inf') and prices[u] + cost < temp[v]:
+                temp[v] = prices[u] + cost
+        prices = temp
+
+    return prices[dst] if prices[dst] != float('inf') else -1
+
+# n=4, flights=[[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]]
+# src=0, dst=3, k=1 → 700 (0→1→3)
+```
+
+> 🔑 **Why not Dijkstra?** Dijkstra finds shortest path ignoring the k-stops constraint. Bellman-Ford's outer loop naturally limits path length to k+1 edges. Using a copy `temp` prevents using more than one edge per iteration.
+
+---
+
+### Q221. Path With Minimum Effort (LC #1631)
+
+> Grid of heights. Move to adjacent cells. Effort = max absolute height difference on path. Minimize effort.
+
+```python
+import heapq
+
+def minimumEffortPath(heights: list[list[int]]) -> int:
+    m, n = len(heights), len(heights[0])
+    effort = [[float('inf')] * n for _ in range(m)]
+    effort[0][0] = 0
+    heap = [(0, 0, 0)]   # (max_effort, row, col)
+
+    while heap:
+        e, r, c = heapq.heappop(heap)
+        if e > effort[r][c]: continue
+        if r == m-1 and c == n-1: return e
+        for dr, dc in [(-1,0),(1,0),(0,-1),(0,1)]:
+            nr, nc = r+dr, c+dc
+            if 0 <= nr < m and 0 <= nc < n:
+                new_e = max(e, abs(heights[nr][nc] - heights[r][c]))
+                if new_e < effort[nr][nc]:
+                    effort[nr][nc] = new_e
+                    heapq.heappush(heap, (new_e, nr, nc))
+    return 0
+```
+
+---
+
+### Q223. Merge Accounts (LC #721) — DSU
+
+> Merge accounts that share an email. Return sorted merged accounts.
+
+```python
+def accountsMerge(accounts: list[list[str]]) -> list[list[str]]:
+    parent = {}
+
+    def find(x):
+        if parent.setdefault(x, x) != x:
+            parent[x] = find(parent[x])
+        return parent[x]
+
+    def union(x, y):
+        parent[find(x)] = find(y)
+
+    email_to_name = {}
+    for account in accounts:
+        name = account[0]
+        for email in account[1:]:
+            email_to_name[email] = name
+            union(account[1], email)   # connect all emails in this account
+
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for email in email_to_name:
+        groups[find(email)].append(email)
+
+    return [[email_to_name[root]] + sorted(emails)
+            for root, emails in groups.items()]
+```
+
+---
+
+### Q224. Evaluate Division (LC #399)
+
+> Given equations like A/B = k, answer queries like C/D = ?
+
+```python
+from collections import defaultdict, deque
+
+def calcEquation(equations, values, queries):
+    graph = defaultdict(dict)
+
+    for (A, B), val in zip(equations, values):
+        graph[A][B] = val
+        graph[B][A] = 1 / val
+
+    def bfs(src, dst):
+        if src not in graph or dst not in graph:
+            return -1.0
+        if src == dst:
+            return 1.0
+        visited = {src}
+        queue = deque([(src, 1.0)])
+        while queue:
+            node, prod = queue.popleft()
+            if node == dst:
+                return prod
+            for neighbour, weight in graph[node].items():
+                if neighbour not in visited:
+                    visited.add(neighbour)
+                    queue.append((neighbour, prod * weight))
+        return -1.0
+
+    return [bfs(s, d) for s, d in queries]
+
+# equations=[["a","b"],["b","c"]], values=[2.0,3.0]
+# queries=[["a","c"],["b","a"]] → [6.0, 0.5]
+```
+
+---
+
+### Q227. Shortest Path with Alternating Colors (LC #1129)
+
+> Graph with red and blue edges. Find shortest path from 0 to all nodes using alternating colors.
+
+```python
+from collections import deque
+
+def shortestAlternatingPaths(n: int, redEdges: list, blueEdges: list) -> list[int]:
+    graph = [[] for _ in range(n)]  # graph[u] = [(v, color)]
+    for u, v in redEdges:
+        graph[u].append((v, 0))   # 0 = red
+    for u, v in blueEdges:
+        graph[u].append((v, 1))   # 1 = blue
+
+    ans = [-1] * n
+    ans[0] = 0
+    # BFS: state = (node, last_color)
+    visited = set()
+    queue = deque([(0, 0, 0), (0, 1, 0)])  # (node, last_color, dist)
+
+    while queue:
+        node, color, dist = queue.popleft()
+        if (node, color) in visited:
+            continue
+        visited.add((node, color))
+        if ans[node] == -1:
+            ans[node] = dist
+        for neighbour, edge_color in graph[node]:
+            if edge_color != color:   # must alternate
+                queue.append((neighbour, edge_color, dist + 1))
+
+    return ans
+```
+
+---
+
+### Q228. All Paths from Source to Target in DAG (LC #797)
+
+```python
+def allPathsSourceTarget(graph: list[list[int]]) -> list[list[int]]:
+    target = len(graph) - 1
+    result = []
+
+    def dfs(node, path):
+        if node == target:
+            result.append(path[:])
+            return
+        for neighbour in graph[node]:
+            path.append(neighbour)
+            dfs(neighbour, path)
+            path.pop()
+
+    dfs(0, [0])
+    return result
+
+# graph=[[1,2],[3],[3],[]] → [[0,1,3],[0,2,3]]
+```
+
+---
+
+## Updated LeetCode Problem List (Extended)
+
+| # | LC# | Problem | Algorithm | Difficulty |
+|---|---|---|---|---|
+| Q209 | — | Water Jug Problem | BFS + GCD | Medium |
+| Q211 | 305 | Number of Islands II | Dynamic DSU | Hard |
+| Q212 | 1192 | Critical Connections | Tarjan Bridges | Hard |
+| Q214 | 802 | Find Eventual Safe States | DFS coloring | Medium |
+| Q217 | 787 | Cheapest Flights K Stops | Bellman-Ford | Medium |
+| Q221 | 1631 | Path With Minimum Effort | Dijkstra | Medium |
+| Q223 | 721 | Accounts Merge | DSU | Medium |
+| Q224 | 399 | Evaluate Division | BFS on graph | Medium |
+| Q227 | 1129 | Alternating Colors Path | BFS with state | Medium |
+| Q228 | 797 | All Paths Source to Target | DFS | Medium |
+
+---
+
 ## Further Resources
 
 - **CP Algorithms** — https://cp-algorithms.com/ (Dijkstra, SCC, MST with proofs)

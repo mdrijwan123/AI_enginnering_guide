@@ -33,27 +33,26 @@ Step 4: ANSWER — which cell contains the final answer?
 
 ```python
 def climbStairs(n: int) -> int:
-    # Step 1: dp[i] = number of ways to reach step i
-    # Step 2: dp[i] = dp[i-1] + dp[i-2]  (came from i-1 via 1 step, or i-2 via 2 steps)
-    # Step 3: dp[1] = 1, dp[2] = 2
-    # Step 4: return dp[n]
-
     if n <= 2:
         return n
-    
     dp = [0] * (n + 1)
     dp[1] = 1
     dp[2] = 2
-    
     for i in range(3, n + 1):
         dp[i] = dp[i-1] + dp[i-2]
-    
     return dp[n]
 
-# Space-optimised (only need last 2):
+# Input:  n = 2
+# Output: 2   (1+1 or 2)
+
+# Input:  n = 3
+# Output: 3   (1+1+1, 1+2, 2+1)
+
+# Input:  n = 5
+# Output: 8
+
 def climbStairsOptimized(n: int) -> int:
-    if n <= 2:
-        return n
+    if n <= 2: return n
     prev2, prev1 = 1, 2
     for _ in range(3, n + 1):
         prev2, prev1 = prev1, prev1 + prev2
@@ -68,31 +67,34 @@ def climbStairsOptimized(n: int) -> int:
 
 ```python
 def rob(nums: list[int]) -> int:
-    # dp[i] = max money stealing from houses 0..i
-    # dp[i] = max(dp[i-1], dp[i-2] + nums[i])
-    # "skip house i" vs "rob house i (skip i-1)"
-    
     if not nums: return 0
     if len(nums) == 1: return nums[0]
-    
     prev2 = nums[0]
     prev1 = max(nums[0], nums[1])
-    
     for i in range(2, len(nums)):
         curr = max(prev1, prev2 + nums[i])
         prev2, prev1 = prev1, curr
-    
     return prev1
 
-# House Robber II — houses in a circle (rob first XOR last)
+# Input:  nums = [1, 2, 3, 1]
+# Output: 4   (rob house 0 and house 2: 1+3=4)
+
+# Input:  nums = [2, 7, 9, 3, 1]
+# Output: 12  (rob house 0,2,4: 2+9+1=12)
+
 def robII(nums: list[int]) -> int:
     def rob_linear(arr):
         prev2, prev1 = 0, 0
         for n in arr:
             prev2, prev1 = prev1, max(prev1, prev2 + n)
         return prev1
-    
     return max(nums[0], rob_linear(nums[1:]), rob_linear(nums[:-1]))
+
+# Input:  nums = [2, 3, 2]
+# Output: 3   (circular: can't rob both 0 and 2)
+
+# Input:  nums = [1, 2, 3, 1]
+# Output: 4
 ```
 
 ---
@@ -102,31 +104,34 @@ def robII(nums: list[int]) -> int:
 
 ```python
 def lengthOfLIS(nums: list[int]) -> int:
-    # dp[i] = LIS length ending at index i
-    # dp[i] = max(dp[j] + 1) for all j < i where nums[j] < nums[i]
-    
     n = len(nums)
-    dp = [1] * n  # every element is LIS of length 1
-    
+    dp = [1] * n
     for i in range(1, n):
         for j in range(i):
             if nums[j] < nums[i]:
                 dp[i] = max(dp[i], dp[j] + 1)
-    
     return max(dp)
 
-# O(n log n) with binary search (patience sorting):
+# Input:  nums = [10, 9, 2, 5, 3, 7, 101, 18]
+# Output: 4   ([2, 3, 7, 101] or [2, 5, 7, 101])
+
+# Input:  nums = [0, 1, 0, 3, 2, 3]
+# Output: 4   ([0, 1, 2, 3])
+
+# Input:  nums = [7, 7, 7, 7, 7]
+# Output: 1   (strictly increasing, so no pair qualifies)
+
 from bisect import bisect_left
 
 def lengthOfLIS_fast(nums: list[int]) -> int:
-    tails = []  # tails[i] = smallest tail of IS with length i+1
+    tails = []
     for n in nums:
         pos = bisect_left(tails, n)
-        if pos == len(tails):
-            tails.append(n)
-        else:
-            tails[pos] = n
+        if pos == len(tails): tails.append(n)
+        else: tails[pos] = n
     return len(tails)
+
+# Same inputs/outputs as above, O(n log n)
 ```
 **Time:** O(n²) basic / O(n log n) optimised
 
@@ -137,30 +142,36 @@ def lengthOfLIS_fast(nums: list[int]) -> int:
 
 ```python
 def coinChange(coins: list[int], amount: int) -> int:
-    # dp[i] = min coins to make amount i
-    # dp[i] = min(dp[i - coin] + 1) for each valid coin
-    # Base: dp[0] = 0
-    
     dp = [float('inf')] * (amount + 1)
     dp[0] = 0
-    
     for i in range(1, amount + 1):
         for coin in coins:
             if coin <= i:
                 dp[i] = min(dp[i], dp[i - coin] + 1)
-    
     return dp[amount] if dp[amount] != float('inf') else -1
 
-# Coin Change II — count number of combinations:
+# Input:  coins = [1, 5, 6, 9],  amount = 11
+# Output: 2   (6+5=11, 2 coins)
+
+# Input:  coins = [1, 2, 5],  amount = 11
+# Output: 3   (5+5+1=11)
+
+# Input:  coins = [2],  amount = 3
+# Output: -1  (impossible)
+
 def change(amount: int, coins: list[int]) -> int:
     dp = [0] * (amount + 1)
     dp[0] = 1
-    
-    for coin in coins:          # outer loop: coins (order matters for combinations!)
+    for coin in coins:
         for i in range(coin, amount + 1):
             dp[i] += dp[i - coin]
-    
     return dp[amount]
+
+# Input:  amount = 5,  coins = [1, 2, 5]
+# Output: 4   ([5], [2+2+1], [2+1+1+1], [1+1+1+1+1])
+
+# Input:  amount = 3,  coins = [2]
+# Output: 0   (impossible with only 2s)
 ```
 
 > 💡 **Key insight:** Coin Change = "unbounded knapsack". Each coin can be used unlimited times. If you want *combinations* (order doesn't matter), loop coins on the outside. If you want *permutations* (order matters), loop amounts on outside.
@@ -175,15 +186,22 @@ def wordBreak(s: str, wordDict: list[str]) -> bool:
     words = set(wordDict)
     n = len(s)
     dp = [False] * (n + 1)
-    dp[0] = True  # empty string is breakable
-    
+    dp[0] = True
     for i in range(1, n + 1):
         for j in range(i):
             if dp[j] and s[j:i] in words:
                 dp[i] = True
                 break
-    
     return dp[n]
+
+# Input:  s = "leetcode",  wordDict = ["leet", "code"]
+# Output: True   ("leet" + "code")
+
+# Input:  s = "applepenapple",  wordDict = ["apple", "pen"]
+# Output: True   ("apple" + "pen" + "apple")
+
+# Input:  s = "catsandog",  wordDict = ["cats", "dog", "sand", "and", "cat"]
+# Output: False
 ```
 
 ---
@@ -195,19 +213,23 @@ def wordBreak(s: str, wordDict: list[str]) -> bool:
 def numDecodings(s: str) -> int:
     n = len(s)
     dp = [0] * (n + 1)
-    dp[0] = 1           # empty string = 1 way
+    dp[0] = 1
     dp[1] = 0 if s[0] == '0' else 1
-    
     for i in range(2, n + 1):
         one_digit = int(s[i-1])
         two_digit = int(s[i-2:i])
-        
-        if one_digit != 0:          # single digit decode
-            dp[i] += dp[i-1]
-        if 10 <= two_digit <= 26:   # two digit decode
-            dp[i] += dp[i-2]
-    
+        if one_digit != 0: dp[i] += dp[i-1]
+        if 10 <= two_digit <= 26: dp[i] += dp[i-2]
     return dp[n]
+
+# Input:  s = "12"
+# Output: 2   ("AB" or "L")
+
+# Input:  s = "226"
+# Output: 3   ("BZ", "VF", "BBF")
+
+# Input:  s = "06"
+# Output: 0   (leading zero → invalid)
 ```
 
 ---
@@ -232,6 +254,12 @@ def countSubstrings(s: str) -> int:
         expand(i, i + 1)  # even length
     
     return count
+
+# Input:  s = "abc"
+# Output: 3   ("a","b","c" are palindromes)
+
+# Input:  s = "aaa"
+# Output: 6   ("a","a","a","aa","aa","aaa")
 
 # Longest Palindromic Substring — DP approach:
 def longestPalindrome(s: str) -> str:
@@ -259,6 +287,12 @@ def longestPalindrome(s: str) -> str:
                     start, max_len = i, length
     
     return s[start:start + max_len]
+
+# Input:  s = "babad"
+# Output: "bab" (or "aba")
+
+# Input:  s = "cbbd"
+# Output: "bb"
 ```
 
 ---
@@ -266,16 +300,22 @@ def longestPalindrome(s: str) -> str:
 ### 1.8 Maximum Product Subarray
 ```python
 def maxProduct(nums: list[int]) -> int:
-    # Track both max AND min (negative × negative = positive)
     max_prod = min_prod = result = nums[0]
-    
     for n in nums[1:]:
         candidates = (n, max_prod * n, min_prod * n)
         max_prod = max(candidates)
         min_prod = min(candidates)
         result = max(result, max_prod)
-    
     return result
+
+# Input:  nums = [2, 3, -2, 4]
+# Output: 6   ([2,3] = 6)
+
+# Input:  nums = [-2, 0, -1]
+# Output: 0   (0 is the max subarray product)
+
+# Input:  nums = [-2, 3, -4]
+# Output: 24  (all three: -2*3*-4=24)
 ```
 
 ---
@@ -287,38 +327,32 @@ def maxProduct(nums: list[int]) -> int:
 
 ```python
 def uniquePaths(m: int, n: int) -> int:
-    # dp[i][j] = paths to reach cell (i,j)
-    # dp[i][j] = dp[i-1][j] + dp[i][j-1]  (came from above or from left)
-    
-    dp = [[1] * n for _ in range(m)]  # first row & col = 1 (only one path)
-    
+    dp = [[1] * n for _ in range(m)]
     for i in range(1, m):
         for j in range(1, n):
             dp[i][j] = dp[i-1][j] + dp[i][j-1]
-    
     return dp[m-1][n-1]
 
-# Unique Paths II — with obstacles:
+# Input:  m = 3,  n = 7
+# Output: 28
+
+# Input:  m = 3,  n = 2
+# Output: 3
+
 def uniquePathsWithObstacles(grid: list[list[int]]) -> int:
     m, n = len(grid), len(grid[0])
     if grid[0][0] == 1: return 0
-    
     dp = [[0] * n for _ in range(m)]
     dp[0][0] = 1
-    
-    for i in range(1, m):
-        dp[i][0] = 0 if grid[i][0] == 1 else dp[i-1][0]
-    for j in range(1, n):
-        dp[0][j] = 0 if grid[0][j] == 1 else dp[0][j-1]
-    
+    for i in range(1, m): dp[i][0] = 0 if grid[i][0] == 1 else dp[i-1][0]
+    for j in range(1, n): dp[0][j] = 0 if grid[0][j] == 1 else dp[0][j-1]
     for i in range(1, m):
         for j in range(1, n):
-            if grid[i][j] == 1:
-                dp[i][j] = 0
-            else:
-                dp[i][j] = dp[i-1][j] + dp[i][j-1]
-    
+            dp[i][j] = 0 if grid[i][j] == 1 else dp[i-1][j] + dp[i][j-1]
     return dp[m-1][n-1]
+
+# Input:  grid = [[0,0,0],[0,1,0],[0,0,0]]
+# Output: 2   (obstacle at center blocks one path)
 ```
 
 ---
@@ -339,6 +373,15 @@ def longestCommonSubsequence(text1: str, text2: str) -> int:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])  # skip one char
     
     return dp[m][n]
+
+# Input:  text1 = "abcde",  text2 = "ace"
+# Output: 3   ("ace" is the LCS)
+
+# Input:  text1 = "abc",  text2 = "abc"
+# Output: 3
+
+# Input:  text1 = "abc",  text2 = "def"
+# Output: 0   (no common subsequence)
 
 # Variant: Shortest Common Supersequence
 def shortestCommonSupersequence(str1: str, str2: str) -> str:
@@ -377,23 +420,25 @@ def shortestCommonSupersequence(str1: str, str2: str) -> str:
 def minDistance(word1: str, word2: str) -> int:
     m, n = len(word1), len(word2)
     dp = [[0] * (n + 1) for _ in range(m + 1)]
-    
-    # Base cases: convert to/from empty string
-    for i in range(m + 1): dp[i][0] = i  # delete all of word1
-    for j in range(n + 1): dp[0][j] = j  # insert all of word2
-    
+    for i in range(m + 1): dp[i][0] = i
+    for j in range(n + 1): dp[0][j] = j
     for i in range(1, m + 1):
         for j in range(1, n + 1):
             if word1[i-1] == word2[j-1]:
-                dp[i][j] = dp[i-1][j-1]     # chars match, no cost
+                dp[i][j] = dp[i-1][j-1]
             else:
-                dp[i][j] = 1 + min(
-                    dp[i-1][j],    # delete from word1
-                    dp[i][j-1],    # insert into word1
-                    dp[i-1][j-1]   # replace
-                )
-    
+                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
     return dp[m][n]
+
+# Input:  word1 = "horse",  word2 = "ros"
+# Output: 3
+# Why:    horse → rorse (replace h→r) → rose (remove r) → ros (remove e)
+
+# Input:  word1 = "intention",  word2 = "execution"
+# Output: 5
+
+# Input:  word1 = "",  word2 = "a"
+# Output: 1   (insert 'a')
 ```
 
 > 💡 **Real-world use:** Edit distance powers spell checkers, DNA sequence alignment, and git diff. Many LLM tokenizer implementations use variations of this.
@@ -406,24 +451,24 @@ def minDistance(word1: str, word2: str) -> int:
 ```python
 def knapsack(weights: list[int], values: list[int], W: int) -> int:
     n = len(weights)
-    # dp[i][w] = max value using first i items with capacity w
     dp = [[0] * (W + 1) for _ in range(n + 1)]
-    
     for i in range(1, n + 1):
         for w in range(W + 1):
-            # Don't take item i
             dp[i][w] = dp[i-1][w]
-            # Take item i (if it fits)
             if weights[i-1] <= w:
                 dp[i][w] = max(dp[i][w], dp[i-1][w - weights[i-1]] + values[i-1])
-    
     return dp[n][W]
 
-# Space-optimised 1D version (iterate w in reverse!):
+# Input:  weights=[2,3,4,5], values=[3,4,5,6], W=8
+# Output: 10  (items with weight 3+5=8, value 4+6=10)
+
+# Input:  weights=[1,3,4,5], values=[1,4,5,7], W=7
+# Output: 9   (items weight 3+4=7, value 4+5=9)
+
 def knapsack_1d(weights, values, W):
     dp = [0] * (W + 1)
     for i in range(len(weights)):
-        for w in range(W, weights[i] - 1, -1):  # reverse! prevents reuse
+        for w in range(W, weights[i] - 1, -1):
             dp[w] = max(dp[w], dp[w - weights[i]] + values[i])
     return dp[W]
 ```
@@ -436,19 +481,20 @@ def knapsack_1d(weights, values, W):
 ```python
 def canPartition(nums: list[int]) -> bool:
     total = sum(nums)
-    if total % 2 != 0:
-        return False
-    
+    if total % 2 != 0: return False
     target = total // 2
-    # dp[j] = can we form sum j using some subset?
     dp = [False] * (target + 1)
-    dp[0] = True  # empty subset = sum 0
-    
+    dp[0] = True
     for num in nums:
-        for j in range(target, num - 1, -1):  # reverse! 0/1 knapsack
+        for j in range(target, num - 1, -1):
             dp[j] = dp[j] or dp[j - num]
-    
     return dp[target]
+
+# Input:  nums = [1, 5, 11, 5]
+# Output: True   ([1,5,5] = 11 = [11])
+
+# Input:  nums = [1, 2, 3, 5]
+# Output: False  (no equal partition exists)
 ```
 
 ---
@@ -461,18 +507,22 @@ def maximalSquare(matrix: list[list[str]]) -> int:
     m, n = len(matrix), len(matrix[0])
     dp = [[0] * n for _ in range(m)]
     max_side = 0
-    
     for i in range(m):
         for j in range(n):
             if matrix[i][j] == '1':
-                if i == 0 or j == 0:
-                    dp[i][j] = 1
-                else:
-                    # Largest square ending here = min of 3 neighbours + 1
-                    dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+                if i == 0 or j == 0: dp[i][j] = 1
+                else: dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
                 max_side = max(max_side, dp[i][j])
-    
     return max_side * max_side
+
+# Input:  matrix = [["1","0","1","0","0"],
+#                   ["1","0","1","1","1"],
+#                   ["1","1","1","1","1"],
+#                   ["1","0","0","1","0"]]
+# Output: 4   (2x2 square found)
+
+# Input:  matrix = [["0","1"],["1","0"]]
+# Output: 1
 ```
 
 ---

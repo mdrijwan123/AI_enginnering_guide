@@ -81,34 +81,39 @@ priority, name = heapq.heappop(tasks)  # (1, "high")
 ```python
 import heapq
 
-# Approach 1: Min-heap of size k
 def findKthLargest(nums, k):
     heap = []
     for n in nums:
         heapq.heappush(heap, n)
         if len(heap) > k:
-            heapq.heappop(heap)  # remove smallest
-    return heap[0]  # kth largest = smallest in k-heap
+            heapq.heappop(heap)
+    return heap[0]
 
-# O(n log k) time, O(k) space — better if k << n
+# Input:  nums = [3,2,1,5,6,4],  k = 2
+# Output: 5   (2nd largest)
 
-# Approach 2: QuickSelect O(n) average (see below)
+# Input:  nums = [3,2,3,1,2,4,5,5,6],  k = 4
+# Output: 4
 ```
 
 ### 1.3 K Closest Points to Origin (LC #973)
 
 ```python
 def kClosest(points, k):
-    # negate distance for max-heap trick
     heap = [(-x**2 - y**2, x, y) for x, y in points[:k]]
     heapq.heapify(heap)
-    
     for x, y in points[k:]:
         dist = -x**2 - y**2
-        if dist > heap[0][0]:  # closer than current worst
+        if dist > heap[0][0]:
             heapq.heapreplace(heap, (dist, x, y))
-    
     return [(x, y) for _, x, y in heap]
+
+# Input:  points = [[1,3],[-2,2]],  k = 1
+# Output: [[-2, 2]]
+# Why:    dist([1,3])=sqrt(10), dist([-2,2])=sqrt(8) → [-2,2] is closer
+
+# Input:  points = [[3,3],[5,-1],[-2,4]],  k = 2
+# Output: [[3,3],[-2,4]]
 ```
 
 ### 1.4 Merge K Sorted Lists (LC #23) — Heap
@@ -223,10 +228,9 @@ def numIslands(grid):
     if not grid: return 0
     rows, cols = len(grid), len(grid[0])
     count = 0
-    
     def bfs(r, c):
         queue = deque([(r, c)])
-        grid[r][c] = '0'  # mark visited
+        grid[r][c] = '0'
         while queue:
             row, col = queue.popleft()
             for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]:
@@ -234,14 +238,28 @@ def numIslands(grid):
                 if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == '1':
                     queue.append((nr, nc))
                     grid[nr][nc] = '0'
-    
     for r in range(rows):
         for c in range(cols):
             if grid[r][c] == '1':
                 bfs(r, c)
                 count += 1
-    
     return count
+
+# Input:  grid = [
+#   ["1","1","1","1","0"],
+#   ["1","1","0","1","0"],
+#   ["1","1","0","0","0"],
+#   ["0","0","0","0","0"]
+# ]
+# Output: 1
+
+# Input:  grid = [
+#   ["1","1","0","0","0"],
+#   ["1","1","0","0","0"],
+#   ["0","0","1","0","0"],
+#   ["0","0","0","1","1"]
+# ]
+# Output: 3
 ```
 
 ### 2.4 Shortest Path (BFS with Distance)
@@ -279,6 +297,15 @@ def ladderLength(beginWord, endWord, wordList):
                     visited.add(next_word)
                     queue.append((next_word, steps + 1))
     return 0
+
+# Input:  beginWord="hit", endWord="cog",
+#         wordList=["hot","dot","dog","lot","log","cog"]
+# Output: 5
+# Why:    hit → hot → dot → dog → cog (5 words = 4 transformations+1)
+
+# Input:  beginWord="hit", endWord="cog",
+#         wordList=["hot","dot","dog","lot","log"]
+# Output: 0   (endWord "cog" not in wordList)
 ```
 
 ---
@@ -308,32 +335,30 @@ def dfs(graph, node, visited=None):
 
 ```python
 def canFinish(numCourses, prerequisites):
-    # Build adjacency list
     adj = defaultdict(list)
     for a, b in prerequisites: adj[b].append(a)
-    
-    # 0 = unvisited, 1 = in-progress (cycle detection), 2 = done
     state = [0] * numCourses
-    
     def dfs(node):
-        if state[node] == 1: return False  # cycle!
-        if state[node] == 2: return True   # already processed
+        if state[node] == 1: return False
+        if state[node] == 2: return True
         state[node] = 1
         for neighbor in adj[node]:
             if not dfs(neighbor): return False
         state[node] = 2
         return True
-    
     return all(dfs(i) for i in range(numCourses))
 
-# LC #210: Return actual topological order
+# Input:  numCourses=2, prerequisites=[[1,0]]
+# Output: True   (take 0 then 1; no cycle)
+
+# Input:  numCourses=2, prerequisites=[[1,0],[0,1]]
+# Output: False  (0 requires 1, 1 requires 0 → cycle)
+
 def findOrder(numCourses, prerequisites):
     adj = defaultdict(list)
     for a, b in prerequisites: adj[b].append(a)
-    
     state = [0] * numCourses
     order = []
-    
     def dfs(node):
         if state[node] == 1: return False
         if state[node] == 2: return True
@@ -343,9 +368,11 @@ def findOrder(numCourses, prerequisites):
         state[node] = 2
         order.append(node)
         return True
-    
     if not all(dfs(i) for i in range(numCourses)): return []
     return order[::-1]
+
+# Input:  numCourses=4, prerequisites=[[1,0],[2,0],[3,1],[3,2]]
+# Output: [0,1,2,3] or [0,2,1,3]  (valid topological orders)
 ```
 
 ### 3.3 Pacific Atlantic Water Flow (LC #417)
@@ -428,6 +455,12 @@ def countComponents(n, edges):
     for a, b in edges:
         uf.union(a, b)
     return uf.components
+
+# Input:  n=5, edges=[[0,1],[1,2],[3,4]]
+# Output: 2   (components: {0,1,2} and {3,4})
+
+# Input:  n=5, edges=[[0,1],[1,2],[2,3],[3,4]]
+# Output: 1   (all connected)
 ```
 
 ---
@@ -442,29 +475,31 @@ import heapq
 def dijkstra(graph, start):
     dist = {node: float('inf') for node in graph}
     dist[start] = 0
-    heap = [(0, start)]   # (cost, node)
-    
+    heap = [(0, start)]
     while heap:
         cost, node = heapq.heappop(heap)
-        if cost > dist[node]: continue  # stale entry
-        
+        if cost > dist[node]: continue
         for neighbor, weight in graph[node]:
             new_cost = cost + weight
             if new_cost < dist[neighbor]:
                 dist[neighbor] = new_cost
                 heapq.heappush(heap, (new_cost, neighbor))
-    
     return dist
 
-# Network Delay Time (LC #743)
+# Input:  graph = {0:[(1,4),(2,1)], 1:[(3,1)], 2:[(1,2),(3,5)], 3:[]},  start=0
+# Output: {0:0, 1:3, 2:1, 3:4}
+# Why:    0→2(cost 1)→1(cost 3)→3(cost 4) is cheaper than 0→1(cost 4)
+
 def networkDelayTime(times, n, k):
     graph = defaultdict(list)
     for u, v, w in times:
         graph[u].append((v, w))
-    
     dist = dijkstra(graph, k)
     max_dist = max(d for d in dist.values() if d != float('inf'))
     return max_dist if len(dist) == n else -1
+
+# Input:  times=[[2,1,1],[2,3,1],[3,4,1]], n=4, k=2
+# Output: 2   (all nodes reachable; furthest takes 2 time units)
 ```
 - Time: O((V + E) log V) with binary heap
 

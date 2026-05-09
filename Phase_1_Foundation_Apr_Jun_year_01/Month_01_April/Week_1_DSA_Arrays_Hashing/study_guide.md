@@ -89,6 +89,9 @@ def build_prefix(nums):
 def range_sum(prefix, l, r):
     return prefix[r+1] - prefix[l]
 
+# Input:  nums = [2, 3, 1, 5, 4]
+# Output: build_prefix → [0, 2, 5, 6, 11, 15]
+#         range_sum(prefix, 1, 3) → 9  (nums[1]+nums[2]+nums[3] = 3+1+5)
 nums = [2, 3, 1, 5, 4]
 prefix = build_prefix(nums)  # [0, 2, 5, 6, 11, 15]
 print(range_sum(prefix, 1, 3))  # 3+1+5 = 9
@@ -111,8 +114,9 @@ def maxSubArray(nums):
     
     return max_sum
 
-# nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
-# Answer: 6 (subarray [4,-1,2,1])
+# Input:  nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+# Output: 6
+# Why:    The subarray [4, -1, 2, 1] has the largest sum = 6
 ```
 
 #### Pattern 3: Two-Pass / Multiple Pointers on Same Array
@@ -136,6 +140,10 @@ def productExceptSelf(nums):
         suffix *= nums[i]
     
     return ans
+
+# Input:  nums = [1, 2, 3, 4]
+# Output: [24, 12, 8, 6]
+# Why:    ans[0]=2*3*4=24, ans[1]=1*3*4=12, ans[2]=1*2*4=8, ans[3]=1*2*3=6
 ```
 
 ---
@@ -305,6 +313,12 @@ def containsDuplicate(nums):
         seen.add(n)
     return False
     # One-liner: return len(nums) != len(set(nums))
+
+# Input:  nums = [1, 2, 3, 1]
+# Output: True   (1 appears twice)
+
+# Input:  nums = [1, 2, 3, 4]
+# Output: False  (all unique)
 ```
 - **Time:** O(n) | **Space:** O(n)
 - **Edge cases:** Empty array → False, single element → False
@@ -326,6 +340,12 @@ def isAnagram_v2(s, t):
     for c in s: count[ord(c) - ord('a')] += 1
     for c in t: count[ord(c) - ord('a')] -= 1
     return all(x == 0 for x in count)
+
+# Input:  s = "anagram",  t = "nagaram"
+# Output: True   (same letters, same counts)
+
+# Input:  s = "rat",      t = "car"
+# Output: False  ('r','a','t' ≠ 'c','a','r')
 ```
 - **Time:** O(n) | **Space:** O(1) — only 26 chars
 
@@ -341,6 +361,14 @@ def twoSum(nums, target):
         if target - n in seen:
             return [seen[target - n], i]
         seen[n] = i
+
+# Input:  nums = [2, 7, 11, 15],  target = 9
+# Output: [0, 1]
+# Why:    nums[0] + nums[1] = 2 + 7 = 9
+
+# Input:  nums = [3, 2, 4],  target = 6
+# Output: [1, 2]
+# Why:    nums[1] + nums[2] = 2 + 4 = 6
 ```
 - **Time:** O(n) | **Space:** O(n)
 - **Follow-up:** What if array is sorted? → Use two pointers, O(1) space
@@ -359,6 +387,10 @@ def groupAnagrams(strs):
         key = tuple(sorted(s))
         groups[key].append(s)
     return list(groups.values())
+
+# Input:  strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+# Output: [["eat","tea","ate"], ["tan","nat"], ["bat"]]
+# Why:    "eat","tea","ate" share sorted key ('a','e','t')
 ```
 - **Time:** O(n × k log k) where k = max string length | **Space:** O(n × k)
 
@@ -379,6 +411,13 @@ def topKFrequent(nums, k):
         result.extend(buckets[i])
         if len(result) >= k:
             return result[:k]
+
+# Input:  nums = [1, 1, 1, 2, 2, 3],  k = 2
+# Output: [1, 2]
+# Why:    1 appears 3×, 2 appears 2×  → top 2 most frequent
+
+# Input:  nums = [1],  k = 1
+# Output: [1]
 ```
 - **Time:** O(n) bucket sort is faster than O(n log n) heap | **Space:** O(n)
 - **Alternative:** Use `heapq.nlargest(k, count, key=count.get)` — O(n log k)
@@ -401,6 +440,13 @@ def productExceptSelf(nums):
         ans[i] *= suffix
         suffix *= nums[i]
     return ans
+
+# Input:  nums = [1, 2, 3, 4]
+# Output: [24, 12, 8, 6]
+# Why:    [2*3*4, 1*3*4, 1*2*4, 1*2*3] = [24,12,8,6]
+
+# Input:  nums = [-1, 1, 0, -3, 3]
+# Output: [0, 0, 9, 0, 0]
 ```
 - **Time:** O(n) | **Space:** O(1) output array doesn't count
 - **Key insight:** ans[i] = (product of everything left of i) × (product of everything right of i)
@@ -477,6 +523,14 @@ def longestConsecutive(nums):
             best = max(best, length)
     
     return best
+
+# Input:  nums = [100, 4, 200, 1, 3, 2]
+# Output: 4
+# Why:    Longest consecutive sequence is [1, 2, 3, 4] → length 4
+
+# Input:  nums = [0, 3, 7, 2, 5, 8, 4, 6, 0, 1]
+# Output: 9
+# Why:    [0,1,2,3,4,5,6,7,8] → length 9
 ```
 - **Time:** O(n) — each number visited at most twice | **Space:** O(n)
 - **Key insight:** Skip any `n` where `n-1` exists — it's not a sequence start
@@ -493,6 +547,16 @@ def maxSubArray(nums):
         current = max(n, current + n)
         max_sum = max(max_sum, current)
     return max_sum
+
+# Input:  nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+# Output: 6
+# Why:    Subarray [4, -1, 2, 1] = 6 is the maximum sum
+
+# Input:  nums = [1]
+# Output: 1
+
+# Input:  nums = [5, 4, -1, 7, 8]
+# Output: 23   (entire array)
 ```
 - **Time:** O(n) | **Space:** O(1)
 
@@ -510,6 +574,13 @@ def findDisappearedNumbers(nums):
     
     # Indices that are still positive indicate missing numbers
     return [i + 1 for i in range(len(nums)) if nums[i] > 0]
+
+# Input:  nums = [4, 3, 2, 7, 8, 2, 3, 1]
+# Output: [5, 6]
+# Why:    Numbers 1-8 expected; 5 and 6 never appeared in nums
+
+# Input:  nums = [1, 1]
+# Output: [2]
 ```
 - **Time:** O(n) | **Space:** O(1) — modifies in-place
 
@@ -530,6 +601,12 @@ def sortColors(nums):
         else:  # nums[mid] == 2
             nums[mid], nums[high] = nums[high], nums[mid]
             high -= 1
+
+# Input:  nums = [2, 0, 2, 1, 1, 0]
+# Output: [0, 0, 1, 1, 2, 2]   (sorted in-place)
+
+# Input:  nums = [2, 0, 1]
+# Output: [0, 1, 2]
 ```
 - **Time:** O(n) single pass | **Space:** O(1)
 
@@ -552,6 +629,14 @@ def subarraySum(nums, k):
         prefix_counts[prefix_sum] += 1
     
     return count
+
+# Input:  nums = [1, 1, 1],  k = 2
+# Output: 2
+# Why:    Subarrays [1,1] (index 0-1) and [1,1] (index 1-2) both sum to 2
+
+# Input:  nums = [1, 2, 3],  k = 3
+# Output: 2
+# Why:    [1,2] and [3] both sum to 3
 ```
 - **Time:** O(n) | **Space:** O(n)
 - **Key insight:** sum(i..j) = prefix[j] - prefix[i-1] = k → prefix[i-1] = prefix[j] - k
@@ -581,6 +666,18 @@ def firstMissingPositive(nums):
             return i + 1
     
     return n + 1  # All 1..n present
+
+# Input:  nums = [1, 2, 0]
+# Output: 3
+# Why:    1 and 2 are present; 3 is the smallest missing positive
+
+# Input:  nums = [3, 4, -1, 1]
+# Output: 2
+# Why:    1 is present, 2 is missing
+
+# Input:  nums = [7, 8, 9, 11, 12]
+# Output: 1
+# Why:    1 is the smallest missing positive
 ```
 - **Time:** O(n) | **Space:** O(1)
 
@@ -618,6 +715,16 @@ def minWindow(s, t):
             left += 1
     
     return best
+
+# Input:  s = "ADOBECODEBANC",  t = "ABC"
+# Output: "BANC"
+# Why:    "BANC" is the shortest substring of s that contains A, B, C
+
+# Input:  s = "a",  t = "a"
+# Output: "a"
+
+# Input:  s = "a",  t = "aa"
+# Output: ""   (impossible — t needs 2 a's but s has only 1)
 ```
 - **Time:** O(|s| + |t|) | **Space:** O(|s| + |t|)
 

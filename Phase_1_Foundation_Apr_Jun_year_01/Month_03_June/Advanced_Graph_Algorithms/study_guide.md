@@ -15,10 +15,8 @@
 from collections import deque
 
 def bfs(graph: dict, start: int, end: int) -> int:
-    """Returns shortest path length (unweighted)."""
-    queue = deque([(start, 0)])   # (node, distance)
+    queue = deque([(start, 0)])
     visited = {start}
-    
     while queue:
         node, dist = queue.popleft()
         if node == end:
@@ -27,8 +25,13 @@ def bfs(graph: dict, start: int, end: int) -> int:
             if neighbour not in visited:
                 visited.add(neighbour)
                 queue.append((neighbour, dist + 1))
-    
-    return -1  # unreachable
+    return -1
+
+# Input:  graph = {0:[1,2], 1:[0,3], 2:[0,3], 3:[1,2]},  start=0, end=3
+# Output: 2   (path 0→1→3 or 0→2→3, both length 2)
+
+# Input:  graph = {0:[1], 1:[0], 2:[3], 3:[2]},  start=0, end=3
+# Output: -1   (unreachable, different components)
 ```
 
 ### 1.2 Word Ladder (BFS on Implicit Graph)
@@ -56,6 +59,15 @@ def ladderLength(beginWord: str, endWord: str, wordList: list[str]) -> int:
                     queue.append((new_word, steps + 1))
     
     return 0
+
+# Input:  beginWord="hit", endWord="cog",
+#         wordList=["hot","dot","dog","lot","log","cog"]
+# Output: 5
+# Why:    hit→hot→dot→dog→cog = 5 words in sequence
+
+# Input:  beginWord="hit", endWord="cog",
+#         wordList=["hot","dot","dog","lot","log"]
+# Output: 0   ("cog" not in wordList)
 
 # Bidirectional BFS (much faster for large graphs):
 def ladderLength_bidir(beginWord, endWord, wordList):
@@ -123,37 +135,33 @@ def minCostPath(grid, start, end):
 import heapq
 
 def dijkstra(graph: dict, start: int) -> dict:
-    """
-    graph = {node: [(weight, neighbour), ...]}
-    Returns dist dict: shortest distance from start to all nodes.
-    """
     dist = {node: float('inf') for node in graph}
     dist[start] = 0
-    heap = [(0, start)]   # (distance, node)
-    
+    heap = [(0, start)]
     while heap:
         d, node = heapq.heappop(heap)
-        
-        if d > dist[node]:   # stale entry — skip
-            continue
-        
+        if d > dist[node]: continue
         for weight, neighbour in graph[node]:
             new_dist = d + weight
             if new_dist < dist[neighbour]:
                 dist[neighbour] = new_dist
                 heapq.heappush(heap, (new_dist, neighbour))
-    
     return dist
 
-# LC 743: Network Delay Time
+# Input:  graph = {0:[(4,1),(1,2)], 1:[(1,3)], 2:[(2,1),(5,3)], 3:[]},  start=0
+# Output: {0:0, 1:3, 2:1, 3:4}
+# Why:    Shortest: 0→2(1)→1(3)→3(4)
+
 def networkDelayTime(times: list[list[int]], n: int, k: int) -> int:
     graph = {i: [] for i in range(1, n + 1)}
     for u, v, w in times:
         graph[u].append((w, v))
-    
     dist = dijkstra(graph, k)
     max_dist = max(dist.values())
     return max_dist if max_dist < float('inf') else -1
+
+# Input:  times=[[2,1,1],[2,3,1],[3,4,1]], n=4, k=2
+# Output: 2   (signal from node 2 reaches all nodes; slowest path takes 2)
 ```
 
 **Time:** O((V + E) log V) | **Space:** O(V + E)
@@ -256,6 +264,12 @@ def countComponents(n: int, edges: list[list[int]]) -> int:
     for u, v in edges:
         uf.union(u, v)
     return uf.components
+
+# Input:  n=5, edges=[[0,1],[1,2],[3,4]]
+# Output: 2   (groups {0,1,2} and {3,4})
+
+# Input:  n=5, edges=[[0,1],[1,2],[2,3],[3,4]]
+# Output: 1   (all connected)
 ```
 
 ### 3.3 Kruskal's Minimum Spanning Tree
@@ -263,25 +277,27 @@ def countComponents(n: int, edges: list[list[int]]) -> int:
 def minCostConnectPoints(points: list[list[int]]) -> int:
     n = len(points)
     edges = []
-    
     for i in range(n):
         for j in range(i + 1, n):
             dist = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1])
             edges.append((dist, i, j))
-    
-    edges.sort()  # sort by weight
+    edges.sort()
     uf = UnionFind(n)
     total_cost = 0
     edges_used = 0
-    
     for cost, u, v in edges:
         if uf.union(u, v):
             total_cost += cost
             edges_used += 1
-            if edges_used == n - 1:  # MST has n-1 edges
+            if edges_used == n - 1:
                 break
-    
     return total_cost
+
+# Input:  points = [[0,0],[2,2],[3,10],[5,2],[7,0]]
+# Output: 20   (minimum cost to connect all 5 points)
+
+# Input:  points = [[0,0],[1,1],[1,0],[-1,1]]
+# Output: 4
 ```
 
 ### 3.4 Detect Cycle in Undirected Graph
@@ -292,6 +308,12 @@ def hasCycle(n: int, edges: list[list[int]]) -> bool:
         if not uf.union(u, v):  # already connected = cycle!
             return True
     return False
+
+# Input:  n=3, edges=[[0,1],[1,2]]
+# Output: False   (no cycle: 0-1-2 is a path)
+
+# Input:  n=3, edges=[[0,1],[1,2],[0,2]]
+# Output: True    (0,1,2 form a triangle = cycle)
 ```
 
 ---
@@ -303,36 +325,37 @@ def hasCycle(n: int, edges: list[list[int]]) -> bool:
 from collections import deque
 
 def topologicalSort(n: int, prerequisites: list[list[int]]) -> list[int]:
-    """
-    Returns topological order or [] if cycle exists.
-    """
     in_degree = [0] * n
     graph = [[] for _ in range(n)]
-    
     for course, prereq in prerequisites:
         graph[prereq].append(course)
         in_degree[course] += 1
-    
-    # Start with all nodes that have no prerequisites
     queue = deque([i for i in range(n) if in_degree[i] == 0])
     order = []
-    
     while queue:
         node = queue.popleft()
         order.append(node)
-        
         for neighbour in graph[node]:
             in_degree[neighbour] -= 1
             if in_degree[neighbour] == 0:
                 queue.append(neighbour)
-    
-    return order if len(order) == n else []  # [] means cycle
+    return order if len(order) == n else []
 
-# LC 207: Course Schedule
+# Input:  n=4, prerequisites=[[1,0],[2,0],[3,1],[3,2]]
+# Output: [0,1,2,3] or [0,2,1,3]  (valid topological orders)
+
+# Input:  n=2, prerequisites=[[0,1],[1,0]]
+# Output: []   (cycle detected)
+
 def canFinish(numCourses: int, prerequisites: list[list[int]]) -> bool:
     return len(topologicalSort(numCourses, prerequisites)) == numCourses
 
-# LC 210: Course Schedule II
+# Input:  numCourses=2, prerequisites=[[1,0]]
+# Output: True
+
+# Input:  numCourses=2, prerequisites=[[1,0],[0,1]]
+# Output: False   (cycle)
+
 def findOrder(numCourses: int, prerequisites: list[list[int]]) -> list[int]:
     return topologicalSort(numCourses, prerequisites)
 ```
@@ -415,23 +438,25 @@ def alienOrder(words: list[str]) -> str:
 ```python
 def isBipartite(graph: list[list[int]]) -> bool:
     color = [-1] * len(graph)
-    
     for start in range(len(graph)):
-        if color[start] != -1:
-            continue
+        if color[start] != -1: continue
         queue = deque([start])
         color[start] = 0
-        
         while queue:
             node = queue.popleft()
             for neighbour in graph[node]:
                 if color[neighbour] == -1:
-                    color[neighbour] = 1 - color[node]  # flip color
+                    color[neighbour] = 1 - color[node]
                     queue.append(neighbour)
                 elif color[neighbour] == color[node]:
-                    return False  # same color = not bipartite
-    
+                    return False
     return True
+
+# Input:  graph = [[1,2,3],[0,2],[0,1,3],[0,2]]
+# Output: False   (node 0 connects to 1,2,3 but 1 and 2 are also connected)
+
+# Input:  graph = [[1,3],[0,2],[1,3],[0,2]]
+# Output: True    (can color: {0,2}=red, {1,3}=blue)
 ```
 
 ### 5.2 Tarjan's Algorithm — Strongly Connected Components

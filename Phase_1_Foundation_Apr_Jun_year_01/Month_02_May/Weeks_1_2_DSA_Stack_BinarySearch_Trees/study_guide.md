@@ -46,22 +46,22 @@ All O(1).
 A monotonic stack maintains elements in a strictly increasing (or decreasing) order. Used to find **next/previous greater/smaller element** in O(n).
 
 ```python
-# Next Greater Element for each position
 def nextGreaterElement(nums):
     result = [-1] * len(nums)
-    stack = []  # indices of elements without a "next greater" yet
-    
+    stack = []
     for i, n in enumerate(nums):
-        # Pop all elements smaller than current → current is their "next greater"
         while stack and nums[stack[-1]] < n:
             idx = stack.pop()
             result[idx] = n
         stack.append(i)
-    
     return result
 
-# nums = [2, 1, 5, 3, 6]
-# result = [5, 5, 6, 6, -1]
+# Input:  nums = [2, 1, 5, 3, 6]
+# Output: [5, 5, 6, 6, -1]
+# Why:    Next greater for 2→5, for 1→5, for 5→6, for 3→6, for 6→-1 (none)
+
+# Input:  nums = [1, 3, 2]
+# Output: [3, -1, -1]
 ```
 
 ### 1.3 Key Stack Problems
@@ -74,11 +74,22 @@ def isValid(s):
     for c in s:
         if c in mapping:
             top = stack.pop() if stack else '#'
-            if top != mapping[c]:
-                return False
+            if top != mapping[c]: return False
         else:
             stack.append(c)
     return not stack
+
+# Input:  s = "()"
+# Output: True
+
+# Input:  s = "()[]{}"
+# Output: True
+
+# Input:  s = "(]"
+# Output: False
+
+# Input:  s = "([)]"
+# Output: False
 ```
 
 #### Min Stack (LC #155)
@@ -118,13 +129,23 @@ def evalRPN(tokens):
 ```python
 def dailyTemperatures(temperatures):
     result = [0] * len(temperatures)
-    stack = []  # indices
+    stack = []
     for i, t in enumerate(temperatures):
         while stack and temperatures[stack[-1]] < t:
             idx = stack.pop()
             result[idx] = i - idx
         stack.append(i)
     return result
+
+# Input:  temperatures = [73,74,75,71,69,72,76,73]
+# Output: [1, 1, 4, 2, 1, 1, 0, 0]
+# Why:    Day 0(73)→1 day later it's 74; Day 2(75)→4 days later it's 76
+
+# Input:  temperatures = [30, 40, 50, 60]
+# Output: [1, 1, 1, 0]
+
+# Input:  temperatures = [30, 60, 90]
+# Output: [1, 1, 0]
 ```
 
 #### Largest Rectangle in Histogram (LC #84) — Hard
@@ -132,8 +153,7 @@ def dailyTemperatures(temperatures):
 def largestRectangleArea(heights):
     stack = []
     max_area = 0
-    heights = heights + [0]  # sentinel to flush remaining stack
-    
+    heights = heights + [0]  # sentinel
     for i, h in enumerate(heights):
         start = i
         while stack and stack[-1][1] > h:
@@ -141,8 +161,17 @@ def largestRectangleArea(heights):
             max_area = max(max_area, height * (i - idx))
             start = idx
         stack.append((start, h))
-    
     return max_area
+
+# Input:  heights = [2, 1, 5, 6, 2, 3]
+# Output: 10
+# Why:    Largest rectangle uses bars 5 and 6 with height=5, width=2 → area=10
+
+# Input:  heights = [2, 4]
+# Output: 4   (single bar of height 4)
+
+# Input:  heights = [1]
+# Output: 1
 ```
 
 ---
@@ -166,17 +195,21 @@ Binary search finds a target in a **sorted** space (array or "answer space") in 
 ```python
 def binary_search(arr, target):
     left, right = 0, len(arr) - 1
-    
     while left <= right:
-        mid = left + (right - left) // 2  # avoid overflow (relevant in Java/C++)
-        if arr[mid] == target:
-            return mid
-        elif arr[mid] < target:
-            left = mid + 1
-        else:
-            right = mid - 1
-    
-    return -1  # not found
+        mid = left + (right - left) // 2
+        if arr[mid] == target: return mid
+        elif arr[mid] < target: left = mid + 1
+        else: right = mid - 1
+    return -1
+
+# Input:  arr = [-1, 0, 3, 5, 9, 12],  target = 9
+# Output: 4   (arr[4] = 9)
+
+# Input:  arr = [-1, 0, 3, 5, 9, 12],  target = 2
+# Output: -1  (2 not in array)
+
+# Input:  arr = [5],  target = 5
+# Output: 0
 ```
 
 **When to suspect binary search:**
@@ -190,20 +223,26 @@ def binary_search(arr, target):
 This is a key industry pattern: binary search on the **answer** rather than array indices.
 
 ```python
-# Koko Eating Bananas (LC #875)
 def minEatingSpeed(piles, h):
     def canFinish(speed):
-        hours = sum((pile + speed - 1) // speed for pile in piles)  # ceil division
+        hours = sum((pile + speed - 1) // speed for pile in piles)
         return hours <= h
-    
     left, right = 1, max(piles)
     while left <= right:
         mid = (left + right) // 2
-        if canFinish(mid):
-            right = mid - 1   # try smaller speed
-        else:
-            left = mid + 1    # need faster speed
+        if canFinish(mid): right = mid - 1
+        else: left = mid + 1
     return left
+
+# Input:  piles = [3,6,7,11],  h = 8
+# Output: 4
+# Why:    Speed 4: ceil(3/4)+ceil(6/4)+ceil(7/4)+ceil(11/4)=1+2+2+3=8 hours ≤ 8
+
+# Input:  piles = [30,11,23,4,20],  h = 5
+# Output: 30   (must eat each pile in 1 hour)
+
+# Input:  piles = [30,11,23,4,20],  h = 6
+# Output: 23
 ```
 
 **Pattern recognition:** "Find the minimum X such that condition(X) is True" → Binary search on X.
@@ -214,13 +253,18 @@ def findMin(nums):
     left, right = 0, len(nums) - 1
     while left < right:
         mid = (left + right) // 2
-        if nums[mid] > nums[right]:
-            # Min is in right half
-            left = mid + 1
-        else:
-            # Min is in left half (or mid is min)
-            right = mid
+        if nums[mid] > nums[right]: left = mid + 1
+        else: right = mid
     return nums[left]
+
+# Input:  nums = [3, 4, 5, 1, 2]
+# Output: 1
+
+# Input:  nums = [4, 5, 6, 7, 0, 1, 2]
+# Output: 0
+
+# Input:  nums = [11, 13, 15, 17]
+# Output: 11   (not rotated)
 ```
 
 ### 2.4 Search in Rotated Sorted Array (LC #33)
@@ -229,20 +273,23 @@ def search(nums, target):
     left, right = 0, len(nums) - 1
     while left <= right:
         mid = (left + right) // 2
-        if nums[mid] == target:
-            return mid
-        # Determine which half is sorted
-        if nums[left] <= nums[mid]:  # left half is sorted
-            if nums[left] <= target < nums[mid]:
-                right = mid - 1
-            else:
-                left = mid + 1
-        else:  # right half is sorted
-            if nums[mid] < target <= nums[right]:
-                left = mid + 1
-            else:
-                right = mid - 1
+        if nums[mid] == target: return mid
+        if nums[left] <= nums[mid]:
+            if nums[left] <= target < nums[mid]: right = mid - 1
+            else: left = mid + 1
+        else:
+            if nums[mid] < target <= nums[right]: left = mid + 1
+            else: right = mid - 1
     return -1
+
+# Input:  nums = [4,5,6,7,0,1,2],  target = 0
+# Output: 4   (nums[4] = 0)
+
+# Input:  nums = [4,5,6,7,0,1,2],  target = 3
+# Output: -1  (3 not in array)
+
+# Input:  nums = [1],  target = 0
+# Output: -1
 ```
 
 ---
@@ -374,10 +421,6 @@ class LRUCache:
 > * **Breadth-First Search (BFS / Level-order):** You look at all the children first. Then you look at all the grandchildren. Then all the great-grandchildren. You look row by row.
 
 ```python
-class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-        self.val = val; self.left = left; self.right = right
-
 # Recursive traversals
 def inorder(root):   # Left → Root → Right (BST: gives sorted order)
     return inorder(root.left) + [root.val] + inorder(root.right) if root else []
@@ -388,7 +431,13 @@ def preorder(root):  # Root → Left → Right
 def postorder(root): # Left → Right → Root
     return postorder(root.left) + postorder(root.right) + [root.val] if root else []
 
-# Iterative inorder (common interview ask)
+# Tree:      1
+#           / \
+#          2   3
+# inorder([1,2,3])   → [2, 1, 3]
+# preorder([1,2,3])  → [1, 2, 3]
+# postorder([1,2,3]) → [2, 3, 1]
+
 def inorderIterative(root):
     result, stack = [], []
     curr = root
@@ -401,8 +450,8 @@ def inorderIterative(root):
         curr = curr.right
     return result
 
-# BFS / Level-order
-from collections import deque
+# Same tree as above → inorderIterative → [2, 1, 3]
+
 def levelOrder(root):
     if not root: return []
     result, queue = [], deque([root])
@@ -415,6 +464,13 @@ def levelOrder(root):
             if node.right: queue.append(node.right)
         result.append(level)
     return result
+
+# Tree:      3
+#           / \
+#          9  20
+#            /  \
+#           15   7
+# Output: [[3], [9,20], [15,7]]
 ```
 
 ### 4.2 Key Tree Problems
@@ -425,6 +481,12 @@ def invertTree(root):
     if not root: return None
     root.left, root.right = invertTree(root.right), invertTree(root.left)
     return root
+
+# Input tree:    4        Output tree:   4
+#               / \                     / \
+#              2   7                   7   2
+#             / \ / \                 / \ / \
+#            1  3 6  9               9  6 3  1
 ```
 
 #### Maximum Depth (LC #104)
@@ -432,6 +494,16 @@ def invertTree(root):
 def maxDepth(root):
     if not root: return 0
     return 1 + max(maxDepth(root.left), maxDepth(root.right))
+
+# Input tree:    3
+#               / \
+#              9  20
+#                /  \
+#               15   7
+# Output: 3   (path 3→20→15 or 3→20→7, depth=3)
+
+# Input: root = [1, None, 2]
+# Output: 2
 ```
 
 #### Validate BST (LC #98)
@@ -441,6 +513,18 @@ def isValidBST(root, lo=float('-inf'), hi=float('inf')):
     if not (lo < root.val < hi): return False
     return (isValidBST(root.left, lo, root.val) and
             isValidBST(root.right, root.val, hi))
+
+# Input tree:    2
+#               / \
+#              1   3
+# Output: True
+
+# Input tree:    5
+#               / \
+#              1   4
+#                 / \
+#                3   6
+# Output: False   (4 is in right subtree of 5, but 4 < 5)
 ```
 
 #### Lowest Common Ancestor (LC #236)
@@ -472,7 +556,6 @@ def maxPathSum(root):
 #### Kth Smallest in BST (LC #230)
 ```python
 def kthSmallest(root, k):
-    # Inorder traversal gives sorted order for BST
     stack = []
     curr = root
     while curr or stack:
@@ -482,6 +565,16 @@ def kthSmallest(root, k):
         k -= 1
         if k == 0: return curr.val
         curr = curr.right
+
+# Input BST:    3       k = 1
+#              / \
+#             1   4
+#              \
+#               2
+# Output: 1   (smallest element)
+
+# Same tree,  k = 3
+# Output: 3
 ```
 
 #### Serialize and Deserialize Binary Tree (LC #297) — Hard

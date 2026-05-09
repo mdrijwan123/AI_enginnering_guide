@@ -47,18 +47,23 @@ Left ↑                ↑ Right
 ```
 
 ```python
-# Classic: Two Sum (sorted array)
 def twoSumSorted(nums, target):
     left, right = 0, len(nums) - 1
     while left < right:
         s = nums[left] + nums[right]
         if s == target:
-            return [left + 1, right + 1]  # 1-indexed
+            return [left + 1, right + 1]
         elif s < target:
-            left += 1   # need larger sum → move left right
+            left += 1
         else:
-            right -= 1  # need smaller sum → move right left
+            right -= 1
     return []
+
+# Input:  nums = [2, 7, 11, 15],  target = 9
+# Output: [1, 2]   (nums[0]+nums[1] = 2+7 = 9)
+
+# Input:  nums = [2, 3, 4],  target = 6
+# Output: [1, 3]   (nums[0]+nums[2] = 2+4 = 6)
 ```
 
 **Why this works:** At any point, if `nums[left] + nums[right] < target`, every pair with `right` is too small (since `left` is already the largest valid left pointer for that `right`). So we can safely increment `left`.
@@ -70,16 +75,20 @@ Both pointers move in the same direction, often at different speeds.
 **Use case:** In-place removal, linked list cycle detection, finding middle of list.
 
 ```python
-# Remove duplicates from sorted array in-place
 def removeDuplicates(nums):
     slow = 0
     for fast in range(1, len(nums)):
         if nums[fast] != nums[slow]:
             slow += 1
             nums[slow] = nums[fast]
-    return slow + 1  # new length
+    return slow + 1
 
-# Generalisation: keep at most k duplicates
+# Input:  nums = [1, 1, 2]
+# Output: 2   (nums becomes [1, 2, _])
+
+# Input:  nums = [0,0,1,1,1,2,2,3,3,4]
+# Output: 5   (nums becomes [0,1,2,3,4,...])
+
 def removeDuplicatesK(nums, k=2):
     slow = 0
     for fast in range(len(nums)):
@@ -87,6 +96,9 @@ def removeDuplicatesK(nums, k=2):
             nums[slow] = nums[fast]
             slow += 1
     return slow
+
+# Input:  nums = [1,1,1,2,2,3],  k=2
+# Output: 5   (nums becomes [1,1,2,2,3,...])
 ```
 
 ### 1.4 3Sum — The Classic Hard Two-Pointer Problem
@@ -95,30 +107,29 @@ def removeDuplicatesK(nums, k=2):
 def threeSum(nums):
     nums.sort()
     result = []
-    
     for i in range(len(nums) - 2):
-        # Skip duplicates for the first element
         if i > 0 and nums[i] == nums[i - 1]:
             continue
-        
         left, right = i + 1, len(nums) - 1
         while left < right:
             s = nums[i] + nums[left] + nums[right]
             if s == 0:
                 result.append([nums[i], nums[left], nums[right]])
-                # Skip duplicates for left and right
-                while left < right and nums[left] == nums[left + 1]:
-                    left += 1
-                while left < right and nums[right] == nums[right - 1]:
-                    right -= 1
-                left += 1
-                right -= 1
-            elif s < 0:
-                left += 1
-            else:
-                right -= 1
-    
+                while left < right and nums[left] == nums[left + 1]: left += 1
+                while left < right and nums[right] == nums[right - 1]: right -= 1
+                left += 1; right -= 1
+            elif s < 0: left += 1
+            else: right -= 1
     return result
+
+# Input:  nums = [-1, 0, 1, 2, -1, -4]
+# Output: [[-1,-1,2], [-1,0,1]]
+
+# Input:  nums = [0, 0, 0]
+# Output: [[0, 0, 0]]
+
+# Input:  nums = [1, 2, -2, -1]
+# Output: []   (no triplet sums to 0)
 ```
 
 - **Time:** O(n²) — O(n log n) sort + O(n²) main loop | **Space:** O(1) ignoring output
@@ -136,19 +147,19 @@ height = [1, 8, 6, 2, 5, 4, 8, 3, 7]
 def maxArea(height):
     left, right = 0, len(height) - 1
     max_water = 0
-    
     while left < right:
         h = min(height[left], height[right])
-        width = right - left
-        max_water = max(max_water, h * width)
-        
-        # Move the shorter side (moving the taller side can never help)
-        if height[left] < height[right]:
-            left += 1
-        else:
-            right -= 1
-    
+        max_water = max(max_water, h * (right - left))
+        if height[left] < height[right]: left += 1
+        else: right -= 1
     return max_water
+
+# Input:  height = [1, 8, 6, 2, 5, 4, 8, 3, 7]
+# Output: 49
+# Why:    heights[1]=8 and heights[8]=7, width=7 → min(8,7)*7=49
+
+# Input:  height = [1, 1]
+# Output: 1
 ```
 
 - **Greedy insight:** The water is limited by the shorter wall. Moving the shorter wall inward might find a taller wall (and could increase area). Moving the taller wall can only decrease width while the height stays limited.
@@ -162,22 +173,22 @@ def trap(height):
     left, right = 0, len(height) - 1
     left_max = right_max = 0
     water = 0
-    
     while left < right:
         if height[left] < height[right]:
-            if height[left] >= left_max:
-                left_max = height[left]
-            else:
-                water += left_max - height[left]
+            if height[left] >= left_max: left_max = height[left]
+            else: water += left_max - height[left]
             left += 1
         else:
-            if height[right] >= right_max:
-                right_max = height[right]
-            else:
-                water += right_max - height[right]
+            if height[right] >= right_max: right_max = height[right]
+            else: water += right_max - height[right]
             right -= 1
-    
     return water
+
+# Input:  height = [0,1,0,2,1,0,1,3,2,1,2,1]
+# Output: 6   (total trapped water = 6 units)
+
+# Input:  height = [4, 2, 0, 3, 2, 5]
+# Output: 9
 ```
 
 **Insight:** Water at position `i` = `min(max_left, max_right) - height[i]`. The two-pointer processes each bar once; if `height[left] < height[right]`, then `left_max` is the binding constraint regardless of what's to the right.
@@ -208,16 +219,19 @@ A sliding window maintains a contiguous subarray between `left` and `right` indi
 Window size `k` is given. Right pointer runs, left follows exactly `k` behind.
 
 ```python
-# Maximum sum of subarray of size k
 def maxSumSubarrayK(nums, k):
     window_sum = sum(nums[:k])
     max_sum = window_sum
-    
     for i in range(k, len(nums)):
-        window_sum += nums[i] - nums[i - k]  # slide: add right, remove left
+        window_sum += nums[i] - nums[i - k]
         max_sum = max(max_sum, window_sum)
-    
     return max_sum
+
+# Input:  nums = [2,1,5,1,3,2],  k = 3
+# Output: 9   (window [5,1,3] = 9)
+
+# Input:  nums = [2,3,4,1,5],  k = 2
+# Output: 7   (window [3,4] = 7)
 ```
 
 ### 2.3 Pattern B: Variable-Size Window (Most Common in Interviews)
@@ -254,19 +268,24 @@ def slidingWindowTemplate(nums, condition):
 
 ```python
 def lengthOfLongestSubstring(s):
-    char_idx = {}   # last seen index of each char
+    char_idx = {}
     left = 0
     max_len = 0
-    
     for right, c in enumerate(s):
-        # If c was seen inside current window, move left past it
         if c in char_idx and char_idx[c] >= left:
             left = char_idx[c] + 1
-        
         char_idx[c] = right
         max_len = max(max_len, right - left + 1)
-    
     return max_len
+
+# Input:  s = "abcabcbb"
+# Output: 3   ("abc")
+
+# Input:  s = "bbbbb"
+# Output: 1   ("b")
+
+# Input:  s = "pwwkew"
+# Output: 3   ("wke")
 ```
 
 - **Time:** O(n) | **Space:** O(min(n, 26)) for lowercase letters, O(128) for ASCII
@@ -278,23 +297,23 @@ Find length of longest substring where you can replace at most `k` characters to
 ```python
 def characterReplacement(s, k):
     count = defaultdict(int)
-    max_count = 0  # count of most frequent char in window
+    max_count = 0
     left = 0
     result = 0
-    
     for right in range(len(s)):
         count[s[right]] += 1
         max_count = max(max_count, count[s[right]])
-        
-        # Window size - max_count = chars to replace
-        # If replacements needed > k, shrink window
         if (right - left + 1) - max_count > k:
             count[s[left]] -= 1
             left += 1
-        
         result = max(result, right - left + 1)
-    
     return result
+
+# Input:  s = "ABAB",  k = 2
+# Output: 4   (replace 2 chars to get "AAAA")
+
+# Input:  s = "AABABBA",  k = 1
+# Output: 4   ("ABAB" → replace one B → length 4)
 ```
 
 **Key insight:** We're looking for the largest window where `window_size - max_freq_char_count <= k`. We only need to shrink by 1 at a time (not re-search max_count) because the result can only grow if max_count grows.
@@ -306,32 +325,32 @@ Find the smallest window in `s` containing all characters of `t`.
 ```python
 def minWindow(s, t):
     if not t: return ""
-    
-    need = Counter(t)      # chars needed
+    need = Counter(t)
     have = defaultdict(int)
-    formed = 0             # how many chars have required frequency
-    required = len(need)   # how many distinct chars needed
-    
+    formed = 0
+    required = len(need)
     left = 0
     best = ""
-    
     for right, c in enumerate(s):
         have[c] += 1
         if c in need and have[c] == need[c]:
             formed += 1
-        
-        # Try to shrink window while it's valid
         while formed == required:
             window = s[left:right+1]
-            if not best or len(window) < len(best):
-                best = window
-            
+            if not best or len(window) < len(best): best = window
             have[s[left]] -= 1
-            if s[left] in need and have[s[left]] < need[s[left]]:
-                formed -= 1
+            if s[left] in need and have[s[left]] < need[s[left]]: formed -= 1
             left += 1
-    
     return best
+
+# Input:  s = "ADOBECODEBANC",  t = "ABC"
+# Output: "BANC"   (shortest window containing A,B,C)
+
+# Input:  s = "a",  t = "a"
+# Output: "a"
+
+# Input:  s = "a",  t = "aa"
+# Output: ""   (impossible)
 ```
 
 - **Time:** O(|s| + |t|) | **Space:** O(|s| + |t|)
@@ -344,25 +363,22 @@ Find the maximum in every window of size `k`.
 from collections import deque
 
 def maxSlidingWindow(nums, k):
-    dq = deque()  # stores INDICES, values in decreasing order
+    dq = deque()
     result = []
-    
     for i, n in enumerate(nums):
-        # Remove elements outside current window
-        while dq and dq[0] < i - k + 1:
-            dq.popleft()
-        
-        # Remove elements smaller than current (they'll never be max)
-        while dq and nums[dq[-1]] < n:
-            dq.pop()
-        
+        while dq and dq[0] < i - k + 1: dq.popleft()
+        while dq and nums[dq[-1]] < n: dq.pop()
         dq.append(i)
-        
-        # Window is full: add max to result
-        if i >= k - 1:
-            result.append(nums[dq[0]])
-    
+        if i >= k - 1: result.append(nums[dq[0]])
     return result
+
+# Input:  nums = [1,3,-1,-3,5,3,6,7],  k = 3
+# Output: [3, 3, 5, 5, 6, 7]
+# Why:    Max of each window of 3: [1,3,-1]→3, [3,-1,-3]→3,
+#         [-1,-3,5]→5, [-3,5,3]→5, [5,3,6]→6, [3,6,7]→7
+
+# Input:  nums = [1],  k = 1
+# Output: [1]
 ```
 
 - **Time:** O(n) — each element added/removed from deque once | **Space:** O(k)
@@ -379,15 +395,20 @@ def maxSlidingWindow(nums, k):
 def isPalindrome(s):
     left, right = 0, len(s) - 1
     while left < right:
-        while left < right and not s[left].isalnum():
-            left += 1
-        while left < right and not s[right].isalnum():
-            right -= 1
-        if s[left].lower() != s[right].lower():
-            return False
-        left += 1
-        right -= 1
+        while left < right and not s[left].isalnum(): left += 1
+        while left < right and not s[right].isalnum(): right -= 1
+        if s[left].lower() != s[right].lower(): return False
+        left += 1; right -= 1
     return True
+
+# Input:  s = "A man, a plan, a canal: Panama"
+# Output: True
+
+# Input:  s = "race a car"
+# Output: False
+
+# Input:  s = " "
+# Output: True   (empty string is palindrome)
 ```
 - **Time:** O(n) | **Space:** O(1)
 
@@ -402,6 +423,12 @@ def twoSum(nums, target):
         if s == target: return [left+1, right+1]
         elif s < target: left += 1
         else: right -= 1
+
+# Input:  nums = [2, 7, 11, 15],  target = 9
+# Output: [1, 2]   (1-indexed)
+
+# Input:  nums = [2, 3, 4],  target = 6
+# Output: [1, 3]
 ```
 
 ---
@@ -434,6 +461,12 @@ def maxProfit(prices):
         min_price = min(min_price, p)
         max_profit = max(max_profit, p - min_price)
     return max_profit
+
+# Input:  prices = [7, 1, 5, 3, 6, 4]
+# Output: 5   (buy at 1, sell at 6)
+
+# Input:  prices = [7, 6, 4, 3, 1]
+# Output: 0   (prices only fall, no profit)
 ```
 - **Time:** O(n) | **Space:** O(1)
 
@@ -455,24 +488,25 @@ Check if any permutation of `p` exists as a substring of `s`.
 ```python
 def checkInclusion(p, s):
     if len(p) > len(s): return False
-    
     p_count = Counter(p)
     window = Counter(s[:len(p)])
-    
     if window == p_count: return True
-    
     for i in range(len(p), len(s)):
-        # Add new char on right
         window[s[i]] += 1
-        # Remove old char on left
         old = s[i - len(p)]
         window[old] -= 1
-        if window[old] == 0:
-            del window[old]
-        if window == p_count:
-            return True
-    
+        if window[old] == 0: del window[old]
+        if window == p_count: return True
     return False
+
+# Input:  p = "ab",  s = "eidbaooo"
+# Output: True   ("ba" at index 3-4 is a permutation of "ab")
+
+# Input:  p = "ab",  s = "eidboaoo"
+# Output: False
+
+# Input:  p = "adc",  s = "dcda"
+# Output: True   ("cda" is permutation of "adc")
 ```
 - **Time:** O(26 × n) = O(n) | **Space:** O(26) = O(1)
 - **Optimisation:** Track a `matches` count instead of comparing full dicts each step.

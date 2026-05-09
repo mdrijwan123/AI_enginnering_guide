@@ -917,22 +917,21 @@ def eraseOverlapIntervals(intervals):
 def intervalIntersection(firstList, secondList):
     result = []
     i, j = 0, 0
-    
     while i < len(firstList) and j < len(secondList):
-        # Find the intersection of two intervals
         start = max(firstList[i][0], secondList[j][0])
         end = min(firstList[i][1], secondList[j][1])
-        
         if start <= end:
             result.append([start, end])
-        
-        # Advance the pointer with the earlier end time
-        if firstList[i][1] < secondList[j][1]:
-            i += 1
-        else:
-            j += 1
-    
+        if firstList[i][1] < secondList[j][1]: i += 1
+        else: j += 1
     return result
+
+# Input:  firstList=[[0,2],[5,10],[13,23],[24,25]]
+#         secondList=[[1,5],[8,12],[15,24],[25,26]]
+# Output: [[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
+
+# Input:  firstList=[[1,3],[5,9]],  secondList=[]
+# Output: []
 ```
 
 ---
@@ -1161,22 +1160,20 @@ a >> 1   # Right shift: 1010 → 0101 (5)    — divide by 2
 
 ```python
 def singleNumber(nums):
-    """Every element appears twice except one. Find the unique one."""
     result = 0
     for n in nums:
         result ^= n
     return result
 
-# nums = [4, 1, 2, 1, 2]
-# 0 ^ 4 = 4
-# 4 ^ 1 = 5
-# 5 ^ 2 = 7
-# 7 ^ 1 = 6  (1 cancels out)
-# 6 ^ 2 = 4  (2 cancels out)
-# Answer: 4
+# Input:  nums = [4, 1, 2, 1, 2]
+# Output: 4
+# Why:    1^1=0, 2^2=0, leaving 4 alone
 
-# Why: all pairs cancel (a ^ a = 0), leaving only the unique element
-# Time: O(n), Space: O(1) — can't beat this!
+# Input:  nums = [2, 2, 1]
+# Output: 1
+
+# Input:  nums = [1]
+# Output: 1
 ```
 
 ### 5.3 Number of 1 Bits (LC #191) — Hamming Weight
@@ -1241,26 +1238,36 @@ def reverseBits(n):
         result = (result << 1) | (n & 1)
         n >>= 1
     return result
+
+# Input:  n = 43261596  (binary: 00000010100101000001111010011100)
+# Output: 964176192   (binary: 00111001011110000010100101000000)
+
+# Input:  n = 4294967293  (binary: 11111111111111111111111111111101)
+# Output: 3221225471   (binary: 10111111111111111111111111111111)
 ```
 
 ### 5.7 Missing Number (LC #268)
 
 ```python
 def missingNumber(nums):
-    """Given [0, 1, ..., n] with one number missing, find it."""
-    # XOR approach: XOR all indices and all values
-    # Pairs cancel, leaving the missing number
     n = len(nums)
-    result = n  # start with n (since indices go 0 to n-1)
+    result = n
     for i in range(n):
         result ^= i ^ nums[i]
     return result
 
-# Or simply: sum approach
+# Input:  nums = [3, 0, 1]
+# Output: 2
+
+# Input:  nums = [9,6,4,2,3,5,7,0,1]
+# Output: 8
+
 def missingNumber_sum(nums):
     n = len(nums)
     expected = n * (n + 1) // 2
     return expected - sum(nums)
+
+# Same inputs/outputs, O(1) space using arithmetic formula
 ```
 
 ### 5.8 Bit Manipulation Cheat Sheet
@@ -1286,19 +1293,18 @@ def missingNumber_sum(nums):
 ```python
 def isPalindrome(s):
     left, right = 0, len(s) - 1
-    
     while left < right:
-        while left < right and not s[left].isalnum():
-            left += 1
-        while left < right and not s[right].isalnum():
-            right -= 1
-        
-        if s[left].lower() != s[right].lower():
-            return False
-        left += 1
-        right -= 1
-    
+        while left < right and not s[left].isalnum(): left += 1
+        while left < right and not s[right].isalnum(): right -= 1
+        if s[left].lower() != s[right].lower(): return False
+        left += 1; right -= 1
     return True
+
+# Input:  s = "A man, a plan, a canal: Panama"
+# Output: True
+
+# Input:  s = "race a car"
+# Output: False
 ```
 
 ### 6.2 Longest Palindromic Substring (LC #5) — Expand Around Centre
